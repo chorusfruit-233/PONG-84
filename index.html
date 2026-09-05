@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#050805">
-  <title>PONG-84 · ASCII 字符 / 玩家增强版</title>
+  <title>PONG-84 · 本地 P2P / 云联机 / ASCII</title>
   <style>
     :root {
       --crt-color: #33ff33;
@@ -392,6 +392,41 @@
       .actions { margin-top: 10px; flex-shrink: 0; }
       .legend { bottom: 4px; }
     }
+
+    /* Connection forms remain scrollable even inside a short landscape viewport. */
+    #menuOverlay { justify-content: flex-start; }
+    #menuOverlay > *, .settings-grid, .section { flex-shrink: 0; min-width: 0; }
+    .network-fields { border: 0; min-width: 0; margin: 12px 0; padding: 0; }
+    .network-fields:disabled { opacity: .64; }
+    .network-scope { display: flex; gap: 10px; justify-content: center; align-items: center; font-size: 11px; }
+    .network-scope select, .network-grid input:not([type="checkbox"]), .network-grid textarea {
+      background: #090d09; color: var(--crt-color); border: 1px solid #3b493b; border-radius: 4px;
+      font: inherit; padding: 8px; min-width: 0; width: 100%; outline: none;
+      user-select: text; -webkit-user-select: text; touch-action: auto;
+    }
+    .network-scope select { max-width: 340px; font-size: 11px; }
+    .network-grid input:focus, .network-grid textarea:focus, .network-scope select:focus { border-color: var(--crt-color); }
+    .network-details { border: 1px solid #293329; padding: 10px 12px; border-radius: 5px; margin-top: 9px; }
+    .network-details summary { cursor: pointer; color: #b0bdb0; font-size: 11px; line-height: 1.6; }
+    .network-caption { color: #9ba69b; font-size: 10px; line-height: 1.65; margin: 8px 0; text-align: left; }
+    #transportDescription { text-align: center; }
+    .network-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; }
+    .network-grid label { display: flex; flex-direction: column; gap: 5px; font-size: 10px; color: #bdc8bd; }
+    .network-grid .check-label { flex-direction: row; align-items: center; }
+    .network-grid input[type="checkbox"] { accent-color: var(--crt-color); min-width: 16px; min-height: 16px; }
+    .network-grid textarea { resize: vertical; min-height: 58px; }
+    .network-divider { color: #b3bdb3; font-size: 10px; padding: 10px 0; border-top: 1px solid #293329; margin-top: 10px; }
+    .connection-panel { border: 1px solid var(--crt-dim); background: rgba(0,0,0,.18); padding: 12px; border-radius: 5px; }
+    .connection-guide { text-align: center; color: #d5ded5; font-size: 10px; line-height: 1.7; margin-bottom: 10px; }
+    .connection-status { color: var(--crt-color); font-size: 11px; line-height: 1.65; margin: 10px 0; min-height: 18px; overflow-wrap: anywhere; }
+    #manualExchange label { display: block; color: #d0dbd0; font-size: 11px; margin: 12px 0 6px; }
+    .signal-code { min-height: 90px; height: 90px; resize: vertical; line-height: 1.4; overflow-wrap: anywhere; touch-action: auto; -webkit-user-select: text; }
+    .network-report { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; font-size: 10px; color: #bac9ba; margin: 10px 0; line-height: 1.7; user-select: text; -webkit-user-select: text; }
+    .online-actions { flex-wrap: wrap; }
+    button:disabled { cursor: wait; opacity: .55; }
+    #disconnectBtn { display: none; border: 1px solid var(--crt-dim); color: var(--crt-color); background: var(--crt-bg); border-radius: 3px; padding: 3px 8px; cursor: pointer; font-size: 10px; }
+    @media (pointer: coarse) { #disconnectBtn { min-height: 34px; } .signal-code { font-size: 12px; } }
+    @media (max-width: 480px) { .network-grid { grid-template-columns: minmax(0,1fr); } .network-scope { flex-direction: column; align-items: stretch; } }
   </style>
 </head>
 <body>
@@ -419,6 +454,7 @@
                   <button id="renderModeBtn" type="button" aria-label="切换到 ASCII 纯字符渲染" aria-pressed="false" title="切换渲染模式 (R)">ASCII 模式</button>
                   <button id="fullscreenBtn" type="button" aria-label="进入全屏" title="全屏 (F)">全屏</button>
                   <button id="pauseBtn" type="button">暂停</button>
+                  <button id="disconnectBtn" type="button" title="退出当前联机">退出联机</button>
                 </span>
               </div>
 
@@ -479,7 +515,7 @@
                 <h2 id="menuTitle">PONG-84</h2>
                 <button id="menuFullscreenBtn" type="button" aria-label="进入全屏" title="全屏 (F)">全屏</button>
               </div>
-              <p id="menuSub">ASCII 可切换 · 键盘加速 · 高频功能球 · 人机零增益</p>
+              <p id="menuSub">本地 P2P / 云房间 · ASCII 可切换 · 高频功能球 · 人机零增益</p>
 
               <div class="settings-grid">
                 <div class="section full">
@@ -543,19 +579,101 @@
                 </div>
 
                 <div class="section full hidden-section" id="onlineSection">
-                  <div class="section-title">云端快捷联机 · 4 位房间码</div>
-                  <div class="select-row" id="onlineChooser">
-                    <button class="choice" id="createRoomBtn" type="button">创建云端房间</button>
-                    <button class="choice" id="joinRoomBtn" type="button">输入房间码加入</button>
+                  <div class="section-title">两种联机方式 · 本地 HTML / 静态网页通用</div>
+                  <div class="select-row" id="transportChooser" role="group" aria-label="联机方式">
+                    <button class="choice selected" id="manualModeBtn" type="button" aria-pressed="true">本地 P2P · 手动连接</button>
+                    <button class="choice" id="cloudModeBtn" type="button" aria-pressed="false">云端联机 · 4 位房间码</button>
                   </div>
-                  <div class="online-box hidden-section" id="onlineBox">
-                    <p class="online-info" id="onlineInfo"></p>
-                    <input class="online-code cloud-room-code" id="onlineCode" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" spellcheck="false" aria-label="4位房间码">
-                    <div class="online-actions">
-                      <button class="btn small" id="onlineActionBtn" type="button">加入房间</button>
-                      <button class="btn small secondary" id="onlineBackBtn" type="button">返回</button>
+                  <p class="network-caption" id="transportDescription">原生 WebRTC，无需安装、启动本地服务器或连接信令服务。双方交换两次连接码即可尝试连接。</p>
+                  <fieldset id="networkFields" class="network-fields">
+                    <label class="network-scope" for="networkScope">网络范围
+                      <select id="networkScope">
+                        <option value="internet">跨网络 · STUN / 可选 TURN</option>
+                        <option value="lan">同一局域网 · 不使用 STUN/TURN</option>
+                      </select>
+                    </label>
+                    <details id="networkAdvanced" class="network-details">
+                      <summary>高级网络设置：STUN / TURN / 自建信令</summary>
+                      <p class="network-caption">通常可先使用默认设置。变更仅在新连接生效；设置只保留在当前标签页。</p>
+                      <div class="network-grid">
+                        <label class="full" for="netStun">STUN 地址（每行一个；局域网模式忽略）
+                          <textarea id="netStun" rows="2" spellcheck="false" autocomplete="off"></textarea>
+                        </label>
+                        <label class="full" for="netTurn">TURN 地址（可选；每行一个）
+                          <textarea id="netTurn" rows="2" spellcheck="false" autocomplete="off" placeholder="turn:turn.example.com:3478?transport=udp&#10;turns:turn.example.com:5349?transport=tcp"></textarea>
+                        </label>
+                        <label for="netUser">TURN 用户名<input id="netUser" type="text" autocomplete="off" spellcheck="false" maxlength="256"></label>
+                        <label for="netPassword">TURN 密码 / 临时凭据<input id="netPassword" type="password" autocomplete="off" maxlength="512"></label>
+                        <label class="full check-label"><input id="netRelay" type="checkbox">强制 TURN 中继（排查直连失败；需有效 TURN）</label>
+                      </div>
+                      <p class="network-caption">TURN 凭据不会写入本地存储、连接码或导出文件。不要将长期凭据或服务商 API 密钥写进公开 HTML。</p>
+                      <div class="network-divider">以下仅影响“云端联机”，手动连接不使用信令服务</div>
+                      <div class="network-grid">
+                        <label class="full" for="signalHost">自建 PeerServer 域名（留空使用 PeerJS 公共信令）
+                          <input id="signalHost" type="text" placeholder="signal.example.com" autocomplete="off" spellcheck="false" maxlength="253">
+                        </label>
+                        <label for="signalPort">端口<input id="signalPort" type="number" value="443" min="1" max="65535" inputmode="numeric"></label>
+                        <label for="signalPath">路径<input id="signalPath" type="text" value="/" autocomplete="off" spellcheck="false" maxlength="128"></label>
+                        <label for="signalKey">服务 key（不是安全密码）<input id="signalKey" type="text" value="peerjs" autocomplete="off" spellcheck="false" maxlength="128"></label>
+                        <label for="roomNamespace">房间分组（双方必须相同）<input id="roomNamespace" type="text" value="pong84-public-v2" autocomplete="off" spellcheck="false" maxlength="48"></label>
+                        <label class="full check-label"><input id="signalSecure" type="checkbox" checked>安全信令（HTTPS / WSS；GitHub Pages 必须启用）</label>
+                      </div>
+                    </details>
+                  </fieldset>
+
+                  <div id="manualPanel" class="connection-panel">
+                    <p class="connection-guide">房主发送“邀请码” → 加入者返回“回应码” → 房主确认 → 房主开始游戏</p>
+                    <div class="select-row" id="manualChooser">
+                      <button class="choice" id="manualCreateBtn" type="button">我是房主 · 生成邀请</button>
+                      <button class="choice" id="manualJoinBtn" type="button">我是加入者 · 粘贴邀请</button>
+                    </div>
+                    <p id="manualInfo" class="connection-status" role="status" aria-live="polite">双方打开本文件，选择相同的网络范围。无需摄像头或麦克风权限。</p>
+                    <div id="manualExchange" class="hidden-section">
+                      <div id="manualOutputGroup" class="hidden-section">
+                        <label for="manualOutput" id="manualOutputLabel">发给对方的连接码</label>
+                        <textarea id="manualOutput" class="online-code signal-code" readonly spellcheck="false" aria-label="发给对方的连接码"></textarea>
+                        <div class="online-actions">
+                          <button class="btn small" id="manualCopyBtn" type="button">复制连接码</button>
+                          <button class="btn small secondary" id="manualSaveBtn" type="button">保存为文件</button>
+                        </div>
+                      </div>
+                      <div id="manualInputGroup" class="hidden-section">
+                        <label for="manualInput" id="manualInputLabel">粘贴对方的连接码</label>
+                        <textarea id="manualInput" class="online-code signal-code" maxlength="65536" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="P84V2.…"></textarea>
+                        <div class="online-actions">
+                          <button class="btn small" id="manualActionBtn" type="button">确认连接码</button>
+                          <button class="btn small secondary" id="manualImportBtn" type="button">从文件读取</button>
+                          <input id="manualFile" type="file" accept=".txt,.pong84,text/plain" hidden>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="online-actions hidden-section" id="manualResetRow">
+                      <button class="btn small secondary" id="manualResetBtn" type="button">取消 / 重新连接</button>
+                    </div>
+                    <p class="network-caption">连接码较长，不是 4 位房间码；只发给本次对手。生成后保持双方页面打开。关闭、刷新或重新生成后，旧连接码失效。</p>
+                  </div>
+
+                  <div id="cloudPanel" class="connection-panel hidden-section">
+                    <p class="network-caption">自动交换信令，需外部 PeerJS 组件与信令服务。4 位码不是密码；双方需使用同一服务、分组和本版本。</p>
+                    <div class="select-row" id="onlineChooser">
+                      <button class="choice" id="createRoomBtn" type="button">创建云端房间</button>
+                      <button class="choice" id="joinRoomBtn" type="button">输入房间码加入</button>
+                    </div>
+                    <div class="online-box hidden-section" id="onlineBox">
+                      <p class="online-info" id="onlineInfo" role="status" aria-live="polite"></p>
+                      <input class="online-code cloud-room-code" id="onlineCode" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" spellcheck="false" aria-label="4位房间码">
+                      <div class="online-actions">
+                        <button class="btn small" id="onlineActionBtn" type="button">加入房间</button>
+                        <button class="btn small secondary" id="onlineBackBtn" type="button">返回 / 断开</button>
+                      </div>
                     </div>
                   </div>
+                  <details class="network-details" id="networkDiagnostics">
+                    <summary>连接诊断 / 联机失败怎么办</summary>
+                    <pre id="networkReport" class="network-report"></pre>
+                    <p class="network-caption">同一 Wi-Fi 也可能有设备隔离、防火墙或浏览器策略限制。跨网络配置 STUN 仍失败时，需有效 TURN 中继；换成 GitHub Pages 本身不会解决穿透问题。</p>
+                    <p class="network-caption">“无外部服务”仅指手动连接 + 同一局域网。两台设备没有任何可达网络时，不能隔空联机。手机请用完整浏览器打开，勿使用聊天软件中的 HTML 预览。</p>
+                  </details>
                 </div>
               </div>
 
@@ -585,7 +703,7 @@
     </div>
   </main>
 
-  <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+  <!-- Cloud-only PeerJS is loaded on demand. Manual WebRTC and local games have no library dependency. -->
   <script>
     'use strict';
 
@@ -865,352 +983,471 @@
       }
     }
 
-    // ============================================================
-    // 5) Cloud room-code WebRTC transport via PeerJS Cloud signaling.
-    //    Signaling is cloud-brokered; gameplay data is browser-to-browser P2P.
-    // ============================================================
+    // Native WebRTC for manual signaling; PeerJS is loaded only for cloud rooms.
+    // A local file in LAN mode makes no external script/STUN/TURN requests.
+    const P2P_VERSION = 2;
+    const MAX_SIGNAL_SIZE = 65536;
+    const DEFAULT_STUN = 'stun:stun.cloudflare.com:3478\nstun:stun.l.google.com:19302';
+    const NETWORK_DEFAULTS = Object.freeze({
+      scope:'internet', stun:DEFAULT_STUN, turn:'', username:'', credential:'', relay:false,
+      host:'', port:443, path:'/', key:'peerjs', secure:true, namespace:'pong84-public-v2'
+    });
+
+    function sessionId() {
+      const bytes = new Uint8Array(16);
+      if (!globalThis.crypto?.getRandomValues) throw new Error('浏览器缺少安全随机数接口，请使用完整浏览器打开。');
+      crypto.getRandomValues(bytes);
+      return Array.from(bytes, b=>b.toString(16).padStart(2,'0')).join('');
+    }
+    function checksum(text) {
+      // Detect accidental copy damage only. This is not a cryptographic signature.
+      let h = 2166136261;
+      for (let i=0;i<text.length;i++) h=Math.imul(h^text.charCodeAt(i),16777619);
+      return (h>>>0).toString(16).padStart(8,'0');
+    }
+    function packSignal(description, sid, scope) {
+      const raw = JSON.stringify({ app:'pong84', v:P2P_VERSION, sid, scope,
+        desc:{ type:description.type, sdp:description.sdp } });
+      const bytes = new TextEncoder().encode(raw);
+      let bin=''; for (const b of bytes) bin+=String.fromCharCode(b);
+      const body = btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+      return `P84V2.${body}.${checksum(body)}`;
+    }
+    function unpackSignal(text, expectedType) {
+      if (typeof text !== 'string' || text.length>MAX_SIGNAL_SIZE) throw new Error('连接码过大或格式不正确。');
+      const clean=text.trim().replace(/\s+/g,'');
+      const match=/^P84V2\.([A-Za-z0-9_-]+)\.([0-9a-f]{8})$/.exec(clean);
+      if (!match) throw new Error('请粘贴完整的 P84V2 连接码，不要粘贴 4 位云房间码或聊天说明文字。');
+      if (checksum(match[1])!==match[2]) throw new Error('连接码不完整或已被修改，请重新复制，或改用连接码文件。');
+      let data;
+      try {
+        const base=match[1].replace(/-/g,'+').replace(/_/g,'/');
+        const bin=atob(base+'='.repeat((4-base.length%4)%4));
+        data=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(bin,c=>c.charCodeAt(0))));
+      } catch { throw new Error('连接码解码失败，请使用双方相同的新版本重新生成。'); }
+      if (!data || data.app!=='pong84' || data.v!==P2P_VERSION || !/^[0-9a-f]{32}$/.test(data.sid || '') ||
+          !['lan','internet'].includes(data.scope) || !data.desc ||
+          !['offer','answer'].includes(data.desc.type) || typeof data.desc.sdp!=='string' ||
+          data.desc.sdp.length>48000 || !data.desc.sdp.startsWith('v=0\r\n') ||
+          !/^m=application /m.test(data.desc.sdp)) throw new Error('不是兼容的 PONG-84 数据通道连接码。');
+      if (data.desc.type!==expectedType) throw new Error(expectedType==='offer'
+        ? '这里需要房主的“邀请码”，不能使用“回应码”。' : '这里需要加入者的“回应码”，不能使用自己的“邀请码”。');
+      return data;
+    }
+    async function copyField(field) {
+      const text=field.value;
+      if (!text) throw new Error('当前没有可复制的连接码。');
+      try {
+        if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; }
+      } catch { /* Local files and denied clipboard permission fall back to selection. */ }
+      field.focus(); field.select(); field.setSelectionRange(0,text.length);
+      try { if (document.execCommand('copy')) return true; } catch {}
+      return false;
+    }
+    function downloadText(text, filename) {
+      const url=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));
+      const a=document.createElement('a'); a.href=url; a.download=filename;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),30000);
+    }
+    let peerLibraryPromise=null;
+    async function loadPeerLibrary() {
+      if (typeof window.Peer==='function') return;
+      if (peerLibraryPromise) return peerLibraryPromise;
+      peerLibraryPromise=(async()=>{
+        const urls=['https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js',
+          'https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js'];
+        for (const url of urls) {
+          try {
+            await new Promise((resolve,reject)=>{
+              const script=document.createElement('script'); let done=false;
+              const finish=ok=>{ if(done)return; done=true; clearTimeout(timer); script.onload=script.onerror=null;
+                if(!ok)script.remove(); ok?resolve():reject(new Error('组件下载失败')); };
+              const timer=setTimeout(()=>finish(false),8000);
+              script.src=url; script.async=true; script.referrerPolicy='no-referrer';
+              script.onload=()=>finish(typeof window.Peer==='function'); script.onerror=()=>finish(false);
+              document.head.appendChild(script);
+            });
+            return;
+          } catch { /* Try the next pinned mirror. Native manual mode needs neither mirror. */ }
+        }
+        throw new Error('云联机组件无法下载。请检查网络，或切换到不依赖组件的“本地 P2P · 手动连接”。');
+      })();
+      try { await peerLibraryPromise; } catch(err) { peerLibraryPromise=null; throw err; }
+    }
+
     class OnlinePeer {
       constructor() {
-        this.peer = null;
-        this.ctrl = null;
-        this.rt = null;
-        this.role = null;
-        this.room = '';
-        this.remotePeerId = null;
-        this.remoteInput = 0;
-        this.remoteTarget = null;
-        this.remoteInputSeq = -1;
-        this.state = 'idle';
-        this.rtt = 0;
-        this.jitter = 0;
-        this.lastReceiveAt = 0;
-        this.openNotified = false;
-        this.keepaliveTimer = null;
-        this.disconnectTimer = null;
-        this.closing = false;
-        this.connectResolve = null;
-        this.connectReject = null;
-        this.connectTimer = null;
-        this.onOpen = null;
-        this.onClose = null;
-        this.onMessage = null;
-        this.onStats = null;
-        this.onConnectionState = null;
-        this.iceConfig = {
-          iceServers:[
-            { urls:'stun:stun.l.google.com:19302' },
-            { urls:'stun:stun1.l.google.com:19302' }
-          ],
-          iceCandidatePoolSize: 4
-        };
+        this.peer=null; this.pc=null; this.ctrl=null; this.rt=null;
+        this.role=null; this.room=''; this.sid=''; this.transport='manual';
+        this.remotePeerId=null; this.remoteInput=0; this.remoteTarget=null; this.remoteInputSeq=-1;
+        this.lastInputAt=0; this.state='idle'; this.rtt=0; this.jitter=0; this.lastReceiveAt=0;
+        this.route='unknown'; this.routeDetail=''; this.openNotified=false; this.closing=false;
+        this.keepaliveTimer=null; this.disconnectTimer=null; this.joinTimer=null;
+        this.epoch=0; this.pending=new Set(); this.watched=new WeakSet(); this.statsBusy=false;
+        this.options={...NETWORK_DEFAULTS};
+        this.onOpen=null; this.onClose=null; this.onMessage=null; this.onStats=null;
+        this.onConnectionState=null; this.onDiagnostic=null;
       }
-
-      get connected() {
-        return !!this.ctrl && !!this.rt && this.ctrl.open === true && this.rt.open === true;
+      get connected() { return !!this.ctrl?.open && !!this.rt?.open; }
+      configure(options) {
+        if (this.role) throw new Error('请先取消当前连接，再修改网络设置。');
+        this.options={...NETWORK_DEFAULTS,...options};
+        this.iceConfiguration(); // Cloud-only settings are validated only when cloud mode is used.
       }
-
+      iceConfiguration() {
+        const o=this.options, iceServers=[];
+        if (o.scope==='lan') {
+          if(o.relay) throw new Error('局域网模式不能同时启用“强制 TURN 中继”。');
+          return {iceServers:[], iceTransportPolicy:'all', iceCandidatePoolSize:0};
+        }
+        const lines=text=>String(text || '').split(/[\s,]+/).map(x=>x.trim()).filter(Boolean);
+        const stun=lines(o.stun), turn=lines(o.turn);
+        if(stun.length+turn.length>10)throw new Error('STUN/TURN 地址合计最多 10 个。');
+        for(const url of stun) {
+          if(!/^stuns?:[^\s/]+$/i.test(url))throw new Error('STUN 地址应以 stun: 或 stuns: 开头，不是网页网址。');
+          iceServers.push({urls:url});
+        }
+        if(turn.length) {
+          if(!o.username || !o.credential) throw new Error('填写 TURN 地址后，还需要 TURN 用户名和密码/临时凭据。');
+          for(const url of turn) {
+            if(!/^turns?:[^\s/]+$/i.test(url))throw new Error('TURN 地址应以 turn: 或 turns: 开头。');
+          }
+          iceServers.push({urls:turn,username:String(o.username),credential:String(o.credential)});
+        }
+        if(o.relay && !turn.length)throw new Error('强制中继需要先填写有效的 TURN 地址和凭据。');
+        return {iceServers,iceTransportPolicy:o.relay?'relay':'all',iceCandidatePoolSize:0};
+      }
       peerOptions() {
-        return { debug:0, config:this.iceConfig };
+        const o=this.options, result={debug:0,config:this.iceConfiguration()};
+        if(!/^[A-Za-z0-9_-]{1,48}$/.test(o.namespace))throw new Error('房间分组只允许 1–48 位字母、数字、横线或下划线。');
+        if(o.host) {
+          if(!/^[A-Za-z0-9.-]+$/.test(o.host))throw new Error('信令域名只填主机名/IP，不含 https://、端口或路径。');
+          if(!Number.isInteger(Number(o.port)) || o.port<1 || o.port>65535)throw new Error('信令端口必须在 1–65535 之间。');
+          if(!String(o.path).startsWith('/') || /[\s?#]/.test(o.path))throw new Error('信令路径必须以 / 开头，不含空格、查询或片段。');
+          if(location.protocol==='https:' && !o.secure)throw new Error('HTTPS 页面需要启用安全信令（WSS），不能连接普通 WS。');
+          Object.assign(result,{host:o.host,port:Number(o.port),path:o.path,key:o.key || 'peerjs',secure:!!o.secure});
+        } else { result.secure=true; }
+        return result;
       }
-
-      siteNamespace() {
-        const base = (location.hostname || 'local-pong84').toLowerCase();
-        let h = 2166136261;
-        for (let i=0;i<base.length;i++) {
-          h ^= base.charCodeAt(i);
-          h = Math.imul(h, 16777619);
-        }
-        return (h >>> 0).toString(36).slice(0,6);
+      peerIdForRoom(code) { return `p84-${this.options.namespace}-${code}`; }
+      begin(role,transport) {
+        this.cleanup(); this.role=role; this.transport=transport; this.state='preparing';
+        return this.epoch;
       }
-
-      peerIdForRoom(code) {
-        return `p84-${this.siteNamespace()}-${String(code)}`;
+      assertCurrent(epoch) {
+        if(epoch!==this.epoch)throw new DOMException('操作已取消','AbortError');
       }
-
-      randomRoom() {
-        return String(1000 + Math.floor(Math.random()*9000));
+      stateChanged(state,detail='') {
+        this.state=state;
+        if(this.onConnectionState)this.onConnectionState(state,detail);
+        this.diagnostic();
       }
-
-      ensureLibrary() {
-        if (typeof window.Peer !== 'function') throw new Error('云联机组件加载失败，请检查网络后刷新页面');
-      }
-
-      attachPeerCommon(peer) {
-        peer.on('disconnected', () => {
-          if (this.closing) return;
-          if (this.onConnectionState) this.onConnectionState(this.connected ? 'signaling-lost' : 'reconnecting');
-          if (!peer.destroyed) setTimeout(() => {
-            try { if (peer.disconnected && !peer.destroyed) peer.reconnect(); } catch {}
-          }, 900);
-        });
-        peer.on('open', () => {
-          if (this.onConnectionState && !this.connected) this.onConnectionState('ready');
-        });
-        peer.on('error', err => this.handlePeerError(err));
-      }
-
-      handlePeerError(err) {
-        if (this.closing) return;
-        const type = err?.type || '';
-        const message = type === 'peer-unavailable' ? '房间不存在或房主已离开' :
-          type === 'network' ? '无法连接云端信令服务' :
-          type === 'server-error' ? '云端信令服务暂时不可用' :
-          type === 'socket-error' || type === 'socket-closed' ? '云端信令连接异常' :
-          (err?.message || '联机连接失败');
-        if (this.connectReject) {
-          const reject = this.connectReject;
-          this.clearConnectWait();
-          reject(new Error(message));
-          return;
-        }
-        if (!this.openNotified && type !== 'unavailable-id') {
-          if (this.onConnectionState) this.onConnectionState('failed');
-        }
-      }
-
-      waitPeerOpen(peer, timeout=9000) {
-        return new Promise((resolve,reject) => {
-          let done=false;
-          const finish=(fn,val)=>{ if(done)return; done=true; clearTimeout(timer); fn(val); };
-          const timer=setTimeout(()=>finish(reject,new Error('连接云端信令超时')),timeout);
-          peer.on('open', id=>finish(resolve,id));
-          peer.on('error', err=>{
-            if (err?.type==='unavailable-id') finish(reject,err);
-            else if (['network','server-error','socket-error','socket-closed','invalid-id'].includes(err?.type)) finish(reject,err);
-          });
+      diagnostic() {
+        const pc=this.pc || this.ctrl?.peerConnection;
+        if(this.onDiagnostic)this.onDiagnostic({
+          transport:this.transport,state:this.state,scope:this.options.scope,
+          ice:pc?.iceConnectionState || '-',gathering:pc?.iceGatheringState || '-',
+          ctrl:this.ctrl?.open?'open':'closed',rt:this.rt?.open?'open':'closed',
+          route:this.route,routeDetail:this.routeDetail,rtt:this.rtt,
+          signal:this.transport==='manual'?'manual':this.peer?.disconnected?'lost':'cloud'
         });
       }
-
-      async createRoom() {
-        this.ensureLibrary();
-        this.cleanup(false);
-        this.closing = false;
-        this.role = 'host';
-        this.state = 'creating-room';
-        for (let attempt=0; attempt<18; attempt++) {
-          const code = this.randomRoom();
-          const peer = new window.Peer(this.peerIdForRoom(code), this.peerOptions());
-          try {
-            await this.waitPeerOpen(peer, 9000);
-            this.peer = peer;
-            this.room = code;
-            this.attachPeerCommon(peer);
-            peer.on('connection', conn => this.acceptIncoming(conn));
-            this.state = 'waiting-peer';
-            if (this.onConnectionState) this.onConnectionState('waiting');
-            return code;
-          } catch (err) {
-            try { peer.destroy(); } catch {}
-            if (err?.type === 'unavailable-id') continue;
-            this.role = null;
-            throw new Error(err?.type === 'network' ? '无法连接云端信令服务' : (err?.message || '创建房间失败'));
-          }
+      cancelableWait(setup,timeout,message) {
+        return new Promise((resolve,reject)=>{
+          let done=false, off=()=>{};
+          const finish=(error,value)=>{
+            if(done)return; done=true; clearTimeout(timer); off(); this.pending.delete(cancel);
+            error?reject(error):resolve(value);
+          };
+          const cancel=()=>finish(new DOMException('操作已取消','AbortError'));
+          const timer=setTimeout(()=>finish(new Error(message)),timeout);
+          this.pending.add(cancel);
+          off=setup(finish) || (()=>{});
+          if(done)off();
+        });
+      }
+      async collectIce(pc) {
+        if(pc.iceGatheringState!=='complete') {
+        this.stateChanged('gathering');
+        await this.cancelableWait(finish=>{
+          const check=()=>{
+            if(pc.connectionState==='closed')finish(new DOMException('操作已取消','AbortError'));
+            else if(pc.iceGatheringState==='complete')finish(null);
+          };
+          pc.addEventListener('icegatheringstatechange',check); check();
+          return ()=>pc.removeEventListener('icegatheringstatechange',check);
+        },22000,'网络地址收集超时。同一 Wi-Fi 可切换“同一局域网”；跨网络请检查 STUN/TURN 后重新生成。');
         }
-        this.role = null;
-        throw new Error('房间号暂时冲突，请重新创建');
+        if(!/^a=candidate:/m.test(pc.localDescription?.sdp || ''))
+          throw new Error('浏览器没有提供可用的连接地址，请检查 WebRTC 权限、防火墙或 TURN 设置。');
       }
-
-      acceptIncoming(conn) {
-        if (this.closing || this.role !== 'host' || !conn) { try { conn?.close(); } catch {} return; }
-        if (!['pong84-ctrl','pong84-rt'].includes(conn.label)) { try { conn.close(); } catch {} return; }
-        if (this.remotePeerId && conn.peer !== this.remotePeerId) { try { conn.close(); } catch {} return; }
-        if (!this.remotePeerId) this.remotePeerId = conn.peer;
-        this.wireConnection(conn);
+      makeNativePeer(epoch) {
+        if(typeof RTCPeerConnection!=='function')throw new Error('此浏览器未提供 WebRTC，请在完整的 Chrome、Edge 或 Firefox 中打开 HTML。');
+        const pc=new RTCPeerConnection(this.iceConfiguration()); this.pc=pc;
+        pc.addEventListener('datachannel',event=>{
+          if(epoch===this.epoch && this.pc===pc)this.wireNative(event.channel,pc,epoch);
+          else event.channel.close();
+        });
+        pc.addEventListener('icecandidateerror',event=>{
+          // One failed STUN server is not a failed peer connection.
+          if(epoch===this.epoch && this.onDiagnostic)this.diagnostic();
+        });
+        this.watchPC(pc,epoch);
+        return pc;
       }
-
-      async joinRoom(code) {
-        this.ensureLibrary();
-        const room = String(code || '').trim();
-        if (!/^\d{4}$/.test(room)) throw new Error('请输入 4 位房间码');
-        this.cleanup(false);
-        this.closing = false;
-        this.role = 'client';
-        this.room = room;
-        this.state = 'joining-room';
-        const peer = new window.Peer(undefined, this.peerOptions());
-        this.peer = peer;
-        this.attachPeerCommon(peer);
+      async createOffer() {
+        const epoch=this.begin('host','manual'); this.sid=sessionId();
         try {
-          await this.waitPeerOpen(peer, 9000);
-          const hostId = this.peerIdForRoom(room);
-          this.remotePeerId = hostId;
-          this.wireConnection(peer.connect(hostId, {
-            label:'pong84-ctrl', metadata:{ game:'pong84', channel:'ctrl' }, serialization:'json', reliable:true
-          }));
-          this.wireConnection(peer.connect(hostId, {
-            label:'pong84-rt', metadata:{ game:'pong84', channel:'rt' }, serialization:'json', reliable:false
-          }));
-          this.state = 'connecting';
-          await this.waitUntilConnected(12000);
-          return true;
-        } catch (err) {
-          const message = err?.type === 'peer-unavailable' ? '房间不存在或房主已离开' : (err?.message || '加入房间失败');
-          this.cleanup(false);
-          throw new Error(message);
-        }
+          const pc=this.makeNativePeer(epoch);
+          this.wireNative(pc.createDataChannel('pong84-ctrl',{ordered:true}),pc,epoch);
+          this.wireNative(pc.createDataChannel('pong84-rt',{ordered:false,maxRetransmits:0}),pc,epoch);
+          await pc.setLocalDescription(await pc.createOffer()); this.assertCurrent(epoch);
+          await this.collectIce(pc); this.assertCurrent(epoch);
+          this.stateChanged('waiting-answer');
+          return packSignal(pc.localDescription,this.sid,this.options.scope);
+        } catch(err) { if(epoch===this.epoch)this.cleanup(); throw err; }
       }
-
-      waitUntilConnected(timeout=12000) {
-        if (this.connected) return Promise.resolve();
-        this.clearConnectWait();
-        return new Promise((resolve,reject) => {
-          this.connectResolve = resolve;
-          this.connectReject = reject;
-          this.connectTimer = setTimeout(() => {
-            const rej=this.connectReject;
-            this.clearConnectWait();
-            if (rej) rej(new Error('连接房主超时，请确认房间号和双方网络'));
-          }, timeout);
-        });
+      async acceptOffer(text) {
+        const offer=unpackSignal(text,'offer');
+        if(offer.scope!==this.options.scope)throw new Error('双方网络范围不一致，请在“网络范围”中选择与房主相同的选项。');
+        const epoch=this.begin('client','manual'); this.sid=offer.sid;
+        try {
+          const pc=this.makeNativePeer(epoch);
+          await pc.setRemoteDescription(offer.desc); this.assertCurrent(epoch);
+          await pc.setLocalDescription(await pc.createAnswer()); this.assertCurrent(epoch);
+          await this.collectIce(pc); this.assertCurrent(epoch);
+          if(!this.connected)this.stateChanged('waiting-host');
+          return packSignal(pc.localDescription,this.sid,this.options.scope);
+        } catch(err) { if(epoch===this.epoch)this.cleanup(); throw err; }
       }
-
-      clearConnectWait() {
-        clearTimeout(this.connectTimer);
-        this.connectTimer = null;
-        this.connectResolve = null;
-        this.connectReject = null;
+      async acceptAnswer(text) {
+        const answer=unpackSignal(text,'answer');
+        if(this.transport!=='manual' || this.role!=='host' || !this.pc)throw new Error('请先由本页生成邀请码，并保持本页打开。');
+        if(answer.sid!==this.sid)throw new Error('回应码不属于本次邀请。请让对方使用当前邀请码重新生成回应码。');
+        if(this.pc.signalingState!=='have-local-offer')throw new Error('本次回应已处理，请等待连接；失败后需重新生成邀请。');
+        const epoch=this.epoch;
+        await this.pc.setRemoteDescription(answer.desc); this.assertCurrent(epoch);
+        if(!this.connected)this.stateChanged('connecting');
+        this.armConnectTimeout(epoch);
       }
-
-      wireConnection(conn) {
-        if (!conn) return;
-        if (conn.label === 'pong84-rt') {
-          if (this.rt && this.rt !== conn) { try { this.rt.close(); } catch {} }
-          this.rt = conn;
-        } else if (conn.label === 'pong84-ctrl') {
-          if (this.ctrl && this.ctrl !== conn) { try { this.ctrl.close(); } catch {} }
-          this.ctrl = conn;
-        } else {
-          try { conn.close(); } catch {}
-          return;
-        }
-        conn.on('open', () => {
-          this.watchUnderlyingPeer(conn);
-          this.checkOpen();
-        });
-        conn.on('data', data => this.handleChannelMessage(conn, data));
-        conn.on('close', () => {
-          if (!this.closing && this.openNotified) this.notifyClosed('数据通道已关闭');
-        });
-        conn.on('error', () => {
-          if (!this.closing && this.openNotified && this.onConnectionState) this.onConnectionState('reconnecting');
-        });
+      armConnectTimeout(epoch) {
+        clearTimeout(this.joinTimer);
+        if(this.connected)return;
+        this.joinTimer=setTimeout(()=>{
+          if(epoch===this.epoch && !this.connected)this.notifyClosed('连接超时：请检查双方网络；跨网络直连失败时需要有效 TURN。重新生成邀请后再试。');
+        },25000);
       }
-
-      watchUnderlyingPeer(conn) {
-        const pc = conn?.peerConnection;
-        if (!pc || pc.__pong84Watched) return;
-        pc.__pong84Watched = true;
-        const update = () => {
-          if (this.closing) return;
-          const cs = pc.connectionState || pc.iceConnectionState || 'new';
-          if (cs === 'connected') {
+      wireNative(dc,pc,epoch) {
+        const conn={label:dc.label,dataChannel:dc,peerConnection:pc,
+          get open(){return dc.readyState==='open';},send:data=>dc.send(JSON.stringify(data)),close:()=>dc.close()};
+        if(!this.installChannel(conn))return;
+        dc.addEventListener('open',()=>{ if(epoch===this.epoch)this.checkOpen(); });
+        dc.addEventListener('message',event=>{ if(epoch===this.epoch)this.handleMessage(conn,event.data); });
+        dc.addEventListener('close',()=>{ if(epoch===this.epoch && !this.closing)this.notifyClosed('对方已离开或数据通道关闭。'); });
+        dc.addEventListener('error',()=>{ if(epoch===this.epoch)this.stateChanged('channel-error'); });
+        if(dc.readyState==='open')this.checkOpen();
+      }
+      installChannel(conn) {
+        const key=conn.label==='pong84-ctrl'?'ctrl':conn.label==='pong84-rt'?'rt':null;
+        if(!key || this[key]) { try{conn.close();}catch{} return false; }
+        this[key]=conn; return true;
+      }
+      watchPC(pc,epoch) {
+        if(this.watched.has(pc))return; this.watched.add(pc);
+        const change=()=>{
+          if(epoch!==this.epoch || this.closing)return;
+          const state=pc.connectionState || pc.iceConnectionState;
+          if(state==='connected') {
             clearTimeout(this.disconnectTimer); this.disconnectTimer=null;
-            if (this.onConnectionState) this.onConnectionState('connected');
-          } else if (cs === 'disconnected') {
-            if (this.onConnectionState) this.onConnectionState('reconnecting');
-            clearTimeout(this.disconnectTimer);
-            this.disconnectTimer=setTimeout(()=>{
-              if (!this.closing && (pc.connectionState==='disconnected' || pc.connectionState==='failed')) this.notifyClosed('连接超时');
-            },7000);
-          } else if (cs === 'failed' || cs === 'closed') {
-            this.notifyClosed('连接失败');
-          }
+            if(this.connected)this.stateChanged('connected');
+          } else if(state==='disconnected') {
+            this.stateChanged('reconnecting');
+            if(!this.disconnectTimer)this.disconnectTimer=setTimeout(()=>{
+              if(epoch===this.epoch && ['disconnected','failed'].includes(pc.connectionState))this.notifyClosed('网络连接中断。请重新建立连接。');
+            },12000);
+          } else if(state==='failed')this.notifyClosed('WebRTC 连接失败：局域网请检查设备隔离/防火墙；跨网络请配置可用 TURN 并重新连接。');
+          else if(state==='closed')this.notifyClosed('连接已关闭。');
+          this.diagnostic();
         };
-        pc.addEventListener?.('connectionstatechange',update);
-        pc.addEventListener?.('iceconnectionstatechange',update);
+        pc.addEventListener('connectionstatechange',change); pc.addEventListener('iceconnectionstatechange',change);
       }
-
+      async createRoom() {
+        this.peerOptions();
+        const epoch=this.begin('host','cloud'); this.stateChanged('loading');
+        try {
+          await loadPeerLibrary(); this.assertCurrent(epoch);
+          for(let attempt=0;attempt<18;attempt++) {
+            const bytes=new Uint32Array(1); crypto.getRandomValues(bytes);
+            const room=String(1000+bytes[0]%9000);
+            const peer=new window.Peer(this.peerIdForRoom(room),this.peerOptions()); this.peer=peer;
+            this.attachPeer(peer,epoch);
+            try {
+              await this.waitPeerOpen(peer); this.assertCurrent(epoch);
+              this.room=room; this.stateChanged('waiting'); return room;
+            } catch(err) {
+              if(this.peer===peer)this.peer=null;
+              try{peer.destroy();}catch{}
+              this.assertCurrent(epoch);
+              if(err?.type==='unavailable-id')continue;
+              throw err;
+            }
+          }
+          throw new Error('房间号冲突，请重试或更换房间分组。');
+        } catch(err) { if(epoch===this.epoch)this.cleanup(); throw new Error(err?.name==='AbortError'?'操作已取消':this.cloudError(err),{cause:err}); }
+      }
+      attachPeer(peer,epoch) {
+        const current=()=>epoch===this.epoch && this.peer===peer;
+        peer.on('connection',conn=>{
+          if(!current() || this.role!=='host' || (this.remotePeerId && this.remotePeerId!==conn.peer) ||
+              conn.metadata?.v!==P2P_VERSION || conn.metadata?.game!=='pong84') {try{conn.close();}catch{}return;}
+          if(!['pong84-ctrl','pong84-rt'].includes(conn.label)){try{conn.close();}catch{}return;}
+          this.remotePeerId=conn.peer; this.wireCloud(conn,epoch);
+        });
+        peer.on('disconnected',()=>{
+          if(!current())return;
+          this.stateChanged(this.connected?'signaling-lost':'reconnecting');
+          setTimeout(()=>{if(current() && peer.disconnected && !peer.destroyed){try{peer.reconnect();}catch{}}},1000);
+        });
+        peer.on('error',err=>{
+          if(!current() || err?.type==='unavailable-id')return;
+          if(this.connected){this.stateChanged('signaling-lost');return;}
+          // waitPeerOpen / waitForConnection own rejection and cleanup.
+          this.stateChanged('cloud-error',this.cloudError(err));
+        });
+      }
+      cloudError(err) {
+        return ({'peer-unavailable':'房间不存在、分组不同，或房主已离开。',network:'无法连接云端信令服务。',
+          'server-error':'云端信令服务不可用。','socket-error':'信令连接异常，请检查 WSS 和服务地址。',
+          'socket-closed':'信令连接已关闭。','browser-incompatible':'此浏览器不支持所需 WebRTC 功能。'})[err?.type] || err?.message || '云联机失败。';
+      }
+      waitPeerOpen(peer) {
+        if(peer.open)return Promise.resolve();
+        return this.cancelableWait(finish=>{
+          const open=()=>finish(null), error=err=>finish(err);
+          peer.on('open',open); peer.on('error',error);
+          return ()=>{peer.off?.('open',open);peer.off?.('error',error);};
+        },12000,'连接云端信令服务超时。可切换到手动 P2P，或配置可达的自建信令服务。');
+      }
+      async joinRoom(code) {
+        const room=String(code || '').trim();
+        if(!/^\d{4}$/.test(room))throw new Error('请输入 4 位房间码。');
+        this.peerOptions();
+        const epoch=this.begin('client','cloud'); this.room=room; this.stateChanged('loading');
+        try {
+          await loadPeerLibrary(); this.assertCurrent(epoch);
+          const peer=new window.Peer(undefined,this.peerOptions()); this.peer=peer; this.attachPeer(peer,epoch);
+          await this.waitPeerOpen(peer); this.assertCurrent(epoch);
+          this.remotePeerId=this.peerIdForRoom(room);
+          for(const channel of ['ctrl','rt']) {
+            this.wireCloud(peer.connect(this.remotePeerId,{label:`pong84-${channel}`,
+              metadata:{game:'pong84',v:P2P_VERSION,channel},serialization:'json',reliable:channel==='ctrl'}),epoch);
+          }
+          if(!this.connected)this.stateChanged('connecting');
+          await this.waitForConnection(peer); this.assertCurrent(epoch); return true;
+        } catch(err) { if(epoch===this.epoch)this.cleanup(); throw new Error(this.cloudError(err),{cause:err}); }
+      }
+      waitForConnection(peer) {
+        if(this.connected)return Promise.resolve();
+        return this.cancelableWait(finish=>{
+          const error=err=>finish(err);
+          peer.on('error',error);
+          const timer=setInterval(()=>{if(this.connected)finish(null);},30);
+          return ()=>{clearInterval(timer);peer.off?.('error',error);};
+        },25000,'连接房主超时。检查分组、房间码及 STUN/TURN 配置。');
+      }
+      wireCloud(conn,epoch) {
+        if(!conn || !this.installChannel(conn))return;
+        const watch=()=>{ if(conn.peerConnection)this.watchPC(conn.peerConnection,epoch); };
+        watch();
+        conn.on('open',()=>{if(epoch===this.epoch){watch();this.checkOpen();}});
+        conn.on('data',data=>{if(epoch===this.epoch)this.handleMessage(conn,data);});
+        conn.on('close',()=>{if(epoch===this.epoch && !this.closing)this.notifyClosed('对方已离开或数据通道关闭。');});
+        conn.on('error',()=>{if(epoch===this.epoch)this.stateChanged('channel-error');});
+      }
       checkOpen() {
-        if (!this.connected || this.openNotified) return;
-        this.openNotified = true;
-        this.state = 'connected';
-        this.lastReceiveAt = performance.now();
-        this.startKeepalive();
-        const resolve = this.connectResolve;
-        this.clearConnectWait();
-        if (resolve) resolve();
-        if (this.onConnectionState) this.onConnectionState('connected');
-        if (this.onOpen) this.onOpen(this.role);
+        if(!this.connected || this.openNotified)return;
+        this.openNotified=true; clearTimeout(this.joinTimer); this.joinTimer=null;
+        this.lastReceiveAt=performance.now(); this.startKeepalive(); this.stateChanged('connected');
+        if(this.onOpen)this.onOpen(this.role);
+        this.inspectRoute();
       }
-
-      handleChannelMessage(conn, raw) {
-        this.lastReceiveAt = performance.now();
-        const msg = (raw && typeof raw === 'object') ? raw : safeParseJSON(raw, null);
-        if (!msg) return;
-        if (msg.t === 'ping') {
-          this.sendRealtime({ t:'pong', id:msg.id });
-          return;
-        }
-        if (msg.t === 'pong') {
-          const sent = Number(msg.id);
-          if (Number.isFinite(sent)) {
-            const sample = Math.max(0, performance.now() - sent);
-            const old = this.rtt || sample;
-            this.rtt = old * .72 + sample * .28;
-            this.jitter = this.jitter * .75 + Math.abs(sample - old) * .25;
-            if (this.onStats) this.onStats({ rtt:this.rtt, jitter:this.jitter });
+      handleMessage(conn,raw) {
+        if(typeof raw==='string' && raw.length>MAX_SIGNAL_SIZE)return;
+        const msg=typeof raw==='string'?safeParseJSON(raw,null):raw;
+        if(!msg || typeof msg!=='object' || Array.isArray(msg) || typeof msg.t!=='string')return;
+        this.lastReceiveAt=performance.now();
+        if(msg.t==='ping') {if(Number.isFinite(msg.id))this.sendRealtime({t:'pong',id:msg.id});return;}
+        if(msg.t==='pong') {
+          const sample=performance.now()-msg.id;
+          if(Number.isFinite(sample) && sample>=0 && sample<30000) {
+            const old=this.rtt || sample; this.rtt=old*.72+sample*.28;
+            this.jitter=this.jitter*.75+Math.abs(sample-old)*.25;
+            if(this.onStats)this.onStats({rtt:this.rtt,jitter:this.jitter});
           }
           return;
         }
-        if (this.onMessage) this.onMessage(msg, conn === this.rt ? 'rt' : 'ctrl');
+        if(msg.t==='bye'){this.notifyClosed('对方已退出联机。');return;}
+        if(this.onMessage)this.onMessage(msg,conn===this.rt?'rt':'ctrl');
       }
-
       startKeepalive() {
-        clearInterval(this.keepaliveTimer);
-        this.keepaliveTimer = setInterval(() => {
-          if (!this.connected) return;
-          this.sendRealtime({ t:'ping', id:performance.now() });
-        }, 1000);
+        clearInterval(this.keepaliveTimer); let tick=0;
+        this.keepaliveTimer=setInterval(()=>{
+          if(!this.connected)return;
+          this.sendRealtime({t:'ping',id:performance.now()});
+          if(performance.now()-this.lastReceiveAt>30000){this.notifyClosed('超过 30 秒未收到对方数据，请保持双方页面在前台并重新连接。');return;}
+          if(++tick%3===0)this.inspectRoute();
+        },1000);
       }
-
-      sendControl(payload) { return this.sendOn(this.ctrl, payload, false); }
-      sendRealtime(payload) { return this.sendOn(this.rt, payload, true); }
-      send(payload) {
-        const realtime = payload && ['state','input','ping','pong'].includes(payload.t);
-        return realtime ? this.sendRealtime(payload) : this.sendControl(payload);
+      async inspectRoute() {
+        if(this.statsBusy || !this.connected)return;
+        const epoch=this.epoch; this.statsBusy=true;
+        try {
+          const pcs=[this.pc || this.ctrl?.peerConnection,this.rt?.peerConnection].filter((pc,i,all)=>pc && all.indexOf(pc)===i);
+          const routes=[];
+          for(const pc of pcs) {
+            const stats=await pc.getStats(); this.assertCurrent(epoch);
+            let pair=null;
+            stats.forEach(stat=>{if(stat.type==='transport' && stat.selectedCandidatePairId)pair=stats.get(stat.selectedCandidatePairId);});
+            if(!pair)stats.forEach(stat=>{if(stat.type==='candidate-pair' && stat.state==='succeeded' && stat.nominated)pair=stat;});
+            if(pair) {
+              const local=stats.get(pair.localCandidateId),remote=stats.get(pair.remoteCandidateId);
+              const relay=local?.candidateType==='relay' || remote?.candidateType==='relay';
+              routes.push({relay,detail:`${local?.candidateType || '?'} / ${remote?.candidateType || '?'} · ${local?.protocol || '?'}`});
+            }
+          }
+          if(routes.length){this.route=routes.some(r=>r.relay)?'relay':'direct';this.routeDetail=routes.map(r=>r.detail).join(' ; ');}
+          this.diagnostic(); if(this.onStats)this.onStats({rtt:this.rtt,jitter:this.jitter});
+        } catch { /* Some browsers provide fewer candidate statistics. */ }
+        finally { if(epoch===this.epoch)this.statsBusy=false; }
       }
-
-      sendOn(conn, payload, dropWhenBusy) {
-        if (!conn || conn.open !== true) return false;
-        const buffered = conn.dataChannel?.bufferedAmount ?? conn.bufferSize ?? 0;
-        if (dropWhenBusy && buffered > 96 * 1024) return false;
-        try { conn.send(payload); return true; } catch { return false; }
+      sendControl(data) {return this.sendOn(this.ctrl,data,false);}
+      sendRealtime(data) {return this.sendOn(this.rt,data,true);}
+      send(data) {return ['state','input','ping','pong'].includes(data?.t)?this.sendRealtime(data):this.sendControl(data);}
+      sendOn(conn,data,drop) {
+        if(!conn?.open)return false;
+        if(drop && (conn.dataChannel?.bufferedAmount ?? conn.bufferSize ?? 0)>96*1024)return false;
+        try{conn.send(data);return true;}catch{return false;}
       }
-
-      notifyClosed(reason='连接断开') {
-        if (this.closing) return;
-        const hadSession = this.openNotified;
-        this.cleanup(false);
-        if (hadSession && this.onClose) this.onClose(reason);
+      notifyClosed(reason='连接断开。') {
+        if(this.closing || (!this.role && !this.openNotified))return;
+        this.cleanup();
+        if(this.onClose)this.onClose(reason);
       }
-
       cleanup(notify=false) {
-        const hadSession = this.openNotified;
-        this.closing = true;
-        clearInterval(this.keepaliveTimer);
-        clearTimeout(this.disconnectTimer);
-        this.clearConnectWait();
-        this.keepaliveTimer = null;
-        this.disconnectTimer = null;
-        try { if (this.ctrl) this.ctrl.close(); } catch {}
-        try { if (this.rt && this.rt !== this.ctrl) this.rt.close(); } catch {}
-        try { if (this.peer && !this.peer.destroyed) this.peer.destroy(); } catch {}
-        this.peer = null;
-        this.ctrl = null;
-        this.rt = null;
-        this.role = null;
-        this.room = '';
-        this.remotePeerId = null;
-        this.remoteInput = 0;
-        this.remoteTarget = null;
-        this.remoteInputSeq = -1;
-        this.state = 'idle';
-        this.rtt = 0;
-        this.jitter = 0;
-        this.lastReceiveAt = 0;
-        this.openNotified = false;
-        this.closing = false;
-        if (notify && hadSession && this.onClose) this.onClose('连接已关闭');
+        const hadSession=!!this.role;
+        if(this.connected)this.sendControl({t:'bye'});
+        this.closing=true; this.epoch++;
+        for(const cancel of Array.from(this.pending))cancel();
+        clearInterval(this.keepaliveTimer); clearTimeout(this.disconnectTimer); clearTimeout(this.joinTimer);
+        this.keepaliveTimer=this.disconnectTimer=this.joinTimer=null;
+        const ctrl=this.ctrl,rt=this.rt,pc=this.pc,peer=this.peer;
+        this.ctrl=this.rt=this.pc=this.peer=null;
+        try{ctrl?.close();}catch{} try{rt?.close();}catch{} try{pc?.close();}catch{} try{peer?.destroy();}catch{}
+        this.role=null;this.room='';this.sid='';this.remotePeerId=null;this.openNotified=false;
+        this.remoteInput=0;this.remoteTarget=null;this.remoteInputSeq=-1;this.lastInputAt=0;
+        this.rtt=0;this.jitter=0;this.route='unknown';this.routeDetail='';this.lastReceiveAt=0;this.statsBusy=false;
+        this.state='idle';this.closing=false; this.diagnostic();
+        if(notify && hadSession && this.onClose)this.onClose('已退出联机。');
       }
     }
 
@@ -1342,12 +1579,24 @@
             g.settings.mode==='ai' || g.isOnline() ? 'SPACE / ENTER TO SERVE' : side==='left' ? 'SPACE TO SERVE' : 'ENTER TO SERVE';
           center(rows-6,`[ ${side.toUpperCase()} SERVE | ${action} ]`);
         } else if (g.respawnRemaining > 0) center(rows-6,'[ POINT SCORED ]');
+        if (g.isOnline() && g.online.connected) center(rows-8,`[ ${g.online.route==='relay'?'TURN RELAY':g.online.route==='direct'?'P2P DIRECT':'P2P CONNECTED'} | ${Math.round(g.online.rtt)} ms | ${g.isHost()?'YOU: LEFT':'YOU: RIGHT'} ]`);
         center(rows-4,'@ BALL   * FAST   o SLOW   O BIG   . SMALL   # PADDLE   ~ CURVE   % SPIN');
         const control=g.settings.mode==='ai'||g.isOnline() ? 'W/S or UP/DOWN: MOVE | SPACE/ENTER: SERVE' : 'W/S: LEFT | UP/DOWN: RIGHT | SPACE: L SERVE | ENTER: R SERVE';
         center(rows-2,`${IS_TOUCH ? 'DRAG: MOVE | RELEASE: SERVE' : control} | R: RENDER | F: FULLSCREEN${g.isOnline() ? '' : ' | P: PAUSE'}`);
         const frame=grid.map(row=>row.join('')).join('\n');
         if (frame !== this.lastFrame) { this.element.textContent=frame; this.lastFrame=frame; }
       }
+    }
+
+    function validSnapshot(s) {
+      if (!s || typeof s!=='object' || !/^[0-9a-f]{32}$/.test(s.matchId || '') || !Number.isSafeInteger(s.seq) ||
+          !s.ball || !s.left || !s.right || !s.match || ![Phase.COUNTDOWN,Phase.PLAYING,Phase.ENDED].includes(s.phase)) return false;
+      const nums=[s.ball.x,s.ball.y,s.ball.vx,s.ball.vy,s.ball.r,s.ball.spin,s.ball.speed,s.left.y,s.left.h,s.right.y,s.right.h,s.countdown,s.curve,s.respawn,s.match.remaining];
+      if (!nums.every(v=>typeof v==='number' && Number.isFinite(v) && Math.abs(v)<=20000)) return false;
+      if (s.ball.r<=0 || s.ball.r>50 || s.left.h<=0 || s.left.h>WORLD.height || s.right.h<=0 || s.right.h>WORLD.height) return false;
+      if (![s.match.leftScore,s.match.rightScore].every(v=>Number.isInteger(v)&&v>=0&&v<=99)) return false;
+      if (s.effect && (!Object.hasOwn(POWERUPS,s.effect.type) || !Number.isFinite(s.effect.remaining))) return false;
+      return true;
     }
 
     class PongGame {
@@ -1369,6 +1618,7 @@
         this.stateSeq = 0;
         this.inputSeq = 0;
         this.lastSnapshotSeq = -1;
+        this.matchId = '';
         this.clientAuthRightY = null;
         this.toastTimers = { curve:0, cheat:0 };
         this.countdownRemaining = 0;
@@ -1468,6 +1718,7 @@
         this.stateSeq = 0;
         this.inputSeq = 0;
         this.lastSnapshotSeq = -1;
+        this.matchId = '';
         this.clientAuthRightY = null;
         this.online.remoteInput = 0;
         this.online.remoteTarget = null;
@@ -1545,7 +1796,7 @@
 
         if (!requestedSide || requestedSide !== this.serveSide) return false;
         if (this.isClient()) {
-          return this.online.sendControl({ t:'serve' });
+          return this.online.sendControl({ t:'serve', matchId:this.matchId });
         }
         return this.launchServe(requestedSide);
       }
@@ -1559,6 +1810,7 @@
       startOnlineHost() {
         if (!this.isHost() || !this.online.connected || ![Phase.MENU,Phase.ENDED].includes(this.phase)) return false;
         this.resetMatch();
+        this.matchId = sessionId();
         this.beginCountdown();
         this.online.sendControl({
           t:'start',
@@ -1572,6 +1824,7 @@
       startOnlineClient(remoteSettings={}, remoteSnapshot=null, remoteCountdown=null) {
         if (remoteSettings.score) this.settings.score = clamp(Number(remoteSettings.score),1,99);
         this.resetMatch();
+        this.matchId = remoteSnapshot?.matchId || '';
         this.beginCountdown();
         if (Number.isFinite(remoteCountdown)) this.countdownRemaining = Math.max(0, Number(remoteCountdown));
         if (remoteSnapshot) this.applySnapshot(remoteSnapshot, true);
@@ -1616,7 +1869,7 @@
         else if (leftWins === false) this.audio.lose();
         else this.audio.countdown();
         if (this.isHost() && !fromNetwork) {
-          this.online.send({ t:'end', message, leftWins, score:[this.match.leftScore, this.match.rightScore] });
+          this.online.send({ t:'end', matchId:this.matchId, message, leftWins, score:[this.match.leftScore, this.match.rightScore] });
         }
         this.emitUi();
         if (this.onEnd) this.onEnd(message, leftWins);
@@ -1677,7 +1930,7 @@
           if (this.networkInputAccumulator >= 1/NETWORK_INPUT_HZ) {
             this.networkInputAccumulator = 0;
             this.online.sendRealtime({
-              t:'input',
+              t:'input', matchId:this.matchId,
               seq:++this.inputSeq,
               dir:this.input.onlineLocalDir(),
               target:this.input.targetFor('local')
@@ -1759,8 +2012,9 @@
         if (this.isHost()) {
           leftDir = this.input.onlineLocalDir();
           leftTarget = this.input.targetFor('local');
-          rightDir = this.online.remoteInput || 0;
-          rightTarget = this.online.remoteTarget;
+          const fresh = performance.now() - this.online.lastInputAt < 350;
+          rightDir = fresh ? (this.online.remoteInput || 0) : 0;
+          rightTarget = fresh ? this.online.remoteTarget : null;
         } else if (this.settings.mode === 'ai') {
           leftDir = this.input.leftDir(true);
           leftTarget = this.input.targetFor('local');
@@ -2036,6 +2290,7 @@
 
       snapshot() {
         return {
+          matchId:this.matchId,
           seq:++this.stateSeq,
           ackInput:this.online.remoteInputSeq,
           phase:this.phase,
@@ -2051,7 +2306,8 @@
       }
 
       applySnapshot(s, force=false) {
-        if (!s || !s.ball || !s.match) return;
+        if (!validSnapshot(s)) return;
+        if (!force && (s.matchId !== this.matchId || this.phase === Phase.ENDED || this.phase === Phase.MENU)) return;
         const seq = Number(s.seq);
         if (!force && Number.isFinite(seq) && seq <= this.lastSnapshotSeq) return;
         if (Number.isFinite(seq)) this.lastSnapshotSeq = seq;
@@ -2060,6 +2316,7 @@
         const oldScoreL = this.match.leftScore, oldScoreR = this.match.rightScore;
         const oldShieldL = this.match.leftShield, oldShieldR = this.match.rightShield;
         const oldEffect = this.effect ? this.effect.type : null;
+        const oldServe = this.serveSide;
 
         const lerp = (a,b,t) => a + (b-a)*t;
         const rttLead = clamp((this.online.rtt || 0) / 2000, 0, .07);
@@ -2105,7 +2362,7 @@
 
         const effectNow = this.effect ? this.effect.type : null;
         const uiChanged = oldPhase !== this.phase || oldScoreL !== this.match.leftScore || oldScoreR !== this.match.rightScore ||
-          oldShieldL !== this.match.leftShield || oldShieldR !== this.match.rightShield || oldEffect !== effectNow;
+          oldShieldL !== this.match.leftShield || oldShieldR !== this.match.rightShield || oldEffect !== effectNow || oldServe !== this.serveSide;
         if (uiChanged) this.emitUi();
       }
 
@@ -2249,6 +2506,7 @@
         this.onlineBackBtn = document.getElementById('onlineBackBtn');
         this.customScore = document.getElementById('customScore');
         this.onlineUiState = 'idle';
+        this.initNetworkingUi();
         this.bind();
         this.syncSettingsButtons();
         this.applyTheme();
@@ -2306,13 +2564,7 @@
           this.game.input.clearTouches(true); this.game.quitToMenu(); this.menuTitle.textContent='PONG-84'; this.menuSub.textContent='配置游戏后开始'; this.resetOnlineUi();
         });
 
-        document.getElementById('createRoomBtn').addEventListener('click', ()=>this.createRoom());
-        document.getElementById('joinRoomBtn').addEventListener('click', ()=>this.joinRoomUi());
-        this.onlineActionBtn.addEventListener('click', ()=>this.onlineAction());
-        this.onlineCode.addEventListener('input', ()=>{ if (!this.onlineCode.readOnly) this.onlineCode.value=this.onlineCode.value.replace(/\D/g,'').slice(0,4); });
-        this.onlineBackBtn.addEventListener('click', ()=>{
-          this.online.cleanup(); this.resetOnlineUi(); this.update();
-        });
+        this.bindNetworking();
 
         window.addEventListener('keydown', e => {
           if ((e.key==='r'||e.key==='R') && !e.ctrlKey && !e.metaKey && !e.altKey && !this.isTypingTarget(e.target)) {
@@ -2347,131 +2599,294 @@
           this.update();
         };
 
-        this.online.onOpen = role => {
-          this.onlineUiState='connected';
-          this.onlineInfo.textContent = role==='host' ? '连接成功。你是主机，点击“开始游戏”。' : '连接成功。等待主机开始游戏。';
-          this.onlineCode.value='';
-          this.onlineActionBtn.classList.add('hidden-section');
-          this.startBtn.style.display = role==='host' ? '' : 'none';
-          this.menuSub.textContent = role==='host' ? '对手已加入 · 云房间已转为 P2P · 60Hz 主机权威同步' : '已连接 · P2P · 本地预测 + 主机校正';
-          this.update();
-        };
-        this.online.onClose = reason=>{
-          if ([Phase.PLAYING,Phase.COUNTDOWN].includes(this.game.phase)) this.game.endGame(reason || '连接断开', false, true);
-          this.onlineInfo.textContent=reason || '连接已断开';
-          this.update();
-        };
-        this.online.onConnectionState = state => {
-          if (state==='reconnecting') this.onlineInfo.textContent='网络波动，正在尝试恢复连接…';
-          else if (state==='signaling-lost' && this.online.connected) this.onlineInfo.textContent='云信令暂时断开，但当前 P2P 对局仍可继续。';
-          else if (state==='waiting' && this.online.role==='host') this.onlineInfo.textContent=`房间 ${this.online.room} 已创建 · 等待对手加入`;
-          else if (state==='connected' && this.online.connected) {
-            this.onlineInfo.textContent = this.online.role==='host' ? '连接稳定。你是主机。' : '连接稳定。等待主机开始。';
-          }
-          this.update();
-        };
-        this.online.onStats = ()=>this.update();
-        this.online.onMessage = msg => this.handleOnlineMessage(msg);
+        this.bindOnlineCallbacks();
       }
 
       handleOnlineMessage(msg) {
-        if (msg.t==='serve' && this.online.role==='host') {
-          if (this.game.phase === Phase.PLAYING && this.game.serveSide === 'right') this.game.launchServe('right');
-        } else if (msg.t==='input' && this.online.role==='host') {
-          const seq = Number(msg.seq);
-          if (Number.isFinite(seq) && seq <= this.online.remoteInputSeq) return;
-          if (Number.isFinite(seq)) this.online.remoteInputSeq = seq;
-          this.online.remoteInput = clamp(Number(msg.dir)||0,-1,1);
-          const hasTarget = msg.target !== null && msg.target !== undefined && msg.target !== '';
-          const target = hasTarget ? Number(msg.target) : NaN;
-          this.online.remoteTarget = Number.isFinite(target) ? clamp(target,0,WORLD.height) : null;
+        if (!msg || typeof msg !== 'object') return;
+        const sameMatch = !!this.game.matchId && msg.matchId === this.game.matchId;
+        if (msg.t==='serve' && this.online.role==='host' && sameMatch) {
+          if (this.game.phase===Phase.PLAYING && this.game.serveSide==='right') this.game.launchServe('right');
+        } else if (msg.t==='input' && this.online.role==='host' && sameMatch) {
+          if (!Number.isSafeInteger(msg.seq) || msg.seq<=this.online.remoteInputSeq || !Number.isFinite(msg.dir)) return;
+          this.online.remoteInputSeq=msg.seq; this.online.lastInputAt=performance.now();
+          this.online.remoteInput=clamp(msg.dir,-1,1);
+          this.online.remoteTarget=Number.isFinite(msg.target)?clamp(msg.target,0,WORLD.height):null;
         } else if (msg.t==='state' && this.online.role==='client') {
           this.game.applySnapshot(msg.s);
         } else if (msg.t==='start' && this.online.role==='client') {
+          if (!validSnapshot(msg.snapshot) || msg.snapshot.matchId===this.game.matchId ||
+              !Number.isInteger(msg.settings?.score) || msg.settings.score<1 || msg.settings.score>99) return;
           this.menu.classList.add('hidden');
-          this.game.startOnlineClient(msg.settings || {}, msg.snapshot || null, msg.countdown);
-        } else if (msg.t==='end' && this.online.role==='client') {
-          if (Array.isArray(msg.score)) {
-            this.game.match.leftScore=msg.score[0]; this.game.match.rightScore=msg.score[1];
-          }
-          this.game.endGame(msg.message || '比赛结束', msg.leftWins ?? null, true);
+          this.game.startOnlineClient(msg.settings,msg.snapshot,msg.countdown);
+        } else if (msg.t==='end' && this.online.role==='client' && sameMatch) {
+          if (!Array.isArray(msg.score) || msg.score.length!==2 || !msg.score.every(v=>Number.isInteger(v)&&v>=0&&v<=99)) return;
+          this.game.match.leftScore=msg.score[0]; this.game.match.rightScore=msg.score[1];
+          this.game.endGame(typeof msg.message==='string'?msg.message.slice(0,120):'比赛结束',msg.leftWins===true?true:msg.leftWins===false?false:null,true);
           this.startBtn.style.display='none';
         }
       }
 
-      async createRoom() {
+      initNetworkingUi() {
+        this.transportMode='manual'; this.manualStep='idle'; this.networkActionId=0; this.networkBusy=false;
+        this.net={};
+        for(const id of ['manualPanel','cloudPanel','manualChooser','manualInfo','manualExchange','manualOutputGroup','manualOutput',
+          'manualOutputLabel','manualInputGroup','manualInput','manualInputLabel','manualActionBtn','manualResetRow',
+          'networkFields','networkScope','networkReport','manualFile','manualCreateBtn','manualJoinBtn','manualCopyBtn',
+          'manualSaveBtn','manualImportBtn','manualResetBtn','manualModeBtn','cloudModeBtn','transportDescription'])this.net[id]=document.getElementById(id);
+        document.getElementById('netStun').value=DEFAULT_STUN;
+        this.disconnectBtn=document.getElementById('disconnectBtn');
+      }
+      bindNetworking() {
+        this.net.manualModeBtn.addEventListener('click',()=>this.selectTransport('manual'));
+        this.net.cloudModeBtn.addEventListener('click',()=>this.selectTransport('cloud'));
+        this.net.manualCreateBtn.addEventListener('click',()=>this.createManual());
+        this.net.manualJoinBtn.addEventListener('click',()=>this.joinManualUi());
+        this.net.manualActionBtn.addEventListener('click',()=>this.manualAction());
+        this.net.manualResetBtn.addEventListener('click',()=>{this.online.cleanup();this.resetOnlineUi();this.update();});
+        this.net.manualCopyBtn.addEventListener('click',async()=>{
+          try {
+            const ok=await copyField(this.net.manualOutput);
+            this.net.manualInfo.textContent=ok?'已复制。把完整连接码发给对方，并保持本页打开。':'浏览器未允许自动复制，已选中全文；请手动复制或使用“保存为文件”。';
+          } catch(err){this.net.manualInfo.textContent=err.message;}
+        });
+        this.net.manualSaveBtn.addEventListener('click',()=>{
+          if(!this.net.manualOutput.value)return;
+          const type=this.online.role==='host'?'invite':'answer';
+          downloadText(this.net.manualOutput.value,`pong84-${type}-${this.online.sid.slice(0,8)}.txt`);
+          this.net.manualInfo.textContent='已生成连接码文件。请发送给对方，并保持本页打开。';
+        });
+        this.net.manualImportBtn.addEventListener('click',()=>{this.net.manualFile.value='';this.net.manualFile.click();});
+        this.net.manualFile.addEventListener('change',async()=>{
+          const file=this.net.manualFile.files?.[0],id=this.networkActionId;
+          if(!file)return;
+          try {
+            if(file.size>MAX_SIGNAL_SIZE)throw new Error('连接码文件不能超过 64 KB。');
+            const text=await file.text(); if(id!==this.networkActionId)return;
+            unpackSignal(text,this.manualStep==='host-response'?'answer':'offer');
+            this.net.manualInput.value=text.trim();
+            this.net.manualInfo.textContent='文件已读取，请点击下方确认按钮继续。';
+          } catch(err){if(id===this.networkActionId)this.net.manualInfo.textContent=err.message;}
+        });
+        document.getElementById('createRoomBtn').addEventListener('click',()=>this.createRoom());
+        document.getElementById('joinRoomBtn').addEventListener('click',()=>this.joinRoomUi());
+        this.onlineActionBtn.addEventListener('click',()=>this.onlineAction());
+        this.onlineCode.addEventListener('input',()=>{if(!this.onlineCode.readOnly)this.onlineCode.value=this.onlineCode.value.replace(/\D/g,'').slice(0,4);});
+        this.onlineBackBtn.addEventListener('click',()=>{this.online.cleanup();this.resetOnlineUi();this.update();});
+        this.disconnectBtn.addEventListener('click',()=>{
+          this.game.input.keys.clear();this.game.input.clearTouches(true);this.game.quitToMenu();
+          this.menuTitle.textContent='PONG-84';this.menuSub.textContent='已退出联机，可以重新连接或选择其他模式。';
+          this.resetOnlineUi();this.update();
+        });
+        this.net.networkScope.addEventListener('change',()=>this.updateNetworkControls());
+        this.updateNetworkControls();
+      }
+      networkOptions() {
+        const value=id=>document.getElementById(id).value.trim();
+        return {scope:this.net.networkScope.value,stun:value('netStun'),turn:value('netTurn'),
+          username:value('netUser'),credential:document.getElementById('netPassword').value,
+          relay:document.getElementById('netRelay').checked,host:value('signalHost'),port:Number(value('signalPort')),
+          path:value('signalPath') || '/',key:value('signalKey') || 'peerjs',secure:document.getElementById('signalSecure').checked,
+          namespace:value('roomNamespace') || NETWORK_DEFAULTS.namespace};
+      }
+      selectTransport(mode) {
+        if(this.transportMode===mode)return;
+        this.online.cleanup();this.transportMode=mode;this.resetOnlineUi();this.update();
+      }
+      updateNetworkControls() {
+        if(!this.net)return;
+        const manual=this.transportMode==='manual';
+        this.net.manualPanel.classList.toggle('hidden-section',!manual);
+        this.net.cloudPanel.classList.toggle('hidden-section',manual);
+        this.net.manualModeBtn.classList.toggle('selected',manual);
+        this.net.cloudModeBtn.classList.toggle('selected',!manual);
+        this.net.manualModeBtn.setAttribute('aria-pressed',String(manual));
+        this.net.cloudModeBtn.setAttribute('aria-pressed',String(!manual));
+        const lan=this.net.networkScope.value==='lan';
+        this.net.transportDescription.textContent=manual
+          ? (lan?'局域网手动 P2P：不加载云组件、不请求外部信令/STUN/TURN。双方仍须处于可互通的网络。':'原生 WebRTC 手动 P2P：不使用信令服务器；跨网络将使用下面配置的 STUN / 可选 TURN。')
+          : '云端房间码：需外部组件和信令服务；网络范围只影响直连/中继设置，不能取消云信令依赖。';
+        this.net.networkFields.disabled=this.networkBusy || !!this.online.role;
+        this.net.manualActionBtn.disabled=this.networkBusy;
+        this.net.manualInput.readOnly=this.networkBusy;
+        this.net.manualImportBtn.disabled=this.networkBusy;
+        this.net.manualCreateBtn.disabled=this.networkBusy;
+        this.net.manualJoinBtn.disabled=this.networkBusy;
+        this.net.manualResetRow.classList.toggle('hidden-section',this.manualStep==='idle' && !this.networkBusy);
+        if(this.disconnectBtn)this.disconnectBtn.style.display=this.game.isOnline() && this.online.role && [Phase.PLAYING,Phase.COUNTDOWN].includes(this.game.phase)?'inline-block':'none';
+        if(!this.online.role)this.renderDiagnostics();
+      }
+      renderDiagnostics(info=null) {
+        const n=this.online,pc=n.pc || n.ctrl?.peerConnection;
+        const data=info || {state:n.state,ice:pc?.iceConnectionState || '-',gathering:pc?.iceGatheringState || '-',
+          ctrl:n.ctrl?.open?'open':'closed',rt:n.rt?.open?'open':'closed',route:n.route,routeDetail:n.routeDetail,rtt:n.rtt};
+        const route=data.route==='relay'?'TURN 中继（不是直连）':data.route==='direct'?'浏览器直连':'尚未确定';
+        this.net.networkReport.textContent=[
+          `打开方式：${location.protocol==='file:'?'本地 HTML（file://）':location.protocol==='https:'?'HTTPS 静态网页':'HTTP / 其他'}`,
+          `WebRTC：${typeof RTCPeerConnection==='function'?'可用':'不可用'} | 安全上下文：${window.isSecureContext?'是':'否'}`,
+          `联机方式：${this.transportMode==='manual'?'手动交换连接码':'云端 4 位房间码'} | 状态：${data.state}`,
+          `ICE：${data.ice} | 地址收集：${data.gathering}`,
+          `控制通道：${data.ctrl} | 实时通道：${data.rt}`,
+          `实际路径：${route}${data.routeDetail?' | '+data.routeDetail:''}`,
+          `往返延迟：${data.rtt>0?Math.round(data.rtt)+' ms':'待测量'}`
+        ].join('\n');
+      }
+      bindOnlineCallbacks() {
+        this.online.onOpen=role=>{
+          this.networkBusy=false;this.onlineUiState='connected';this.manualStep='connected';
+          const message=role==='host'?'连接成功。你控制左拍，请点击“开始游戏”。':'连接成功。你控制右拍，等待房主开始游戏。';
+          this.net.manualInfo.textContent=message;this.onlineInfo.textContent=message;
+          this.net.manualExchange.classList.add('hidden-section');this.net.manualChooser.classList.add('hidden-section');
+          this.net.manualInput.value='';this.net.manualOutput.value='';
+          this.onlineCode.value='';this.onlineCode.classList.add('hidden-section');this.onlineActionBtn.classList.add('hidden-section');
+          this.menuSub.textContent=`${this.transportMode==='manual'?'手动 P2P':'云房间'}已连接 · 房主负责物理和比分 · 双方保留各自画面风格`;
+          this.updateNetworkControls();this.update();
+          if(role==='host')this.startBtn.scrollIntoView({block:'nearest',behavior:'smooth'});
+        };
+        this.online.onClose=reason=>{
+          this.networkActionId++;this.networkBusy=false;
+          if([Phase.PLAYING,Phase.COUNTDOWN].includes(this.game.phase))this.game.endGame(reason || '连接断开',null,true);
+          this.onlineUiState='disconnected';this.manualStep='disconnected';
+          this.net.manualInfo.textContent=reason || '连接已断开，请重新生成邀请。';
+          this.onlineInfo.textContent=reason || '连接已断开，请返回重新连接。';
+          this.net.manualExchange.classList.add('hidden-section');this.net.manualChooser.classList.remove('hidden-section');
+          this.net.manualOutput.value='';this.net.manualInput.value='';this.onlineActionBtn.classList.add('hidden-section');
+          this.updateNetworkControls();this.update();
+        };
+        this.online.onConnectionState=(state,detail='')=>{
+          const messages={gathering:'正在收集完整连接地址，请保持页面打开…',
+            'waiting-answer':'邀请码已生成。请发送给对方，再粘贴对方返回的回应码。',
+            'waiting-host':'请把回应码发回房主；房主确认后才能完成连接。',
+            connecting:'正在建立数据通道…',loading:'正在加载云联机组件并连接信令服务…',
+            reconnecting:'网络波动，正在等待底层连接恢复；持续失败请重新连接。',
+            'signaling-lost':'云信令暂时不可用；已建立的数据通道可能仍可继续。',
+            'channel-error':'数据通道出现异常，请查看连接诊断。',
+            'cloud-error':detail || '云信令异常，请检查服务地址和网络。',
+            waiting:`房间 ${this.online.room} 已创建，等待对方加入。`};
+          if(messages[state]) {
+            const target=this.transportMode==='manual'?this.net.manualInfo:this.onlineInfo;
+            target.textContent=messages[state];
+          }
+          this.updateNetworkControls();this.update();
+        };
+        this.online.onDiagnostic=info=>this.renderDiagnostics(info);
+        this.online.onStats=()=>{this.renderDiagnostics();this.update();};
+        this.online.onMessage=msg=>this.handleOnlineMessage(msg);
+      }
+      async createManual() {
+        if(this.networkBusy)return;
+        if(this.online.role)this.online.cleanup();
+        const id=++this.networkActionId;
+        this.manualStep='collecting';this.networkBusy=true;
+        this.net.manualChooser.classList.add('hidden-section');this.net.manualExchange.classList.remove('hidden-section');
+        this.net.manualInputGroup.classList.add('hidden-section');this.net.manualOutputGroup.classList.add('hidden-section');
+        this.net.manualInput.value='';this.net.manualOutput.value='';this.net.manualInfo.textContent='正在生成本次邀请…';
+        this.updateNetworkControls();
+        try {
+          this.audio.ensure();this.online.configure(this.networkOptions());
+          const code=await this.online.createOffer();if(id!==this.networkActionId)return;
+          this.manualStep='host-response';this.net.manualOutput.value=code;
+          this.net.manualOutputLabel.textContent='第 1 步：把此邀请码发送给加入者';
+          this.net.manualInputLabel.textContent='第 3 步：粘贴加入者发回的回应码';
+          this.net.manualActionBtn.textContent='确认回应并连接';
+          this.net.manualOutputGroup.classList.remove('hidden-section');this.net.manualInputGroup.classList.remove('hidden-section');
+          this.net.manualInfo.textContent='请先发送上方邀请码，再将对方返回的回应码粘贴到下方。保持本页打开。';
+          this.net.manualOutputGroup.scrollIntoView({block:'nearest',behavior:'smooth'});
+        } catch(err) {
+          if(id!==this.networkActionId)return;
+          this.manualStep='idle';this.net.manualChooser.classList.remove('hidden-section');this.net.manualExchange.classList.add('hidden-section');
+          this.net.manualInfo.textContent='生成失败：'+err.message;
+        } finally {if(id===this.networkActionId){this.networkBusy=false;this.updateNetworkControls();this.update();}}
+      }
+      joinManualUi() {
+        this.online.cleanup();this.resetOnlineUi();this.manualStep='guest-offer';
+        this.net.manualChooser.classList.add('hidden-section');this.net.manualExchange.classList.remove('hidden-section');
+        this.net.manualInputGroup.classList.remove('hidden-section');this.net.manualOutputGroup.classList.add('hidden-section');
+        this.net.manualInputLabel.textContent='第 1 步：粘贴房主的邀请码（也可从文件读取）';
+        this.net.manualActionBtn.textContent='生成回应码';
+        this.net.manualInfo.textContent='粘贴房主的邀请码，生成回应码后，必须再把回应码发回房主。';
+        this.updateNetworkControls();this.net.manualInputGroup.scrollIntoView({block:'nearest',behavior:'smooth'});this.net.manualInput.focus({preventScroll:true});
+      }
+      async manualAction() {
+        if(this.networkBusy || !['guest-offer','host-response'].includes(this.manualStep))return;
+        const step=this.manualStep,id=++this.networkActionId;
+        this.networkBusy=true;this.updateNetworkControls();
         try {
           this.audio.ensure();
-          this.onlineUiState='creating';
-          this.showOnlineBox();
-          this.onlineInfo.textContent='正在创建云端房间…';
-          this.onlineCode.value='';
-          this.onlineCode.readOnly=true;
-          this.onlineActionBtn.classList.add('hidden-section');
-          this.startBtn.style.display='none';
-          const room = await this.online.createRoom();
-          this.onlineCode.value=room;
-          this.onlineUiState='host-room-ready';
-          this.onlineInfo.textContent='房间已创建。把这 4 位房间码告诉对方，等待加入。';
-          this.onlineActionBtn.textContent='复制房间码';
-          this.onlineActionBtn.classList.remove('hidden-section');
-          this.menuSub.textContent=`云端房间 ${room} · 等待对手加入`;
-          this.update();
-        } catch (err) {
-          this.onlineInfo.textContent='创建失败：'+err.message;
-          this.online.cleanup();
-          this.startBtn.style.display='';
-        }
-      }
-
-      joinRoomUi() {
-        this.onlineUiState='join-wait-room';
-        this.showOnlineBox();
-        this.onlineInfo.textContent='输入房主屏幕上的 4 位房间码。';
-        this.onlineCode.readOnly=false;
-        this.onlineCode.value='';
-        this.onlineCode.placeholder='0000';
-        this.onlineActionBtn.textContent='加入房间';
-        this.onlineActionBtn.classList.remove('hidden-section');
-        this.startBtn.style.display='none';
-        setTimeout(()=>this.onlineCode.focus(),30);
-      }
-
-      async onlineAction() {
-        try {
-          if (this.onlineUiState==='host-room-ready') {
-            const text=this.onlineCode.value.trim();
-            if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(text);
-            else { this.onlineCode.focus(); this.onlineCode.select(); document.execCommand('copy'); }
-            this.onlineInfo.textContent=`房间码 ${text} 已复制 · 等待对手加入`;
-          } else if (this.onlineUiState==='join-wait-room') {
-            const room=this.onlineCode.value.replace(/\D/g,'').slice(0,4);
-            this.onlineCode.value=room;
-            if (!/^\d{4}$/.test(room)) throw new Error('请输入 4 位房间码');
-            this.onlineUiState='joining';
-            this.onlineCode.readOnly=true;
-            this.onlineActionBtn.classList.add('hidden-section');
-            this.onlineInfo.textContent=`正在加入房间 ${room}…`;
-            this.menuSub.textContent=`云端房间 ${room} · 正在建立 P2P 连接`;
-            await this.online.joinRoom(room);
+          if(step==='guest-offer') {
+            this.online.configure(this.networkOptions());
+            const code=await this.online.acceptOffer(this.net.manualInput.value);if(id!==this.networkActionId)return;
+            this.manualStep='guest-response';this.net.manualOutput.value=code;
+            this.net.manualOutputLabel.textContent='第 2 步：把此回应码发送回房主';
+            this.net.manualOutputGroup.classList.remove('hidden-section');this.net.manualInputGroup.classList.add('hidden-section');
+            this.net.manualInfo.textContent='回应码已生成。请复制或保存为文件发回房主；等待房主确认。不要关闭或刷新本页。';
+          } else {
+            await this.online.acceptAnswer(this.net.manualInput.value);if(id!==this.networkActionId)return;
+            if(!this.online.connected){this.manualStep='connecting';this.net.manualInputGroup.classList.add('hidden-section');
+              this.net.manualInfo.textContent='回应已确认，正在建立连接… 若失败，请查看诊断并重新生成邀请。';}
           }
-        } catch (err) {
-          this.onlineUiState='join-wait-room';
-          this.onlineCode.readOnly=false;
-          this.onlineActionBtn.textContent='重新加入';
-          this.onlineActionBtn.classList.remove('hidden-section');
-          this.onlineInfo.textContent='加入失败：'+err.message;
-          this.startBtn.style.display='none';
-        }
+        } catch(err) {
+          if(id!==this.networkActionId)return;
+          this.manualStep=step;this.net.manualInfo.textContent='连接码处理失败：'+err.message;
+          this.net.manualInputGroup.classList.remove('hidden-section');
+        } finally {if(id===this.networkActionId){this.networkBusy=false;this.updateNetworkControls();this.update();}}
       }
-
+      async createRoom() {
+        if(this.networkBusy)return;
+        this.online.cleanup();const id=++this.networkActionId;this.networkBusy=true;this.onlineUiState='creating';
+        this.showOnlineBox();this.onlineInfo.textContent='正在创建云端房间…';this.onlineCode.value='';this.onlineCode.readOnly=true;
+        this.onlineCode.classList.remove('hidden-section');this.onlineActionBtn.classList.add('hidden-section');this.updateNetworkControls();
+        try {
+          this.audio.ensure();this.online.configure(this.networkOptions());
+          const room=await this.online.createRoom();if(id!==this.networkActionId || this.online.connected)return;
+          this.onlineCode.value=room;this.onlineUiState='host-room-ready';
+          this.onlineInfo.textContent='房间已创建。将这 4 位房间码告诉对方；双方信令服务和房间分组必须相同。';
+          this.onlineActionBtn.textContent='复制房间码';this.onlineActionBtn.classList.remove('hidden-section');
+          this.menuSub.textContent=`云端房间 ${room} · 等待对手加入`;
+        } catch(err) {if(id===this.networkActionId){this.onlineInfo.textContent='创建失败：'+err.message;this.onlineUiState='failed';}}
+        finally {if(id===this.networkActionId){this.networkBusy=false;this.updateNetworkControls();this.update();}}
+      }
+      joinRoomUi() {
+        this.online.cleanup();this.networkActionId++;this.networkBusy=false;this.onlineUiState='join-wait-room';
+        this.showOnlineBox();this.onlineInfo.textContent='输入房主的 4 位房间码；请确认双方房间分组相同。';
+        this.onlineCode.classList.remove('hidden-section');this.onlineCode.readOnly=false;this.onlineCode.value='';this.onlineCode.placeholder='0000';
+        this.onlineActionBtn.textContent='加入房间';this.onlineActionBtn.classList.remove('hidden-section');
+        this.updateNetworkControls();this.onlineCode.focus({preventScroll:true});
+      }
+      async onlineAction() {
+        if(this.networkBusy)return;
+        if(this.onlineUiState==='host-room-ready') {
+          try{const ok=await copyField(this.onlineCode);this.onlineInfo.textContent=ok?'房间码已复制，等待对方加入。':'已选中房间码，请手动复制。';}
+          catch(err){this.onlineInfo.textContent=err.message;}return;
+        }
+        if(this.onlineUiState!=='join-wait-room')return;
+        const id=++this.networkActionId;
+        try {
+          this.online.configure(this.networkOptions());
+          const room=this.onlineCode.value.trim();if(!/^\d{4}$/.test(room))throw new Error('请输入 4 位房间码。');
+          this.networkBusy=true;this.onlineUiState='joining';this.onlineCode.readOnly=true;
+          this.onlineActionBtn.classList.add('hidden-section');this.onlineInfo.textContent=`正在加入房间 ${room}…`;
+          this.updateNetworkControls();await this.online.joinRoom(room);
+        } catch(err) {
+          if(id!==this.networkActionId)return;
+          this.onlineUiState='join-wait-room';this.onlineCode.readOnly=false;
+          this.onlineActionBtn.textContent='重新加入';this.onlineActionBtn.classList.remove('hidden-section');
+          this.onlineInfo.textContent='加入失败：'+err.message;
+        } finally {if(id===this.networkActionId){this.networkBusy=false;this.updateNetworkControls();this.update();}}
+      }
       showOnlineBox() {
-        this.onlineChooser.classList.add('hidden-section');
-        this.onlineBox.classList.remove('hidden-section');
+        this.onlineChooser.classList.add('hidden-section');this.onlineBox.classList.remove('hidden-section');
       }
       resetOnlineUi() {
-        this.onlineUiState='idle'; this.onlineChooser.classList.remove('hidden-section'); this.onlineBox.classList.add('hidden-section');
-        this.onlineCode.value=''; this.onlineInfo.textContent=''; this.startBtn.style.display='';
+        this.networkActionId++;this.networkBusy=false;this.onlineUiState='idle';this.manualStep='idle';
+        this.onlineChooser.classList.remove('hidden-section');this.onlineBox.classList.add('hidden-section');
+        this.onlineCode.classList.remove('hidden-section');this.onlineCode.value='';this.onlineCode.readOnly=false;
+        this.onlineInfo.textContent='';
+        this.net.manualChooser.classList.remove('hidden-section');this.net.manualExchange.classList.add('hidden-section');
+        this.net.manualInput.value='';this.net.manualOutput.value='';
+        this.net.manualInfo.textContent='双方打开本文件，选择相同的网络范围。房主创建邀请，加入者粘贴邀请并返回回应码。';
+        this.startBtn.textContent=this.game.phase===Phase.ENDED?'再来一局':'开始游戏';
+        this.updateNetworkControls();
       }
 
       syncSettingsButtons() {
@@ -2531,7 +2946,7 @@
       isTypingTarget(target) {
         if (!target) return false;
         const tag = target.tagName;
-        return tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable;
+        return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target.isContentEditable;
       }
 
       getFullscreenElement() {
@@ -2587,7 +3002,7 @@
         this.shieldRow.classList.toggle('timer-offset',g.isTimerMode());
 
         const modeLabels={ ai:'人机', pvp:'双人', timer:'计时', online:'联机' };
-        this.modeBadge.textContent = mode==='ai' ? `${modeLabels[mode]} · ${DIFFICULTY[g.settings.difficulty].label}` : modeLabels[mode];
+        this.modeBadge.textContent = mode==='ai' ? `${modeLabels[mode]} · ${DIFFICULTY[g.settings.difficulty].label}` : mode==='online' && this.online.connected ? `${this.online.route==='relay'?'中继联机':'联机'} · ${this.online.role==='host'?'左拍':'右拍'}` : modeLabels[mode];
 
         this.pauseBtn.style.display = [Phase.PLAYING].includes(g.phase) && !g.isOnline() ? 'block' : 'none';
         const menuVisible = g.phase === Phase.MENU || g.phase === Phase.ENDED;
@@ -2609,6 +3024,7 @@
         this.updateTouchLayers();
         this.updateHint();
         this.updateStatus();
+        this.updateNetworkControls();
       }
 
       updateTouchLayers() {
@@ -2641,7 +3057,7 @@
         if (g.isOnline()) {
           if (this.online.role==='host') this.hint.textContent=IS_TOUCH?'上下拖动控制左拍 · 60Hz 主机权威同步':'W/S 或 ↑/↓ 控制左拍 · 60Hz 主机权威同步';
           else if (this.online.role==='client') this.hint.textContent=IS_TOUCH?'上下拖动控制右拍 · 60Hz 输入同步 · 本地预测':'W/S 或 ↑/↓ 控制右拍 · 60Hz 输入同步 · 本地预测';
-          else this.hint.textContent='创建或输入 4 位房间码开始联机';
+          else this.hint.textContent='选择手动 P2P 或云端房间码，连接后由房主开始';
         } else if (g.settings.mode==='ai') {
           this.hint.textContent=IS_TOUCH?`上下拖动控制球拍 · 先得 ${g.settings.score} 分获胜`:`W/S 或 ↑/↓ 控制 · 先得 ${g.settings.score} 分获胜`;
         } else if (g.settings.mode==='timer') {
@@ -2666,7 +3082,7 @@
         } else if (g.isOnline() && this.online.connected) {
           const ping = this.online.rtt > 0 ? `${Math.round(this.online.rtt)} ms` : '测量中';
           const quality = this.online.rtt <= 70 ? '优' : this.online.rtt <= 140 ? '良' : this.online.rtt > 0 ? '较高延迟' : '连接中';
-          this.status.textContent=`联机 ${ping} · ${quality}`;
+          this.status.textContent=`${this.online.route==='relay'?'TURN 中继':this.online.route==='direct'?'P2P 直连':'联机'} ${ping} · ${quality}`;
         } else {
           this.status.textContent='';
         }
@@ -2683,6 +3099,13 @@
     const online=new OnlinePeer();
     const game=new PongGame(canvas,ctx,audio,input,online);
     const ui=new UIController(game,online,audio);
+    const stopOnlineInput=()=>{
+      if(game.isClient() && online.connected)online.sendRealtime({t:'input',matchId:game.matchId,seq:++game.inputSeq,dir:0,target:null});
+    };
+    window.addEventListener('blur',stopOnlineInput);
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)stopOnlineInput();});
+    window.addEventListener('pagehide',()=>online.cleanup());
+
 
     // Always keep renderer alive so menu has a live CRT background.
     game.raf=requestAnimationFrame(game.loop);
