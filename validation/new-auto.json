@@ -1,0 +1,42 @@
+{
+  "canvasCalls": 0,
+  "grid": [
+    96,
+    32
+  ],
+  "profile": "auto",
+  "target": 60,
+  "tier": 0,
+  "phase": "playing",
+  "stats": {
+    "frames": 667,
+    "draws": 667,
+    "steps": 2667,
+    "skippedTime": 0,
+    "fps": 60.00393468424157,
+    "rafFps": 60.00393468424157,
+    "jsMs": 0.10819672130536838,
+    "rowWrites": 1818
+  },
+  "ball": 595.0373677767002,
+  "score": [
+    0,
+    0
+  ],
+  "name": "new-auto",
+  "cpu_throttle": 1,
+  "seconds": 10.002,
+  "submissions": 600,
+  "submission_hz": 59.99,
+  "render_js_mean_ms": 0.0645,
+  "render_js_p95_ms": 0.2,
+  "submit_interval_p95_ms": 17.1,
+  "submit_interval_max_ms": 49.9,
+  "metrics_delta_s": {
+    "TaskDuration": 0.6032,
+    "ScriptDuration": 0.1025,
+    "LayoutDuration": 0.1384,
+    "RecalcStyleDuration": 0.0037
+  },
+  "errors": []
+}

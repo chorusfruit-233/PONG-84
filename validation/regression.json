@@ -1,0 +1,315 @@
+{
+  "browser": "144.0.7559.96",
+  "flags": [
+    "--no-sandbox",
+    "--disable-gpu",
+    "--disable-gpu-compositing",
+    "--disable-accelerated-2d-canvas",
+    "--disable-webgl",
+    "--disable-software-rasterizer"
+  ],
+  "gpu": {
+    "2d_canvas": "disabled_software",
+    "direct_rendering_display_compositor": "disabled_off_ok",
+    "gpu_compositing": "disabled_software",
+    "multiple_raster_threads": "disabled_off",
+    "opengl": "disabled_off",
+    "rasterization": "disabled_software",
+    "raw_draw": "disabled_off_ok",
+    "skia_graphite": "disabled_off",
+    "trees_in_viz": "disabled_off",
+    "video_decode": "disabled_software",
+    "video_encode": "disabled_software",
+    "vulkan": "disabled_off",
+    "webgl": "disabled_off",
+    "webgpu": "disabled_off",
+    "webnn": "disabled_off"
+  },
+  "checks": [
+    {
+      "name": "GPU 合成与光栅化均为软件路径",
+      "pass": true,
+      "detail": {
+        "2d_canvas": "disabled_software",
+        "direct_rendering_display_compositor": "disabled_off_ok",
+        "gpu_compositing": "disabled_software",
+        "multiple_raster_threads": "disabled_off",
+        "opengl": "disabled_off",
+        "rasterization": "disabled_software",
+        "raw_draw": "disabled_off_ok",
+        "skia_graphite": "disabled_off",
+        "trees_in_viz": "disabled_off",
+        "video_decode": "disabled_software",
+        "video_encode": "disabled_software",
+        "vulkan": "disabled_off",
+        "webgl": "disabled_off",
+        "webgpu": "disabled_off",
+        "webnn": "disabled_off"
+      }
+    },
+    {
+      "name": "首次启动默认 ASCII",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "默认启动没有任何 Canvas getContext 调用",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "ASCII 字符只含可打印 ASCII",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "初始 ASCII 网格有上限",
+      "pass": true,
+      "detail": [
+        96,
+        32
+      ]
+    },
+    {
+      "name": "菜单停止持续帧循环",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "页面无持续 CSS 动画或滤镜",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "全屏覆盖球场、控制台和按钮",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "全屏底部控制不被裁切",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "开始进入倒计时",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "倒计时可暂停",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "倒计时暂停后恢复原阶段",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "空格发球不清分、不重新倒计时",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "重复发球键不会重开",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "切换图形不清除比分、长拍或发球权",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "图形路径按需创建 2D 上下文",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "切回 ASCII 释放大画布",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "ASCII 运行期间不请求图形上下文",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "ASCII 不记录拖尾",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "暂停时物理和重绘均停止",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "未变化帧没有文本行写入",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "键盘玩家基础移速仍为 1100",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "按键移速按时间计算",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "人机无增益 / long",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "人机无增益 / shield",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "人机无增益 / fast",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "人机无增益 / small",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "人机无增益 / big",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "人机无增益 / slow",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "人机无增益 / return",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "高频功能球设置保留",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "60/30 帧档位的固定步长物理一致",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "计时赛显示时长、隐藏比分设置",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "手动 P2P 控制完整保留",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "云端房间码入口保留",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "选择云联机尚未加载外部脚本",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "非法手动连接码有可见错误",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Canvas API 完全不可用时 ASCII 仍可启动",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "图形创建失败自动回退 ASCII",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "旧设置迁移保留玩法而首次默认 ASCII",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "新性能设置可保存",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "布局 1440×960 无横向溢出",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "布局 1366×768 无横向溢出",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "布局 800×600 无横向溢出",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "布局 390×844 无横向溢出",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "触控取消不意外发球",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "触控松手发球",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "竖屏不强制遮挡页面",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "布局 844×390 无横向溢出",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "横屏 844×390 球场/工具栏可见",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "布局 667×375 无横向溢出",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "横屏 667×375 球场/工具栏可见",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "测试过程中无未捕获脚本错误",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

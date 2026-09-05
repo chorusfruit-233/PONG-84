@@ -1,63 +1,85 @@
-# PONG-84 P2P v2 测试说明
+# 测试报告 · v3.0.0
 
-测试日期：2026-09-05
+测试对象：本次 UI / CPU 友好 ASCII 重写版。JavaScript 已通过 `node --check`。
 
-## 测试环境与边界
+**53 项回归检查 + 4 项附加检查通过，共 57 项。** 下表的数目来自实际运行结果，不包括未完成的联机测试。无未捕获游戏脚本错误。
 
-JavaScript 通过 Node.js 语法检查。浏览器检查使用 Chromium，将 HTML 注入 about:blank 文档执行；双端部分在两个独立应用文档中使用内存 WebRTC / PeerJS 模拟适配器，不是实际联网。测试模拟代码未加入发布的 index.html。
+| 序号 | 检查 | 结果 |
+| --- | --- | --- |
+| 1 | GPU 合成与光栅化均为软件路径 | 通过 |
+| 2 | 首次启动默认 ASCII | 通过 |
+| 3 | 默认启动没有任何 Canvas getContext 调用 | 通过 |
+| 4 | ASCII 字符只含可打印 ASCII | 通过 |
+| 5 | 初始 ASCII 网格有上限 | 通过 |
+| 6 | 菜单停止持续帧循环 | 通过 |
+| 7 | 页面无持续 CSS 动画或滤镜 | 通过 |
+| 8 | 全屏覆盖球场、控制台和按钮 | 通过 |
+| 9 | 全屏底部控制不被裁切 | 通过 |
+| 10 | 开始进入倒计时 | 通过 |
+| 11 | 倒计时可暂停 | 通过 |
+| 12 | 倒计时暂停后恢复原阶段 | 通过 |
+| 13 | 空格发球不清分、不重新倒计时 | 通过 |
+| 14 | 重复发球键不会重开 | 通过 |
+| 15 | 切换图形不清除比分、长拍或发球权 | 通过 |
+| 16 | 图形路径按需创建 2D 上下文 | 通过 |
+| 17 | 切回 ASCII 释放大画布 | 通过 |
+| 18 | ASCII 运行期间不请求图形上下文 | 通过 |
+| 19 | ASCII 不记录拖尾 | 通过 |
+| 20 | 暂停时物理和重绘均停止 | 通过 |
+| 21 | 未变化帧没有文本行写入 | 通过 |
+| 22 | 键盘玩家基础移速仍为 1100 | 通过 |
+| 23 | 按键移速按时间计算 | 通过 |
+| 24 | 人机无增益 / long | 通过 |
+| 25 | 人机无增益 / shield | 通过 |
+| 26 | 人机无增益 / fast | 通过 |
+| 27 | 人机无增益 / small | 通过 |
+| 28 | 人机无增益 / big | 通过 |
+| 29 | 人机无增益 / slow | 通过 |
+| 30 | 人机无增益 / return | 通过 |
+| 31 | 高频功能球设置保留 | 通过 |
+| 32 | 60/30 帧档位的固定步长物理一致 | 通过 |
+| 33 | 计时赛显示时长、隐藏比分设置 | 通过 |
+| 34 | 手动 P2P 控制完整保留 | 通过 |
+| 35 | 云端房间码入口保留 | 通过 |
+| 36 | 选择云联机尚未加载外部脚本 | 通过 |
+| 37 | 非法手动连接码有可见错误 | 通过 |
+| 38 | Canvas API 完全不可用时 ASCII 仍可启动 | 通过 |
+| 39 | 图形创建失败自动回退 ASCII | 通过 |
+| 40 | 旧设置迁移保留玩法而首次默认 ASCII | 通过 |
+| 41 | 新性能设置可保存 | 通过 |
+| 42 | 布局 1440×960 无横向溢出 | 通过 |
+| 43 | 布局 1366×768 无横向溢出 | 通过 |
+| 44 | 布局 800×600 无横向溢出 | 通过 |
+| 45 | 布局 390×844 无横向溢出 | 通过 |
+| 46 | 触控取消不意外发球 | 通过 |
+| 47 | 触控松手发球 | 通过 |
+| 48 | 竖屏不强制遮挡页面 | 通过 |
+| 49 | 布局 844×390 无横向溢出 | 通过 |
+| 50 | 横屏 844×390 球场/工具栏可见 | 通过 |
+| 51 | 布局 667×375 无横向溢出 | 通过 |
+| 52 | 横屏 667×375 球场/工具栏可见 | 通过 |
+| 53 | 测试过程中无未捕获脚本错误 | 通过 |
+| 54 | 持续主线程过载自动切到 30 帧低密度 | 通过 |
+| 55 | 重新选择自适应可恢复高档尝试 | 通过 |
+| 56 | 后台事件暂停本地对局、停止帧循环 | 通过 |
+| 57 | 返回前台仍等待玩家继续 | 通过 |
 
-另外使用真实 RTCPeerConnection 检查了双数据通道的可靠性参数、真实 SDP 生成/解析、offer-answer 设置后双方 signalingState 为 stable，以及局域网配置中 iceServers 为空。SDP 协商成功不代表网络通道已经接通。
+## 范围与局限
 
-受执行环境浏览器和网络策略限制，本地 file:// 和回环 HTTP 导航被阻止，真实 WebRTC 未收集到可用连接地址；未完成两台物理设备、公网 PeerJS、TURN、实际 GitHub Pages 部署后的端到端验证，也未实测 Firefox / Safari。
+界面尺寸包括 1440×960、1366×768、800×600、390×844、844×390、667×375。实际使用浏览器排版和截图，不只是检查 HTML 是否包含某个标签。触摸用例使用浏览器合成 PointerEvent；后台用例使用可见性属性测试替身和事件分发。它们不能代替实体手机触控、操作系统切后台或浏览器真实后台调度的验证。
 
-## 41 项界面、逻辑及模拟双端检查
+软件渲染与 6 倍 CPU 节流的测量见 `PERFORMANCE.md` 与 `validation/new-*.json`。无头环境注入完整 HTML，不等于验证了 `file://` 导航、网页服务器部署、具体旧电脑或物理显示设备的端到端显示效果。
 
-| 编号 | 检查项 | 结果 |
-|---|---|---|
-| 1 | Boot both application documents | 通过 |
-| 2 | No automatic CDN or signaling requests | 通过 |
-| 3 | Human movement and powerup constants retained | 通过 |
-| 4 | Space serves without resetting scores | 通过 |
-| 5 | ASCII toggle preserves game, score and effect | 通过 |
-| 6 | ASCII surface uses printable ASCII and LF only | 通过 |
-| 7 | AI never gains score-streak shield | 通过 |
-| 8 | Manual host invitation generated after complete ICE | 通过 |
-| 9 | LAN transport configuration has no external ICE servers | 通过 |
-| 10 | Native channel quality flags | 通过 |
-| 11 | Connection-code roundtrip and whitespace tolerance | 通过 |
-| 12 | Wrong connection-code type rejected | 通过 |
-| 13 | Damaged connection code rejected | 通过 |
-| 14 | Short cloud room code rejected in manual form | 通过 |
-| 15 | Invitation file import | 通过 |
-| 16 | Guest response generated | 通过 |
-| 17 | Response carries matching session ID | 通过 |
-| 18 | SIMULATED dual datachannel connection | 通过 |
-| 19 | Only host can start match | 通过 |
-| 20 | Match ID synchronized | 通过 |
-| 21 | Exit multiplayer button visible | 通过 |
-| 22 | SIMULATED host serve and score retention | 通过 |
-| 23 | SIMULATED client Space serve delivered to host | 通过 |
-| 24 | SIMULATED client movement reaches host | 通过 |
-| 25 | Render modes independent across peers | 通过 |
-| 26 | SIMULATED authoritative score propagation | 通过 |
-| 27 | Previous-round snapshots rejected after rematch | 通过 |
-| 28 | Realtime packets dropped rather than queued under backpressure | 通过 |
-| 29 | Malformed snapshot validation | 通过 |
-| 30 | SIMULATED explicit disconnect propagates | 通过 |
-| 31 | Cancel generation discards late callbacks | 通过 |
-| 32 | Relay requires TURN config | 通过 |
-| 33 | LAN rejects forced relay | 通过 |
-| 34 | Manual config ignores invalid cloud-only fields | 通过 |
-| 35 | SIMULATED cloud 4-digit room creation | 通过 |
-| 36 | SIMULATED cloud ctrl/rt adapter connection | 通过 |
-| 37 | Cloud room IDs do not depend on website hostname | 通过 |
-| 38 | SIMULATED cloud start message | 通过 |
-| 39 | No script exceptions during regression | 通过 |
-| 40 | No real external calls made by simulation | 通过 |
-| 41 | Landscape touch layout has usable input bounds | 通过 |
+## 原生联机尝试未完成
 
-## 发布后的两设备验收建议
+在两个浏览器上下文中尝试局域网原生 WebRTC。环境未返回可用连接地址，邀请码生成未成功；页面给出「浏览器没有提供可用的连接地址，请检查 WebRTC 权限、防火墙或 TURN 设置」提示。未生成成功的邀请、未建立真实数据通道，**不计入通过项**。原始结果见 `validation/extra_tests.json`。
 
-先使用同一局域网的两台设备打开新版文件，按邀请码→回应码→房主确认的流程连接，检查双方发球、移动、比分、再来一局和退出。然后用实际不同网络分别验证手动方式及云房间。配置真实 TURN 后勾选强制中继，并确认连接诊断显示 TURN 中继。最后在真实 Pages 地址重复这些步骤。
+手动 / 云房间界面、输入错误反馈、按需加载入口和既有协议代码保留；本次未进行公共 PeerJS、有效 TURN、线上 GitHub Pages、不同设备或不同网络的端到端联机实测。
 
-以上是部署验收建议，不代表这些现场网络测试已经执行。
+## 文件校验
+
+下面校验值对应发布包中的 `index.html`，与独立提供的 `index_ui.html` 字节相同。
+
+```text
+SHA-256  1d3aa28a046d94475d4fb79bde577a3b50954194cc0b28e88aaf6b8966898772
+```

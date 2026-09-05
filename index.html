@@ -1,710 +1,207 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+<!doctype html>
+<html lang="zh-CN" class="ascii-mode" data-phase="menu">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#050805">
-  <title>PONG-84 · 本地 P2P / 云联机 / ASCII</title>
-  <style>
-    :root {
-      --crt-color: #33ff33;
-      --crt-glow: rgba(51, 255, 51, .58);
-      --crt-bg: #051005;
-      --crt-dim: rgba(51, 255, 51, .24);
-      --crt-soft: rgba(51, 255, 51, .08);
-      --danger: #ff4d4d;
-      --panel: rgba(7, 10, 7, .96);
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111713">
+<meta name="description" content="PONG-84：纯前端乒乓球游戏，CPU 友好的 ASCII 字符渲染、本地双人、手动 WebRTC P2P 与云房间联机。">
+<title>PONG-84 · 纯字符也能开局</title>
+<style>:root{color-scheme:dark;--bg:#111713;--surface:#19201b;--card:#1d251f;--border:#333e35;--text:#ecf0e8;--muted:#a0aea0;--faint:#6f826f;--accent:#c6f18d;--accent-ink:#1b2812;--crt-color:#33ff33;--crt-bg:#051005;--crt-dim:rgba(51,255,51,.24);--crt-glow:transparent;--crt-soft:rgba(51,255,51,.08);--danger:#ffaaa0;--court-reserve:400px;font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}body{font-size:14px;line-height:1.5;overscroll-behavior-x:none}button,input,textarea,select{font:inherit}button{cursor:pointer;touch-action:manipulation}button,a{-webkit-tap-highlight-color:transparent}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}button:focus:not(:focus-visible){outline:none}[hidden],.hidden-section{display:none!important}h1,h2,h3,p{margin:0}h2{font-size:23px;font-weight:650;letter-spacing:-.5px}kbd{font:11px ui-monospace,Consolas,monospace;border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:var(--muted);white-space:nowrap}a{color:inherit;text-decoration:none}input,textarea,select{min-width:0;color:var(--text);background:#111713;border:1px solid var(--border);border-radius:7px;padding:8px}textarea{resize:vertical;user-select:text}summary{cursor:pointer;list-style:none;user-select:none}summary::-webkit-details-marker{display:none}summary:before{content:'+';font:17px ui-monospace,monospace;color:var(--accent);margin-right:8px}details[open]>summary:before{content:'−'}
+#app{max-width:1560px;padding:0 32px;margin:0 auto}.app-header{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid var(--border)}.wordmark{display:flex;align-items:center;gap:12px;white-space:nowrap}.mark{font:bold 28px ui-monospace,monospace;color:var(--accent);letter-spacing:-4px;margin-right:7px}.wordmark strong{font:800 30px ui-monospace,Consolas,monospace;letter-spacing:-2px}.wordmark strong span{color:var(--accent)}.wordmark small{color:var(--muted);font-size:11px;margin-left:8px}.header-caption{font-size:12px;color:var(--muted)}.header-caption span{color:var(--text);margin-left:8px}.version-tag{border:1px solid var(--border);border-radius:20px;padding:5px 10px;color:var(--muted);font-size:11px;white-space:nowrap}.version-tag b{color:var(--accent);font-weight:500;margin-left:8px}
+.game-shell{display:grid;grid-template-columns:minmax(0,1fr) 344px;gap:28px;padding:20px 0;outline:none;align-items:start}.arena-column{min-width:0}.arena-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px}.eyebrow{font-size:10px;letter-spacing:1.8px;color:var(--faint)}h1{font-size:clamp(18px,1.8vw,28px);font-weight:550;letter-spacing:-.7px;margin-top:5px}.session-phase{font-size:11px;white-space:nowrap;color:var(--accent);padding:5px 9px;background:#24301f;border-radius:4px}.arena-card{border:1px solid var(--border);border-radius:12px;background:var(--surface);overflow:hidden}.match-strip{height:64px;display:flex;align-items:center;justify-content:space-between;padding:10px 24px;gap:20px}.player-score{display:flex;align-items:center;gap:18px;min-width:115px}.player-score>span{color:var(--muted);font-size:11px}.player-score strong{font:500 38px/1 ui-monospace,Consolas,"Liberation Mono",monospace;min-width:30px;color:var(--text)}.player-score strong.active{color:var(--accent)}.player-score.right{flex-direction:row-reverse}.match-meta{text-align:center;display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--muted);gap:3px}.match-meta>span:first-child{color:var(--text)}.timer-display{display:none;font:13px ui-monospace,monospace}.timer-display.show{display:block}.timer-display.urgent{color:var(--danger)}.court-wrap{background:#080e09;display:flex;justify-content:center;align-items:center;padding:8px}.game-container{position:relative;width:min(100%,calc((100vh - var(--court-reserve))*16/9));width:min(100%,calc((100dvh - var(--court-reserve))*16/9));min-width:0;aspect-ratio:16/9;overflow:hidden;touch-action:none;outline:none;background:#080e09;border:1px solid #334235;contain:layout paint style}.game-container>canvas,.game-container>pre{position:absolute;inset:0;width:100%;height:100%;display:block;margin:0}#gameCanvas{background:var(--crt-bg)}#asciiScreen{display:none;white-space:pre;font-family:Consolas,"Liberation Mono","Courier New",monospace;font-weight:400;font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;color:var(--crt-color);background:#080e09;overflow:hidden;user-select:none;pointer-events:none;contain:strict;text-align:left;direction:ltr}#asciiScreen>.ascii-row{display:block;white-space:pre;width:100%;height:var(--line-height);line-height:var(--line-height);contain:layout paint style}.ascii-mode #asciiScreen{display:block}.ascii-mode #gameCanvas{display:none}.ascii-mode .countdown,.ascii-mode .center-toast{display:none!important}.court-status{min-height:30px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:5px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)}.renderer-badge{font:10px ui-monospace,Consolas,monospace;white-space:nowrap;color:var(--faint)}.shield-row{display:flex;gap:8px;margin-left:auto}.shield{display:none;color:var(--accent);font-size:10px}.shield.active{display:block}.court-toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;border-top:1px solid var(--border);padding:6px 10px;flex-wrap:wrap}.toolbar-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.tool-btn{background:transparent;color:var(--muted);border:1px solid transparent;border-radius:6px;padding:7px 9px;font-size:12px;min-height:34px;white-space:nowrap}.tool-btn:hover{background:#29342b;color:var(--text)}.tool-btn kbd{margin-left:4px}.btn{border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);font-weight:650;border-radius:7px;padding:10px 15px;font-size:13px;min-height:42px;white-space:normal}.btn:hover:not(:disabled){background:#d9f5b6;border-color:#d9f5b6}.btn.secondary{background:transparent;border-color:var(--border);color:var(--text);font-weight:450}.btn.secondary:hover:not(:disabled){background:#29342b;border-color:var(--faint)}.btn.small{font-size:11px;padding:7px 10px;min-height:33px}.btn kbd{color:inherit;border-color:#789650;margin-left:4px}.btn.primary{width:100%;padding:13px;font-size:14px;min-height:46px}.text-btn{border:0;background:none;color:var(--accent);font-size:11px;padding:5px}.text-btn:hover{text-decoration:underline}.arena-footer{display:flex;justify-content:space-between;gap:10px;padding:8px 1px 10px;color:var(--muted);font-size:11px}.rotate-hint{display:none;color:var(--faint)}.rotate-hint.show{display:block}.performance-strip{display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);padding:8px 0;color:var(--faint);font-size:11px}.perf-label{display:flex;align-items:center;gap:6px;white-space:nowrap}.steady-dot{width:5px;height:5px;background:var(--accent);border-radius:50%}.performance-strip output{color:var(--muted);flex:1;font-variant-numeric:tabular-nums}.inline-notice{padding:10px 12px;background:#2d3020;border:1px solid #5b603c;border-radius:6px;color:#e8e4b7;font-size:12px}
+.console-column{min-width:0;border-left:1px solid var(--border);padding-left:26px}.console-top{display:flex;justify-content:space-between;align-items:center;padding:3px 0 18px}.console-label{font-size:10px;color:var(--faint)}.menu-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.muted{color:var(--muted);font-size:12px;margin-top:6px;line-height:1.7}.menu-panel.hidden{display:none!important}.section{margin-top:19px;min-width:0}.section-title{display:block;color:var(--muted);font-size:11px;margin-bottom:8px}.select-row{display:flex;gap:6px;flex-wrap:wrap}.select-row.compact{gap:5px}.choice{color:var(--muted);border:1px solid var(--border);background:var(--surface);border-radius:6px;padding:7px 10px;font-size:11px;min-height:34px}.choice:hover{color:var(--text);border-color:var(--faint)}.choice.selected{border-color:var(--accent);color:var(--accent);background:#26331f}.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mode-card{text-align:left;position:relative;padding:12px 10px;min-height:84px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;border-radius:8px}.mode-card strong{font-size:13px;font-weight:600}.mode-card small{font-size:10px;color:var(--faint)}.mode-card.selected small{color:#abc09a}.mode-no{font:10px ui-monospace,monospace;position:absolute;top:8px;right:9px;color:var(--faint)}.score-input{width:57px;font-size:11px;text-align:center;padding:6px}.start-action{margin-top:22px}.small-note{color:var(--faint);font-size:10px;margin-top:8px;line-height:1.8}.settings-details{border-top:1px solid var(--border);margin-top:18px;padding-top:15px;font-size:12px}.settings-details>summary{display:flex;align-items:center;color:var(--text);min-height:28px}.settings-details>summary span{margin-left:auto;color:var(--faint);font-size:10px}.details-body{padding:0 0 5px}.details-body .section{margin-top:14px}.stats-report,.network-report{white-space:pre-wrap;word-break:break-word;font:11px/1.8 ui-monospace,Consolas,monospace;padding:12px;background:#0e150f;border-radius:6px;color:var(--muted);margin-top:12px}.console-bottom{border-top:1px solid var(--border);margin-top:20px;padding-top:15px;color:var(--muted);font-size:10px;line-height:1.8}.console-bottom span{color:var(--faint)}.playing-panel,.pause-panel{padding:7px 0 5px}.panel-symbol{display:block;font:30px/1.2 ui-monospace,monospace;letter-spacing:3px;color:var(--accent);margin:10px 0 22px}.pause-panel{display:none}.pause-panel.show{display:block}.actions{display:flex;flex-direction:column;gap:9px;margin-top:22px}.live-info{margin:24px 0}.live-info>div{border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;padding:12px 0;font-size:12px}.live-info span{color:var(--faint)}.live-info strong{font-weight:500;color:var(--text);text-align:right}.full-width{width:100%}.key-guide{margin:12px 0}.key-guide>div{margin:12px 0}.key-guide dt{font-size:12px}.key-guide dd{font-size:11px;color:var(--muted);margin:5px 0 0}.legend{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;color:var(--muted);font-size:11px}.legend b{display:inline-block;color:var(--crt-color);font:14px ui-monospace,monospace;min-width:15px}
+#onlineSection{border-top:1px solid var(--border);padding-top:17px}#transportChooser{display:grid;grid-template-columns:1fr 1fr}.network-caption,.online-info{font-size:11px;color:var(--muted);line-height:1.8;margin:10px 0;overflow-wrap:anywhere}.network-fields{border:0;margin:0;padding:0;min-width:0}.network-scope{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted);margin:12px 0}.network-scope select{font-size:10px;width:220px;max-width:80%;padding:8px 5px}.network-details{font-size:11px;border:1px solid var(--border);border-radius:6px;padding:9px 10px;margin:12px 0}.network-details summary{color:var(--muted)}.network-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.network-grid .full{grid-column:1/-1}.network-grid label{display:flex;flex-direction:column;gap:5px;font-size:10px;color:var(--muted);min-width:0}.network-grid input,.network-grid textarea{width:100%;font-size:11px}.network-grid .check-label{display:flex;flex-direction:row;align-items:center}.network-grid .check-label input{width:auto;accent-color:var(--accent)}.network-divider{border-top:1px solid var(--border);padding-top:12px;font-size:10px;color:var(--muted);margin-bottom:12px}.connection-panel{margin-top:12px;min-width:0}.connection-guide{font-size:11px;color:var(--accent);padding:10px;border-left:2px solid var(--accent);background:#222d1e;line-height:1.8;margin-bottom:12px}.connection-status{font-size:11px;color:var(--muted);line-height:1.8;margin-top:10px;white-space:pre-wrap;overflow-wrap:anywhere}.online-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.online-code{width:100%;font:11px/1.6 ui-monospace,Consolas,monospace;margin-top:6px}.signal-code{height:100px;resize:vertical;overflow-wrap:anywhere}.cloud-room-code{text-align:center;font-size:28px;letter-spacing:12px;min-height:58px}#manualExchange label{display:block;color:var(--muted);font-size:11px;margin-top:12px}#manualChooser .choice,#onlineChooser .choice{flex:1}#networkReport{font-size:10px;padding:8px}
+.touch-layer{position:absolute;inset:0;display:none;z-index:3;touch-action:none;user-select:none}.touch-layer.active{display:flex}.touch-half{flex:1;position:relative}.touch-cursor{display:none}.countdown{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;z-index:4}.countdown.hidden{display:none}.countdown span{font:700 72px ui-monospace,Consolas,monospace;color:var(--text);background:#111713;padding:0 18px;border:1px solid var(--border)}.center-toast{display:none;position:absolute;bottom:10px;left:50%;transform:translateX(-50%);color:var(--accent);font-size:12px;padding:5px 10px;background:#162219;z-index:4;pointer-events:none}.center-toast.show{display:block}.app-footer{display:flex;justify-content:space-between;padding:16px 0 22px;border-top:1px solid var(--border);color:var(--faint);font-size:10px;gap:12px}.noscript{padding:16px;background:#312319;color:#fff}
+#gameShell:fullscreen,#gameShell:-webkit-full-screen{background:var(--bg);width:100vw;height:100vh;height:100dvh;overflow:auto;padding:18px 24px;--court-reserve:240px}.game-shell:fullscreen .arena-heading,.game-shell:-webkit-full-screen .arena-heading{margin-bottom:12px}.game-shell:fullscreen h1,.game-shell:-webkit-full-screen h1{font-size:20px}.game-shell:fullscreen .arena-footer,.game-shell:-webkit-full-screen .arena-footer{padding:9px 0}
+/* No filters, shadows, continuous animation or compositing hints in either UI. */
+@media(min-width:1100px){.console-column{max-height:calc(100dvh - 145px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) var(--bg);padding-right:4px}#gameShell:fullscreen .console-column{max-height:calc(100dvh - 40px)}}
+@media(max-width:1100px){#app{padding:0 20px}.game-shell{gap:18px;grid-template-columns:minmax(0,1fr) 305px}.console-column{padding-left:18px}.header-caption{display:none}.match-strip{padding:10px 16px}.player-score{gap:10px;min-width:80px}.player-score>span{font-size:10px}.court-toolbar{padding:8px}.tool-btn{padding:6px}.renderer-badge{font-size:9px}}
+@media(max-width:800px) and (min-height:501px){#app{padding:0 14px}.app-header{min-height:74px}.wordmark strong{font-size:26px}.wordmark small{display:none}.game-shell{grid-template-columns:1fr;padding:20px 0;gap:22px;--court-reserve:270px}.console-column{border-left:0;border-top:1px solid var(--border);padding:20px 0 0}.arena-heading{margin-bottom:14px}.match-strip{height:74px}.player-score strong{font-size:36px}.performance-strip{padding:9px 0}.court-wrap{padding:8px}.console-top{padding-bottom:10px}.mode-card{min-height:79px;padding:12px 14px}.mode-card small{font-size:11px}.select-row.compact .choice{flex:1}.console-bottom{margin-top:16px}.app-footer{flex-direction:column;gap:3px}.arena-footer{padding:10px 0}.arena-footer p{font-size:10px}.settings-details{margin-top:16px}.game-shell:fullscreen{padding:12px}.game-shell:fullscreen .console-column{max-height:none}}
+@media(max-width:500px){.version-tag{font-size:10px}.wordmark{gap:8px}.arena-heading h1{font-size:19px}.session-phase{font-size:10px;padding:4px 6px}.match-strip{gap:8px;padding:8px 12px}.match-meta{font-size:10px}.player-score{min-width:76px}.court-status{padding:5px 10px;gap:5px;font-size:10px}.renderer-badge{display:none}.toolbar-group{gap:3px}.tool-btn{font-size:10px;padding:5px 6px}.tool-btn kbd{display:none}.btn.small{font-size:10px;padding:6px 8px}.performance-strip{gap:8px;font-size:10px}.performance-strip .perf-label{font-size:10px}.rotate-hint{display:none!important}.console-column{padding-top:16px}}
+@media(max-height:500px) and (orientation:landscape){:root{--court-reserve:165px}#app{padding:0 10px}.app-header{min-height:43px}.wordmark strong{font-size:21px}.mark{font-size:20px}.wordmark small,.header-caption,.app-footer,.arena-heading,.arena-footer,.console-bottom{display:none}.version-tag{font-size:9px;padding:3px 6px}.game-shell{padding:8px 0;gap:14px;grid-template-columns:minmax(0,1fr) 284px}.console-column{padding-left:13px;max-height:calc(100dvh - 60px);overflow-y:auto}.console-top{padding:0 0 9px}.match-strip{height:46px;padding:5px 14px}.player-score strong{font-size:28px}.match-meta{font-size:9px;gap:0}.court-wrap{padding:5px}.court-status{min-height:24px;font-size:10px;padding:3px 10px}.court-toolbar{padding:4px 7px}.tool-btn,.btn.small{min-height:28px;font-size:10px;padding:4px 7px}.tool-btn kbd{display:none}.performance-strip{padding:5px 1px;border:0;font-size:9px}.renderer-badge{font-size:9px}.console-top .eyebrow{font-size:9px}h2{font-size:20px}.section{margin-top:12px}.mode-card{min-height:68px;padding:8px}.mode-card strong{font-size:12px}.mode-card small{font-size:9px}.mode-no{top:5px;font-size:9px}.start-action{margin-top:15px}.settings-details{margin-top:12px;padding-top:10px}.app-header .wordmark{gap:6px}html[data-phase="playing"] .game-shell,html[data-phase="countdown"] .game-shell{grid-template-columns:1fr}html[data-phase="playing"] .console-column,html[data-phase="countdown"] .console-column{display:none}#gameShell:fullscreen,#gameShell:-webkit-full-screen{padding:6px 10px;--court-reserve:116px}#gameShell:fullscreen .console-column{max-height:calc(100dvh - 14px)}.countdown span{font-size:40px}.shield-row{gap:4px}.shield{font-size:9px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      width: 100%; height: 100%; overflow: hidden;
-      background: radial-gradient(ellipse at center, #1b1b1b 0%, #080808 78%);
-      color: var(--crt-color);
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", "PingFang SC", "Microsoft YaHei", monospace;
-      user-select: none; -webkit-user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation; overscroll-behavior: none;
-    }
-
-    button, input, textarea { font: inherit; }
-    button { -webkit-tap-highlight-color: transparent; }
-
-    #app {
-      width: 100%; height: 100%; display: grid; place-items: center;
-      position: relative; padding: 20px 12px 44px;
-    }
-
-    .crt-assembly {
-      width: min(96vw, 1040px); position: relative; padding: 16px;
-      border-radius: 24px; background: #080808;
-      box-shadow: inset 0 0 60px rgba(0,0,0,.95), 0 0 0 2px #242424,
-                  0 0 0 10px #111, 0 0 0 11px #333, 0 20px 80px rgba(0,0,0,.72);
-    }
-    .crt-bezel { background: #000; border-radius: 19px; padding: 8px; }
-    .crt-screen {
-      position: relative; overflow: hidden; border-radius: 48% / 4%;
-      box-shadow: inset 0 0 110px rgba(0,0,0,.94), inset 0 0 32px rgba(0,0,0,.82), 0 0 30px var(--crt-glow);
-      animation: screenFlicker 7s infinite;
-    }
-    @keyframes screenFlicker {
-      0%, 100% { opacity: 1; filter: brightness(1); }
-      12% { opacity: .985; filter: brightness(.985); }
-      31% { opacity: .97; filter: brightness(.975); }
-      48% { opacity: 1; filter: brightness(1.01); }
-      73% { opacity: .982; filter: brightness(.99); }
-    }
-
-    .game-container {
-      width: 100%; aspect-ratio: 16 / 9; position: relative; overflow: hidden;
-      background: var(--crt-bg); border: 1px solid #181818; touch-action: none;
-    }
-    canvas { display: block; width: 100%; height: 100%; }
-
-    .hud { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
-    .titlebar {
-      position: absolute; top: 8px; left: 12px; right: 12px;
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 10px; color: var(--crt-dim); letter-spacing: 2px;
-    }
-    .brand {
-      color: var(--crt-color); font-weight: 800; letter-spacing: 6px;
-      text-shadow: 0 0 10px var(--crt-glow), 0 0 20px var(--crt-glow);
-    }
-    .title-actions { display: flex; align-items: center; gap: 6px; pointer-events: auto; }
-    #pauseBtn, #fullscreenBtn, #renderModeBtn {
-      pointer-events: auto; background: transparent; border: 1px solid var(--crt-dim);
-      color: var(--crt-dim); border-radius: 3px; padding: 3px 8px; cursor: pointer; font-size: 10px;
-      transition: color .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
-    }
-    #pauseBtn { display: none; }
-    #pauseBtn:hover, #fullscreenBtn:hover, #renderModeBtn:hover {
-      color: var(--crt-color); border-color: var(--crt-color); background: var(--crt-soft);
-      box-shadow: 0 0 9px var(--crt-glow);
-    }
-
-    /* Fullscreen keeps every interactive layer aligned to the 16:9 playfield. */
-    #gameContainer:fullscreen,
-    #gameContainer:-webkit-full-screen {
-      width: 100vw; height: 100vh; max-width: none; aspect-ratio: auto;
-      display: block; background: #000; border: 0;
-    }
-    #gameContainer:fullscreen > #asciiScreen,
-    #gameContainer:-webkit-full-screen > #asciiScreen,
-    #gameContainer:fullscreen > canvas,
-    #gameContainer:-webkit-full-screen > canvas,
-    #gameContainer:fullscreen > .hud,
-    #gameContainer:-webkit-full-screen > .hud,
-    #gameContainer:fullscreen > .touch-layer,
-    #gameContainer:-webkit-full-screen > .touch-layer,
-    #gameContainer:fullscreen > .countdown,
-    #gameContainer:-webkit-full-screen > .countdown,
-    #gameContainer:fullscreen > .overlay,
-    #gameContainer:-webkit-full-screen > .overlay {
-      position: absolute; inset: auto;
-      left: 50%; top: 50%; transform: translate(-50%, -50%);
-      width: min(100vw, calc(100vh * 16 / 9));
-      height: min(100vh, calc(100vw * 9 / 16));
-    }
-
-    .scoreboard {
-      position: absolute; top: 24px; left: 50%; transform: translateX(-50%);
-      display: flex; align-items: center; gap: 36px; font-size: 34px; font-weight: 800;
-      color: var(--crt-dim); text-shadow: 0 0 6px var(--crt-glow);
-    }
-    .scoreboard .active { color: #fff; text-shadow: 0 0 14px var(--crt-glow), 0 0 28px var(--crt-glow); }
-    .scoreboard .dash { font-size: 14px; font-weight: 400; }
-
-    .timer-display {
-      position: absolute; top: 68px; left: 50%; transform: translateX(-50%);
-      opacity: 0; font-size: 14px; letter-spacing: 2px; color: var(--crt-dim);
-      text-shadow: 0 0 5px var(--crt-glow); transition: opacity .2s;
-    }
-    .timer-display.show { opacity: 1; }
-    .timer-display.urgent { color: var(--danger); text-shadow: 0 0 10px rgba(255,77,77,.72); }
-
-    .shield-row {
-      position: absolute; top: 68px; left: 50%; transform: translateX(-50%);
-      display: flex; gap: 42px; font-size: 10px; color: var(--crt-dim);
-    }
-    .shield-row.timer-offset { top: 91px; }
-    .shield {
-      opacity: 0; display: flex; align-items: center; gap: 4px; transition: opacity .2s;
-    }
-    .shield.active { opacity: 1; color: var(--crt-color); text-shadow: 0 0 8px var(--crt-glow); }
-    .shield svg { width: 14px; height: 14px; filter: drop-shadow(0 0 3px var(--crt-glow)); }
-
-    .center-toast {
-      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-      opacity: 0; transition: opacity .18s; font-size: 13px; letter-spacing: 3px;
-      pointer-events: none; text-shadow: 0 0 12px currentColor;
-    }
-    .center-toast.show { opacity: 1; }
-    .center-toast.curve { color: #ffaa33; }
-    .center-toast.cheat { color: #ff4a4a; top: 58%; }
-
-    .status-strip {
-      position: absolute; left: 50%; bottom: 30px; transform: translateX(-50%);
-      display: flex; gap: 10px; align-items: center; color: var(--crt-dim); font-size: 10px;
-      white-space: nowrap;
-    }
-    .status-strip .dot { width: 7px; height: 7px; border-radius: 50%; box-shadow: 0 0 5px currentColor; }
-
-    .controls-hint {
-      position: absolute; left: 8px; right: 8px; bottom: 8px; text-align: center;
-      color: var(--crt-dim); font-size: 10px; text-shadow: 0 0 4px var(--crt-glow);
-    }
-
-    .fx-scanlines, .fx-scanbar, .fx-vignette, .fx-reflection { position: absolute; inset: 0; pointer-events: none; }
-    .fx-scanlines {
-      z-index: 25; background: repeating-linear-gradient(0deg, rgba(0,0,0,.24), rgba(0,0,0,.24) 1px, transparent 1px, transparent 3px);
-    }
-    .fx-scanbar {
-      z-index: 26; height: 8px; inset: auto 0 auto 0;
-      background: linear-gradient(to bottom, transparent, rgba(255,255,255,.035), transparent);
-      animation: scanMove 9s linear infinite;
-    }
-    @keyframes scanMove { from { top: -10%; } to { top: 110%; } }
-    .fx-vignette { z-index: 27; background: radial-gradient(ellipse at center, transparent 54%, rgba(0,0,0,.62) 100%); }
-    .fx-reflection { z-index: 28; background: linear-gradient(104deg, rgba(255,255,255,.04) 0%, transparent 27%, transparent 58%, rgba(255,255,255,.022) 68%, transparent 100%); }
-
-    .overlay {
-      position: absolute; inset: 0; z-index: 40; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; padding: 20px;
-      background: var(--panel); overflow: auto; transition: opacity .2s ease;
-      touch-action: pan-y; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
-    }
-    .overlay.hidden { opacity: 0; pointer-events: none; }
-    .overlay h2 {
-      font-size: clamp(20px, 3vw, 28px); letter-spacing: 5px; margin: 0;
-      text-shadow: 0 0 15px var(--crt-glow);
-    }
-    .menu-title-row {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      margin-bottom: 5px;
-    }
-    #menuFullscreenBtn {
-      color: var(--crt-dim); background: transparent; border: 1px solid var(--crt-dim);
-      border-radius: 3px; padding: 4px 9px; cursor: pointer; font-size: 10px;
-      letter-spacing: 1px; white-space: nowrap; box-shadow: none; text-shadow: none;
-      transition: color .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
-    }
-    #menuFullscreenBtn:hover, #menuFullscreenBtn:focus-visible {
-      color: var(--crt-color); border-color: var(--crt-color); background: var(--crt-soft);
-      box-shadow: 0 0 9px var(--crt-glow); outline: none;
-    }
-    .overlay > p { color: var(--crt-dim); font-size: 11px; margin-bottom: 12px; text-align: center; }
-
-    .settings-grid {
-      width: min(100%, 620px); display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px;
-    }
-    .settings-grid .full { grid-column: 1 / -1; }
-    .section { margin-top: 10px; }
-    .section-title { color: var(--crt-dim); font-size: 10px; letter-spacing: 2px; margin-bottom: 7px; text-align: center; }
-    .select-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
-
-    .choice, .btn {
-      color: #777; background: transparent; border: 1px solid #333; border-radius: 4px;
-      cursor: pointer; transition: .16s ease; letter-spacing: 1px;
-    }
-    .choice { padding: 7px 12px; font-size: 11px; }
-    .choice:hover, .choice:focus-visible { color: #ccc; border-color: #666; outline: none; }
-    .choice.selected {
-      color: var(--crt-color); border-color: var(--crt-color); background: var(--crt-soft);
-      box-shadow: 0 0 10px var(--crt-glow), inset 0 0 8px var(--crt-soft); text-shadow: 0 0 5px var(--crt-glow);
-    }
-    .btn {
-      color: var(--crt-color); border-color: var(--crt-color); padding: 10px 30px; font-size: 12px;
-      box-shadow: 0 0 10px var(--crt-glow), inset 0 0 10px var(--crt-soft); text-shadow: 0 0 5px var(--crt-glow);
-    }
-    .btn:hover { color: #fff; background: var(--crt-soft); box-shadow: 0 0 18px var(--crt-glow), inset 0 0 12px var(--crt-soft); }
-    .btn.secondary { color: #999; border-color: #555; box-shadow: none; text-shadow: none; }
-    .btn.small { padding: 7px 14px; font-size: 10px; }
-
-    .score-input {
-      width: 62px; padding: 7px; background: transparent; color: var(--crt-color);
-      border: 1px solid #333; border-radius: 4px; text-align: center; outline: none; font-size: 11px;
-    }
-    .score-input:focus { border-color: var(--crt-color); box-shadow: 0 0 8px var(--crt-glow); }
-
-    .actions { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
-    .hidden-section { display: none !important; }
-
-    .online-box { width: min(100%, 520px); margin: 9px auto 0; }
-    .online-info { color: #777; font-size: 10px; line-height: 1.5; text-align: center; margin-bottom: 7px; }
-    .online-code {
-      width: 100%; min-height: 72px; resize: none; background: #090909; color: var(--crt-color);
-      border: 1px solid #333; border-radius: 4px; padding: 7px; outline: none; font-size: 9px; user-select: text;
-    }
-    .online-code:focus { border-color: var(--crt-color); }
-    .cloud-room-code {
-      min-height: 50px; height: 50px; resize: none; text-align: center; font-size: 27px;
-      font-weight: 700; letter-spacing: 12px; padding-left: 18px; user-select: text;
-    }
-    .online-actions { display: flex; gap: 7px; margin-top: 7px; justify-content: center; }
-
-    #pauseOverlay { display: none; z-index: 45; }
-    #pauseOverlay.show { display: flex; }
-
-    .countdown {
-      position: absolute; inset: 0; z-index: 20; display: grid; place-items: center;
-      pointer-events: none;
-    }
-    .countdown.hidden { display: none; }
-    .countdown span {
-      font-size: 76px; font-weight: 900; text-shadow: 0 0 30px var(--crt-glow), 0 0 60px var(--crt-glow);
-      animation: pop .48s ease-out;
-    }
-    @keyframes pop { from { opacity: 0; transform: scale(.55); } 35% { opacity: 1; transform: scale(1.12); } to { opacity: .92; transform: scale(1); } }
-
-    .touch-layer {
-      position: absolute; inset: 0; z-index: 8; display: none;
-      touch-action: none; -webkit-touch-callout: none; overflow: hidden;
-    }
-    .touch-layer.active { display: flex; }
-    .touch-layer.single { flex-direction: column; }
-    .touch-layer.dual { flex-direction: row; }
-    .touch-half, .touch-zone { flex: 1; display: flex; }
-    .touch-half { flex-direction: column; position: relative; }
-    .touch-zone { pointer-events: none; position: relative; }
-    .touch-layer.dual .touch-half + .touch-half {
-      border-left: 1px dashed rgba(255,255,255,.08);
-    }
-    .touch-cursor {
-      position: absolute; left: 50%; top: 50%; width: 44px; height: 44px;
-      border: 1px solid var(--crt-dim); border-radius: 50%; pointer-events: none;
-      opacity: 0; transform: translate(-50%,-50%) scale(.72);
-      transition: opacity .10s ease, transform .10s ease;
-      box-shadow: 0 0 14px var(--crt-glow), inset 0 0 10px var(--crt-soft);
-      background: rgba(0,0,0,.16); z-index: 2;
-    }
-    .touch-cursor::before, .touch-cursor::after {
-      content: ''; position: absolute; left: 50%; top: 50%;
-      background: var(--crt-dim); transform: translate(-50%,-50%);
-    }
-    .touch-cursor::before { width: 20px; height: 1px; }
-    .touch-cursor::after { width: 1px; height: 20px; }
-    .touch-cursor.show { opacity: .72; transform: translate(-50%,-50%) scale(1); }
-    .touch-layer.touching { background: radial-gradient(circle at var(--touch-x,50%) var(--touch-y,50%), var(--crt-soft), transparent 17%); }
-
-    @media (pointer: coarse) {
-      #fullscreenBtn, #pauseBtn, #menuFullscreenBtn, #renderModeBtn { min-height: 34px; min-width: 50px; padding: 6px 10px; }
-      .choice { min-height: 34px; padding: 7px 12px; }
-      .btn { min-height: 40px; }
-      .btn.small { min-height: 34px; }
-      .score-input { min-height: 34px; }
-      .online-code { font-size: 12px; }
-    }
-
-    .crt-label { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px 0; color: #444; font-size: 9px; letter-spacing: 2px; }
-    .power-led { width: 6px; height: 6px; border-radius: 50%; background: var(--crt-color); box-shadow: 0 0 6px var(--crt-glow); animation: pulse 2.8s ease-in-out infinite; }
-    @keyframes pulse { 50% { opacity: .35; } }
-
-    .legend {
-      position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-      display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap;
-      color: #555; font-size: 9px; width: min(94vw, 900px); pointer-events: none;
-    }
-    .legend span { display: inline-flex; align-items: center; gap: 4px; }
-    .legend i { width: 6px; height: 6px; border-radius: 50%; box-shadow: 0 0 4px currentColor; }
-
-    .rotate-hint {
-      position: fixed; inset: 0; z-index: 100; background: #080808; display: none;
-      flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: var(--crt-dim);
-    }
-    .rotate-hint.show { display: flex; }
-    .rotate-hint svg { width: 58px; height: 58px; animation: rotatePhone 1.8s ease-in-out infinite; filter: drop-shadow(0 0 5px var(--crt-glow)); }
-    @keyframes rotatePhone { 50% { transform: rotate(90deg); } }
-    .rotate-hint p { font-size: 13px; letter-spacing: 2px; }
-
-    @media (max-width: 720px) {
-      #app { padding: 8px 6px 24px; }
-      .crt-assembly { width: 98vw; padding: 8px; border-radius: 15px; }
-      .crt-bezel { padding: 5px; border-radius: 12px; }
-      .scoreboard { top: 20px; font-size: 25px; gap: 25px; }
-      .timer-display { top: 52px; font-size: 11px; }
-      .shield-row { top: 52px; font-size: 9px; gap: 28px; }
-      .shield-row.timer-offset { top: 70px; }
-      .titlebar { top: 5px; }
-      .brand { letter-spacing: 4px; }
-      .settings-grid { grid-template-columns: 1fr; gap: 0; }
-      .settings-grid .full { grid-column: auto; }
-      .section { margin-top: 7px; }
-      .choice { padding: 5px 9px; font-size: 9px; }
-      .overlay { padding: 12px; justify-content: flex-start; }
-      .overlay h2 { margin-top: 3px; }
-      .overlay > p { margin-bottom: 4px; }
-      .actions { margin-top: 10px; }
-      .btn { padding: 8px 23px; font-size: 10px; }
-      .controls-hint { font-size: 8px; bottom: 5px; }
-      .status-strip { bottom: 20px; font-size: 8px; }
-      .legend { bottom: 4px; gap: 6px; font-size: 8px; }
-    }
-
-    /* ASCII is a real text grid, not a pixel filter applied to the canvas. */
-    #asciiScreen {
-      display: none; position: absolute; inset: 0; z-index: 1; margin: 0; padding: 0;
-      width: 100%; height: 100%; overflow: hidden; white-space: pre;
-      font-family: "Liberation Mono", Consolas, "Courier New", monospace;
-      font-weight: 400; font-variant-ligatures: none; font-kerning: none;
-      background: var(--crt-bg); color: var(--crt-color); text-shadow: none;
-      pointer-events: none; user-select: none; -webkit-user-select: none;
-      text-align: left; border: 0; border-radius: 0;
-    }
-    .ascii-mode #gameCanvas { visibility: hidden; }
-    .ascii-mode #asciiScreen { display: block; }
-    .ascii-mode .crt-screen { animation: none; box-shadow: none; border-radius: 0; }
-    .ascii-mode .fx-scanlines, .ascii-mode .fx-scanbar,
-    .ascii-mode .fx-vignette, .ascii-mode .fx-reflection,
-    .ascii-mode .hud > :not(.titlebar), .ascii-mode .countdown,
-    .ascii-mode .titlebar > .brand, .ascii-mode #modeBadge,
-    .ascii-mode .touch-cursor, .ascii-mode .legend { display: none !important; }
-    .ascii-mode .titlebar { justify-content: flex-end; top: 4px; right: 8px; }
-    .ascii-mode #pauseBtn, .ascii-mode #fullscreenBtn, .ascii-mode #renderModeBtn {
-      color: var(--crt-color); background: var(--crt-bg); box-shadow: none;
-      border-radius: 0; text-shadow: none;
-    }
-    .ascii-mode .touch-layer.touching { background: none; }
-    .ascii-mode .touch-layer.dual .touch-half + .touch-half { border: 0; }
-    .ascii-mode .power-led { animation: none; box-shadow: none; }
-    .render-note { text-align: center; color: #888; font-size: 9px; line-height: 1.5; margin-top: 5px; }
-    #renderModeBtn[aria-pressed="true"] { color: var(--crt-color); border-color: var(--crt-color); }
-
-    /* Landscape phones must fit the entire court, not just its top half. */
-    @media (max-height: 600px) and (orientation: landscape) {
-      #app { padding: 8px 8px 24px; }
-      .crt-assembly {
-        width: min(96vw, 1040px, calc((100vh - 66px) * 16 / 9 + 22px));
-        width: min(96vw, 1040px, calc((100dvh - 66px) * 16 / 9 + 22px));
-        padding: 6px; border-radius: 12px;
-      }
-      .crt-bezel { padding: 4px; border-radius: 8px; }
-      .crt-label { display: none; }
-      .overlay { justify-content: flex-start; padding: 10px; }
-      .overlay h2 { font-size: 22px; }
-      .overlay > p { margin-bottom: 5px; }
-      .settings-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 12px; }
-      .settings-grid .full { grid-column: 1 / -1; }
-      .section { margin-top: 7px; }
-      .section-title { margin-bottom: 5px; }
-      .select-row { gap: 5px; }
-      .choice { padding: 5px 8px; font-size: 10px; }
-      .actions { margin-top: 10px; flex-shrink: 0; }
-      .legend { bottom: 4px; }
-    }
-
-    /* Connection forms remain scrollable even inside a short landscape viewport. */
-    #menuOverlay { justify-content: flex-start; }
-    #menuOverlay > *, .settings-grid, .section { flex-shrink: 0; min-width: 0; }
-    .network-fields { border: 0; min-width: 0; margin: 12px 0; padding: 0; }
-    .network-fields:disabled { opacity: .64; }
-    .network-scope { display: flex; gap: 10px; justify-content: center; align-items: center; font-size: 11px; }
-    .network-scope select, .network-grid input:not([type="checkbox"]), .network-grid textarea {
-      background: #090d09; color: var(--crt-color); border: 1px solid #3b493b; border-radius: 4px;
-      font: inherit; padding: 8px; min-width: 0; width: 100%; outline: none;
-      user-select: text; -webkit-user-select: text; touch-action: auto;
-    }
-    .network-scope select { max-width: 340px; font-size: 11px; }
-    .network-grid input:focus, .network-grid textarea:focus, .network-scope select:focus { border-color: var(--crt-color); }
-    .network-details { border: 1px solid #293329; padding: 10px 12px; border-radius: 5px; margin-top: 9px; }
-    .network-details summary { cursor: pointer; color: #b0bdb0; font-size: 11px; line-height: 1.6; }
-    .network-caption { color: #9ba69b; font-size: 10px; line-height: 1.65; margin: 8px 0; text-align: left; }
-    #transportDescription { text-align: center; }
-    .network-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; }
-    .network-grid label { display: flex; flex-direction: column; gap: 5px; font-size: 10px; color: #bdc8bd; }
-    .network-grid .check-label { flex-direction: row; align-items: center; }
-    .network-grid input[type="checkbox"] { accent-color: var(--crt-color); min-width: 16px; min-height: 16px; }
-    .network-grid textarea { resize: vertical; min-height: 58px; }
-    .network-divider { color: #b3bdb3; font-size: 10px; padding: 10px 0; border-top: 1px solid #293329; margin-top: 10px; }
-    .connection-panel { border: 1px solid var(--crt-dim); background: rgba(0,0,0,.18); padding: 12px; border-radius: 5px; }
-    .connection-guide { text-align: center; color: #d5ded5; font-size: 10px; line-height: 1.7; margin-bottom: 10px; }
-    .connection-status { color: var(--crt-color); font-size: 11px; line-height: 1.65; margin: 10px 0; min-height: 18px; overflow-wrap: anywhere; }
-    #manualExchange label { display: block; color: #d0dbd0; font-size: 11px; margin: 12px 0 6px; }
-    .signal-code { min-height: 90px; height: 90px; resize: vertical; line-height: 1.4; overflow-wrap: anywhere; touch-action: auto; -webkit-user-select: text; }
-    .network-report { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; font-size: 10px; color: #bac9ba; margin: 10px 0; line-height: 1.7; user-select: text; -webkit-user-select: text; }
-    .online-actions { flex-wrap: wrap; }
-    button:disabled { cursor: wait; opacity: .55; }
-    #disconnectBtn { display: none; border: 1px solid var(--crt-dim); color: var(--crt-color); background: var(--crt-bg); border-radius: 3px; padding: 3px 8px; cursor: pointer; font-size: 10px; }
-    @media (pointer: coarse) { #disconnectBtn { min-height: 34px; } .signal-code { font-size: 12px; } }
-    @media (max-width: 480px) { .network-grid { grid-template-columns: minmax(0,1fr); } .network-scope { flex-direction: column; align-items: stretch; } }
-  </style>
+.game-container{width:100%;max-width:var(--court-limit,100%)}
+@media(max-height:500px) and (orientation:landscape){html[data-phase="playing"] .app-header,html[data-phase="countdown"] .app-header{display:none}}
+</style>
 </head>
 <body>
-  <div class="rotate-hint" id="rotateHint" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-      <rect x="4" y="2" width="16" height="20" rx="2"></rect>
-      <circle cx="12" cy="18" r="1.5" fill="currentColor"></circle>
-    </svg>
-    <p>横屏体验更佳 · 进入游戏后可直接拖动球拍</p>
-  </div>
-
-  <main id="app">
-    <section class="crt-assembly" aria-label="PONG-84 游戏机">
-      <div class="crt-bezel">
-        <div class="crt-screen">
-          <div class="game-container" id="gameContainer" tabindex="-1">
-            <canvas id="gameCanvas" aria-label="PONG-84 游戏画面"></canvas>
-            <pre id="asciiScreen" role="img" aria-label="PONG-84 ASCII 纯字符游戏画面" aria-live="off" aria-hidden="true"></pre>
-
-            <div class="hud">
-              <div class="titlebar">
-                <span class="brand">PONG-84</span>
-                <span id="modeBadge">人机 · 普通</span>
-                <span class="title-actions">
-                  <button id="renderModeBtn" type="button" aria-label="切换到 ASCII 纯字符渲染" aria-pressed="false" title="切换渲染模式 (R)">ASCII 模式</button>
-                  <button id="fullscreenBtn" type="button" aria-label="进入全屏" title="全屏 (F)">全屏</button>
-                  <button id="pauseBtn" type="button">暂停</button>
-                  <button id="disconnectBtn" type="button" title="退出当前联机">退出联机</button>
-                </span>
-              </div>
-
-              <div class="scoreboard">
-                <span id="scoreLeft">0</span><span class="dash">—</span><span id="scoreRight">0</span>
-              </div>
-              <div class="timer-display" id="timerDisplay">00:30</div>
-
-              <div class="shield-row" id="shieldRow">
-                <div class="shield" id="shieldLeft">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                  <span>护盾</span>
-                </div>
-                <div class="shield" id="shieldRight">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                  <span>护盾</span>
-                </div>
-              </div>
-
-              <div class="center-toast curve" id="curveToast">变速变轨球!</div>
-              <div class="center-toast cheat" id="cheatToast">作弊模式激活!</div>
-
-              <div class="status-strip" id="statusStrip"></div>
-              <div class="controls-hint" id="controlsHint">W / S 或 ↑ / ↓ 控制球拍</div>
+<noscript><div class="noscript">需要启用 JavaScript 才能运行游戏。游戏不需要安装，也不需要摄像头或麦克风。</div></noscript>
+<main id="app">
+  <header class="app-header">
+    <a class="wordmark" href="#app" aria-label="PONG-84 首页"><span class="mark">|•|</span><strong>PONG<span>—84</span></strong><small>双人街机</small></a>
+    <div class="header-caption">一个文件。一张球场。<span>下一球见。</span></div>
+    <span class="version-tag">本地优先 <b>v3.0</b></span>
+  </header>
+  <section id="gameShell" class="game-shell" tabindex="-1" aria-label="PONG-84 游戏与控制台">
+    <div class="arena-column">
+      <div class="arena-heading"><div><span class="eyebrow">球场 / 01</span><h1>把注意力留给下一球。</h1></div><span id="sessionPhase" class="session-phase" role="status">准备就绪</span></div>
+      <div class="arena-card">
+        <div class="match-strip">
+          <div class="player-score"><span id="playerLeftName">左方 · 你</span><strong id="scoreLeft">0</strong></div>
+          <div class="match-meta"><span id="modeBadge">人机 · 普通</span><span id="matchGoal">先得 11 分</span><span id="timerDisplay" class="timer-display">00:30</span></div>
+          <div class="player-score right"><span id="playerRightName">电脑</span><strong id="scoreRight">0</strong></div>
+        </div>
+        <div class="court-wrap">
+          <div id="gameContainer" class="game-container" tabindex="-1">
+            <canvas id="gameCanvas" width="1" height="1" aria-label="PONG-84 图形游戏画面" aria-hidden="true"></canvas>
+            <pre id="asciiScreen" role="img" aria-label="PONG-84 ASCII 字符球场，井号为球拍，@ 为球；比分与状态显示在球场上下方" aria-live="off"></pre>
+            <div class="touch-layer single" id="touchSingle" aria-label="拖动控制球拍，松手发球"><div class="touch-zone"></div><div class="touch-cursor" data-cursor="local"></div></div>
+            <div class="touch-layer dual" id="touchDual" aria-label="左右半屏分别拖动各自球拍">
+              <div class="touch-half" data-side="left"><div class="touch-cursor" data-cursor="left"></div></div>
+              <div class="touch-half" data-side="right"><div class="touch-cursor" data-cursor="right"></div></div>
             </div>
-
-            <div class="touch-layer single" id="touchSingle" aria-label="拖动控制球拍">
-              <div class="touch-zone"></div>
-              <div class="touch-zone"></div>
-              <div class="touch-cursor" data-cursor="local"></div>
-            </div>
-            <div class="touch-layer dual" id="touchDual" aria-label="左右半屏分别拖动控制球拍">
-              <div class="touch-half" data-side="left">
-                <div class="touch-zone"></div>
-                <div class="touch-zone"></div>
-                <div class="touch-cursor" data-cursor="left"></div>
-              </div>
-              <div class="touch-half" data-side="right">
-                <div class="touch-zone"></div>
-                <div class="touch-zone"></div>
-                <div class="touch-cursor" data-cursor="right"></div>
-              </div>
-            </div>
-
-            <div class="countdown hidden" id="countdown"><span id="countdownText">3</span></div>
-
-            <div class="overlay" id="pauseOverlay">
-              <h2>已暂停</h2>
-              <p>计时、物理和道具效果均已冻结</p>
-              <div class="actions">
-                <button class="btn" id="resumeBtn" type="button">继续游戏</button>
-                <button class="btn secondary" id="quitBtn" type="button">退出到菜单</button>
-              </div>
-            </div>
-
-            <div class="overlay" id="menuOverlay">
-              <div class="menu-title-row">
-                <h2 id="menuTitle">PONG-84</h2>
-                <button id="menuFullscreenBtn" type="button" aria-label="进入全屏" title="全屏 (F)">全屏</button>
-              </div>
-              <p id="menuSub">本地 P2P / 云房间 · ASCII 可切换 · 高频功能球 · 人机零增益</p>
-
-              <div class="settings-grid">
-                <div class="section full">
-                  <div class="section-title">游戏模式</div>
-                  <div class="select-row" id="modeSelect">
-                    <button class="choice selected" data-setting="mode" data-value="ai">人机对战</button>
-                    <button class="choice" data-setting="mode" data-value="pvp">双人对战</button>
-                    <button class="choice" data-setting="mode" data-value="timer">计时赛</button>
-                    <button class="choice" data-setting="mode" data-value="online">联机对战</button>
-                  </div>
-                </div>
-
-                <div class="section" id="difficultySection">
-                  <div class="section-title">AI 难度</div>
-                  <div class="select-row">
-                    <button class="choice" data-setting="difficulty" data-value="easy">简单</button>
-                    <button class="choice selected" data-setting="difficulty" data-value="normal">普通</button>
-                    <button class="choice" data-setting="difficulty" data-value="hard">困难</button>
-                    <button class="choice" data-setting="difficulty" data-value="hell">地狱</button>
-                  </div>
-                </div>
-
-                <div class="section" id="scoreSection">
-                  <div class="section-title">获胜比分</div>
-                  <div class="select-row">
-                    <button class="choice" data-setting="score" data-value="5">5</button>
-                    <button class="choice" data-setting="score" data-value="7">7</button>
-                    <button class="choice selected" data-setting="score" data-value="11">11</button>
-                    <button class="choice" data-setting="score" data-value="15">15</button>
-                    <button class="choice" data-setting="score" data-value="21">21</button>
-                    <input id="customScore" class="score-input" type="number" inputmode="numeric" min="1" max="99" placeholder="自定">
-                  </div>
-                </div>
-
-                <div class="section hidden-section" id="timeSection">
-                  <div class="section-title">比赛时长</div>
-                  <div class="select-row">
-                    <button class="choice selected" data-setting="time" data-value="30">30 秒</button>
-                    <button class="choice" data-setting="time" data-value="60">1 分钟</button>
-                    <button class="choice" data-setting="time" data-value="120">2 分钟</button>
-                  </div>
-                </div>
-
-                <div class="section" id="themeSection">
-                  <div class="section-title">显示风格</div>
-                  <div class="select-row">
-                    <button class="choice selected" data-setting="theme" data-value="green">绿色磷光</button>
-                    <button class="choice" data-setting="theme" data-value="amber">琥珀色</button>
-                    <button class="choice" data-setting="theme" data-value="white">白色磷光</button>
-                    <button class="choice" data-setting="theme" data-value="blue">蓝色磷光</button>
-                  </div>
-                </div>
-
-                <div class="section" id="renderSection">
-                  <div class="section-title">画面渲染</div>
-                  <div class="select-row">
-                    <button class="choice selected" data-setting="renderMode" data-value="crt" type="button">原版图形</button>
-                    <button class="choice" data-setting="renderMode" data-value="ascii" type="button">ASCII 纯字符</button>
-                  </div>
-                  <p class="render-note">R 键随时切换，不重开对局；人机模式的增益仅供玩家使用。</p>
-                </div>
-
-                <div class="section full hidden-section" id="onlineSection">
-                  <div class="section-title">两种联机方式 · 本地 HTML / 静态网页通用</div>
-                  <div class="select-row" id="transportChooser" role="group" aria-label="联机方式">
-                    <button class="choice selected" id="manualModeBtn" type="button" aria-pressed="true">本地 P2P · 手动连接</button>
-                    <button class="choice" id="cloudModeBtn" type="button" aria-pressed="false">云端联机 · 4 位房间码</button>
-                  </div>
-                  <p class="network-caption" id="transportDescription">原生 WebRTC，无需安装、启动本地服务器或连接信令服务。双方交换两次连接码即可尝试连接。</p>
-                  <fieldset id="networkFields" class="network-fields">
-                    <label class="network-scope" for="networkScope">网络范围
-                      <select id="networkScope">
-                        <option value="internet">跨网络 · STUN / 可选 TURN</option>
-                        <option value="lan">同一局域网 · 不使用 STUN/TURN</option>
-                      </select>
-                    </label>
-                    <details id="networkAdvanced" class="network-details">
-                      <summary>高级网络设置：STUN / TURN / 自建信令</summary>
-                      <p class="network-caption">通常可先使用默认设置。变更仅在新连接生效；设置只保留在当前标签页。</p>
-                      <div class="network-grid">
-                        <label class="full" for="netStun">STUN 地址（每行一个；局域网模式忽略）
-                          <textarea id="netStun" rows="2" spellcheck="false" autocomplete="off"></textarea>
-                        </label>
-                        <label class="full" for="netTurn">TURN 地址（可选；每行一个）
-                          <textarea id="netTurn" rows="2" spellcheck="false" autocomplete="off" placeholder="turn:turn.example.com:3478?transport=udp&#10;turns:turn.example.com:5349?transport=tcp"></textarea>
-                        </label>
-                        <label for="netUser">TURN 用户名<input id="netUser" type="text" autocomplete="off" spellcheck="false" maxlength="256"></label>
-                        <label for="netPassword">TURN 密码 / 临时凭据<input id="netPassword" type="password" autocomplete="off" maxlength="512"></label>
-                        <label class="full check-label"><input id="netRelay" type="checkbox">强制 TURN 中继（排查直连失败；需有效 TURN）</label>
-                      </div>
-                      <p class="network-caption">TURN 凭据不会写入本地存储、连接码或导出文件。不要将长期凭据或服务商 API 密钥写进公开 HTML。</p>
-                      <div class="network-divider">以下仅影响“云端联机”，手动连接不使用信令服务</div>
-                      <div class="network-grid">
-                        <label class="full" for="signalHost">自建 PeerServer 域名（留空使用 PeerJS 公共信令）
-                          <input id="signalHost" type="text" placeholder="signal.example.com" autocomplete="off" spellcheck="false" maxlength="253">
-                        </label>
-                        <label for="signalPort">端口<input id="signalPort" type="number" value="443" min="1" max="65535" inputmode="numeric"></label>
-                        <label for="signalPath">路径<input id="signalPath" type="text" value="/" autocomplete="off" spellcheck="false" maxlength="128"></label>
-                        <label for="signalKey">服务 key（不是安全密码）<input id="signalKey" type="text" value="peerjs" autocomplete="off" spellcheck="false" maxlength="128"></label>
-                        <label for="roomNamespace">房间分组（双方必须相同）<input id="roomNamespace" type="text" value="pong84-public-v2" autocomplete="off" spellcheck="false" maxlength="48"></label>
-                        <label class="full check-label"><input id="signalSecure" type="checkbox" checked>安全信令（HTTPS / WSS；GitHub Pages 必须启用）</label>
-                      </div>
-                    </details>
-                  </fieldset>
-
-                  <div id="manualPanel" class="connection-panel">
-                    <p class="connection-guide">房主发送“邀请码” → 加入者返回“回应码” → 房主确认 → 房主开始游戏</p>
-                    <div class="select-row" id="manualChooser">
-                      <button class="choice" id="manualCreateBtn" type="button">我是房主 · 生成邀请</button>
-                      <button class="choice" id="manualJoinBtn" type="button">我是加入者 · 粘贴邀请</button>
-                    </div>
-                    <p id="manualInfo" class="connection-status" role="status" aria-live="polite">双方打开本文件，选择相同的网络范围。无需摄像头或麦克风权限。</p>
-                    <div id="manualExchange" class="hidden-section">
-                      <div id="manualOutputGroup" class="hidden-section">
-                        <label for="manualOutput" id="manualOutputLabel">发给对方的连接码</label>
-                        <textarea id="manualOutput" class="online-code signal-code" readonly spellcheck="false" aria-label="发给对方的连接码"></textarea>
-                        <div class="online-actions">
-                          <button class="btn small" id="manualCopyBtn" type="button">复制连接码</button>
-                          <button class="btn small secondary" id="manualSaveBtn" type="button">保存为文件</button>
-                        </div>
-                      </div>
-                      <div id="manualInputGroup" class="hidden-section">
-                        <label for="manualInput" id="manualInputLabel">粘贴对方的连接码</label>
-                        <textarea id="manualInput" class="online-code signal-code" maxlength="65536" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="P84V2.…"></textarea>
-                        <div class="online-actions">
-                          <button class="btn small" id="manualActionBtn" type="button">确认连接码</button>
-                          <button class="btn small secondary" id="manualImportBtn" type="button">从文件读取</button>
-                          <input id="manualFile" type="file" accept=".txt,.pong84,text/plain" hidden>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="online-actions hidden-section" id="manualResetRow">
-                      <button class="btn small secondary" id="manualResetBtn" type="button">取消 / 重新连接</button>
-                    </div>
-                    <p class="network-caption">连接码较长，不是 4 位房间码；只发给本次对手。生成后保持双方页面打开。关闭、刷新或重新生成后，旧连接码失效。</p>
-                  </div>
-
-                  <div id="cloudPanel" class="connection-panel hidden-section">
-                    <p class="network-caption">自动交换信令，需外部 PeerJS 组件与信令服务。4 位码不是密码；双方需使用同一服务、分组和本版本。</p>
-                    <div class="select-row" id="onlineChooser">
-                      <button class="choice" id="createRoomBtn" type="button">创建云端房间</button>
-                      <button class="choice" id="joinRoomBtn" type="button">输入房间码加入</button>
-                    </div>
-                    <div class="online-box hidden-section" id="onlineBox">
-                      <p class="online-info" id="onlineInfo" role="status" aria-live="polite"></p>
-                      <input class="online-code cloud-room-code" id="onlineCode" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" spellcheck="false" aria-label="4位房间码">
-                      <div class="online-actions">
-                        <button class="btn small" id="onlineActionBtn" type="button">加入房间</button>
-                        <button class="btn small secondary" id="onlineBackBtn" type="button">返回 / 断开</button>
-                      </div>
-                    </div>
-                  </div>
-                  <details class="network-details" id="networkDiagnostics">
-                    <summary>连接诊断 / 联机失败怎么办</summary>
-                    <pre id="networkReport" class="network-report"></pre>
-                    <p class="network-caption">同一 Wi-Fi 也可能有设备隔离、防火墙或浏览器策略限制。跨网络配置 STUN 仍失败时，需有效 TURN 中继；换成 GitHub Pages 本身不会解决穿透问题。</p>
-                    <p class="network-caption">“无外部服务”仅指手动连接 + 同一局域网。两台设备没有任何可达网络时，不能隔空联机。手机请用完整浏览器打开，勿使用聊天软件中的 HTML 预览。</p>
-                  </details>
-                </div>
-              </div>
-
-              <div class="actions">
-                <button class="btn" id="startBtn" type="button">开始游戏</button>
-              </div>
-            </div>
-
-            <div class="fx-scanlines"></div>
-            <div class="fx-scanbar"></div>
-            <div class="fx-vignette"></div>
-            <div class="fx-reflection"></div>
+            <div id="countdown" class="countdown hidden" aria-live="polite"><span id="countdownText">3</span></div>
+            <div id="curveToast" class="center-toast curve">变轨球</div><div id="cheatToast" class="center-toast cheat">玩家辅助已开启</div>
           </div>
         </div>
-        <div class="crt-label"><span>MOONSHOT ELECTRONICS · CLOUD ROOM</span><span class="power-led"></span></div>
+        <div class="court-status"><span id="statusStrip">选好模式，开始一局。</span><div class="shield-row" id="shieldRow"><span class="shield" id="shieldLeft">[左方护盾]</span><span class="shield" id="shieldRight">[右方护盾]</span></div><span id="rendererBadge" class="renderer-badge">ASCII / 文本直绘</span></div>
+        <div class="court-toolbar">
+          <div class="toolbar-group"><button id="serveBtn" type="button" class="btn small" disabled>发球 <kbd>空格</kbd></button><button id="serveRightBtn" type="button" class="btn small secondary" hidden>右方发球 <kbd>回车</kbd></button><button id="pauseBtn" class="tool-btn" type="button">暂停 <kbd>P</kbd></button><button id="disconnectBtn" class="tool-btn" type="button">退出联机</button></div>
+          <div class="toolbar-group"><button id="renderModeBtn" class="tool-btn" type="button" aria-pressed="true" title="切换渲染模式 (R)">图形 <kbd>R</kbd></button><button id="soundBtn" class="tool-btn" type="button" aria-pressed="true" title="音效开关">声音开</button><button id="fullscreenBtn" class="tool-btn" type="button" title="全屏 (F)">全屏</button></div>
+        </div>
       </div>
-    </section>
-
-    <div class="legend" aria-hidden="true">
-      <span><i style="background:#ff4444;color:#ff4444"></i>加速</span>
-      <span><i style="background:#4488ff;color:#4488ff"></i>减速</span>
-      <span><i style="background:#44ff88;color:#44ff88"></i>大球</span>
-      <span><i style="background:#ffaa44;color:#ffaa44"></i>长拍</span>
-      <span><i style="background:#cc44ff;color:#cc44ff"></i>小球</span>
-      <span><i style="background:#ff8844;color:#ff8844"></i>变轨</span>
-      <span><i style="background:#44ddff;color:#44ddff"></i>旋转</span>
+      <div class="arena-footer"><p id="controlsHint">W / S 或 ↑ / ↓ 控制球拍</p><span id="rotateHint" class="rotate-hint" aria-hidden="true">横屏可获得更大的球场</span></div>
+      <div class="performance-strip"><span class="perf-label"><span class="steady-dot"></span>渲染状态</span><output id="perfText">待机 · 无持续重绘</output><button id="perfProfileBtn" type="button" class="text-btn" title="切换性能档位">自适应</button></div>
+      <div id="inlineNotice" class="inline-notice" role="status" hidden></div>
     </div>
-  </main>
+    <aside class="console-column" aria-label="游戏控制台">
+      <div class="console-top"><span class="eyebrow">控制台 / 02</span><span class="console-label">即开即玩</span></div>
+      <section id="menuOverlay" class="menu-panel">
+        <div class="menu-title-row"><h2 id="menuTitle">开始一局</h2><button id="menuFullscreenBtn" type="button" class="text-btn" title="全屏 (F)">全屏</button></div>
+        <p id="menuSub" class="muted">选择玩法。你的画面，你的节奏。</p>
+        <div class="section"><div class="section-title">游戏模式</div>
+          <div id="modeSelect" class="mode-grid">
+            <button class="choice mode-card selected" data-setting="mode" data-value="ai" type="button"><span class="mode-no">01</span><strong>人机对战</strong><small>独自练习 · 电脑无增益</small></button>
+            <button class="choice mode-card" data-setting="mode" data-value="pvp" type="button"><span class="mode-no">02</span><strong>同屏双人</strong><small>共享键盘 · 并肩对战</small></button>
+            <button class="choice mode-card" data-setting="mode" data-value="timer" type="button"><span class="mode-no">03</span><strong>双人计时</strong><small>限时回合 · 分高者胜</small></button>
+            <button class="choice mode-card" data-setting="mode" data-value="online" type="button"><span class="mode-no">04</span><strong>联机对战</strong><small>两台设备 · 同场对决</small></button>
+          </div>
+        </div>
+        <div id="difficultySection" class="section"><div class="section-title">电脑难度</div><div class="select-row compact">
+          <button class="choice" data-setting="difficulty" data-value="easy" type="button">简单</button><button class="choice selected" data-setting="difficulty" data-value="normal" type="button">普通</button><button class="choice" data-setting="difficulty" data-value="hard" type="button">困难</button><button class="choice" data-setting="difficulty" data-value="hell" type="button">地狱</button>
+        </div></div>
+        <div id="scoreSection" class="section"><label class="section-title" for="customScore">目标比分</label><div class="select-row compact">
+          <button class="choice" data-setting="score" data-value="5" type="button">5</button><button class="choice" data-setting="score" data-value="7" type="button">7</button><button class="choice selected" data-setting="score" data-value="11" type="button">11</button><button class="choice" data-setting="score" data-value="15" type="button">15</button><button class="choice" data-setting="score" data-value="21" type="button">21</button><input id="customScore" class="score-input" type="number" inputmode="numeric" min="1" max="99" placeholder="自定" aria-label="自定义目标比分，1 至 99">
+        </div></div>
+        <div id="timeSection" class="section hidden-section"><div class="section-title">比赛时长 · 有效对打计时</div><div class="select-row compact"><button class="choice selected" data-setting="time" data-value="30" type="button">30 秒</button><button class="choice" data-setting="time" data-value="60" type="button">1 分钟</button><button class="choice" data-setting="time" data-value="120" type="button">2 分钟</button></div></div>
+        <div class="section full hidden-section" id="onlineSection">
+<div class="section-title">连接对手</div>
+<div aria-label="联机方式" class="select-row" id="transportChooser" role="group">
+<button aria-pressed="true" class="choice selected" id="manualModeBtn" type="button">手动 P2P</button>
+<button aria-pressed="false" class="choice" id="cloudModeBtn" type="button">4 位房间码</button>
+</div>
+<p class="network-caption" id="transportDescription">原生 WebRTC，无需安装、启动本地服务器或连接信令服务。双方交换两次连接码即可尝试连接。</p>
+<fieldset class="network-fields" id="networkFields">
+<label class="network-scope" for="networkScope">网络范围
+                      <select id="networkScope">
+<option value="internet">跨网络 · STUN / 可选 TURN</option>
+<option value="lan">同一局域网 · 不使用 STUN/TURN</option>
+</select>
+</label>
 
-  <!-- Cloud-only PeerJS is loaded on demand. Manual WebRTC and local games have no library dependency. -->
-  <script>
+<details class="network-details" id="networkAdvanced">
+<summary>高级设置 · STUN / TURN / 信令</summary>
+<p class="network-caption">通常可先使用默认设置。变更仅在新连接生效；设置只保留在当前标签页。</p>
+<div class="network-grid">
+<label class="full" for="netStun">STUN 地址（每行一个；局域网模式忽略）
+                          <textarea autocomplete="off" id="netStun" rows="2" spellcheck="false"></textarea>
+</label>
+<label class="full" for="netTurn">TURN 地址（可选；每行一个）
+                          <textarea autocomplete="off" id="netTurn" placeholder="turn:turn.example.com:3478?transport=udp
+turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textarea>
+</label>
+<label for="netUser">TURN 用户名<input autocomplete="off" id="netUser" maxlength="256" spellcheck="false" type="text"/></label>
+<label for="netPassword">TURN 密码 / 临时凭据<input autocomplete="off" id="netPassword" maxlength="512" type="password"/></label>
+<label class="full check-label"><input id="netRelay" type="checkbox"/>强制 TURN 中继（排查直连失败；需有效 TURN）</label>
+</div>
+<p class="network-caption">TURN 凭据不会写入本地存储、连接码或导出文件。不要将长期凭据或服务商 API 密钥写进公开 HTML。</p>
+<div class="network-divider">以下仅影响“云端联机”，手动连接不使用信令服务</div>
+<div class="network-grid">
+<label class="full" for="signalHost">自建 PeerServer 域名（留空使用 PeerJS 公共信令）
+                          <input autocomplete="off" id="signalHost" maxlength="253" placeholder="signal.example.com" spellcheck="false" type="text"/>
+</label>
+<label for="signalPort">端口<input id="signalPort" inputmode="numeric" max="65535" min="1" type="number" value="443"/></label>
+<label for="signalPath">路径<input autocomplete="off" id="signalPath" maxlength="128" spellcheck="false" type="text" value="/"/></label>
+<label for="signalKey">服务 key（不是安全密码）<input autocomplete="off" id="signalKey" maxlength="128" spellcheck="false" type="text" value="peerjs"/></label>
+<label for="roomNamespace">房间分组（双方必须相同）<input autocomplete="off" id="roomNamespace" maxlength="48" spellcheck="false" type="text" value="pong84-public-v2"/></label>
+<label class="full check-label"><input checked="" id="signalSecure" type="checkbox"/>安全信令（HTTPS / WSS；GitHub Pages 必须启用）</label>
+</div>
+</details></fieldset>
+<div class="connection-panel" id="manualPanel">
+<p class="connection-guide">房主发送“邀请码” → 加入者返回“回应码” → 房主确认 → 房主开始游戏</p>
+<div class="select-row" id="manualChooser">
+<button class="choice" id="manualCreateBtn" type="button">我是房主 · 生成邀请</button>
+<button class="choice" id="manualJoinBtn" type="button">我是加入者 · 粘贴邀请</button>
+</div>
+<p aria-live="polite" class="connection-status" id="manualInfo" role="status">双方打开本文件，选择相同的网络范围。无需摄像头或麦克风权限。</p>
+<div class="hidden-section" id="manualExchange">
+<div class="hidden-section" id="manualOutputGroup">
+<label for="manualOutput" id="manualOutputLabel">发给对方的连接码</label>
+<textarea aria-label="发给对方的连接码" class="online-code signal-code" id="manualOutput" readonly="" spellcheck="false"></textarea>
+<div class="online-actions">
+<button class="btn small" id="manualCopyBtn" type="button">复制连接码</button>
+<button class="btn small secondary" id="manualSaveBtn" type="button">保存为文件</button>
+</div>
+</div>
+<div class="hidden-section" id="manualInputGroup">
+<label for="manualInput" id="manualInputLabel">粘贴对方的连接码</label>
+<textarea autocapitalize="off" autocomplete="off" class="online-code signal-code" id="manualInput" maxlength="65536" placeholder="P84V2.…" spellcheck="false"></textarea>
+<div class="online-actions">
+<button class="btn small" id="manualActionBtn" type="button">确认连接码</button>
+<button class="btn small secondary" id="manualImportBtn" type="button">从文件读取</button>
+<input accept=".txt,.pong84,text/plain" hidden="" id="manualFile" type="file"/>
+</div>
+</div>
+</div>
+<div class="online-actions hidden-section" id="manualResetRow">
+<button class="btn small secondary" id="manualResetBtn" type="button">取消 / 重新连接</button>
+</div>
+<p class="network-caption">连接码较长，不是 4 位房间码；只发给本次对手。生成后保持双方页面打开。关闭、刷新或重新生成后，旧连接码失效。</p>
+</div>
+<div class="connection-panel hidden-section" id="cloudPanel">
+<p class="network-caption">自动交换信令，需外部 PeerJS 组件与信令服务。4 位码不是密码；双方需使用同一服务、分组和本版本。</p>
+<div class="select-row" id="onlineChooser">
+<button class="choice" id="createRoomBtn" type="button">创建云端房间</button>
+<button class="choice" id="joinRoomBtn" type="button">输入房间码加入</button>
+</div>
+<div class="online-box hidden-section" id="onlineBox">
+<p aria-live="polite" class="online-info" id="onlineInfo" role="status"></p>
+<input aria-label="4位房间码" autocomplete="off" class="online-code cloud-room-code" id="onlineCode" inputmode="numeric" maxlength="4" pattern="[0-9]*" spellcheck="false"/>
+<div class="online-actions">
+<button class="btn small" id="onlineActionBtn" type="button">加入房间</button>
+<button class="btn small secondary" id="onlineBackBtn" type="button">返回 / 断开</button>
+</div>
+</div>
+</div>
+<details class="network-details" id="networkDiagnostics">
+<summary>连接诊断 / 联机失败怎么办</summary>
+<pre class="network-report" id="networkReport"></pre>
+<p class="network-caption">同一 Wi-Fi 也可能有设备隔离、防火墙或浏览器策略限制。跨网络配置 STUN 仍失败时，需有效 TURN 中继；换成 GitHub Pages 本身不会解决穿透问题。</p>
+<p class="network-caption">“无外部服务”仅指手动连接 + 同一局域网。两台设备没有任何可达网络时，不能隔空联机。手机请用完整浏览器打开，勿使用聊天软件中的 HTML 预览。</p>
+</details>
+</div>
+        <div class="start-action"><button id="startBtn" class="btn primary" type="button">开始游戏</button></div>
+        <p class="small-note">发球不重开，切换画面不清空比分。</p>
+      </section>
+      <section id="pauseOverlay" class="pause-panel" aria-hidden="true"><span class="panel-symbol">[ II ]</span><h2>暂停一下。</h2><p class="muted">计时、球和功能效果均已冻结。</p><div class="actions"><button id="resumeBtn" class="btn primary" type="button">继续游戏</button><button id="quitBtn" class="btn secondary" type="button">返回菜单</button></div></section>
+      <section id="playingPanel" class="playing-panel" hidden><span class="panel-symbol">[ &gt; ]</span><h2>回球，就是现在。</h2><p class="muted" id="playAdvice">边缘击球能改变方向。功能球会自动出现。</p><div class="live-info"><div><span>当前效果</span><strong id="liveEffect">常规球</strong></div><div><span>连接</span><strong id="liveNetwork">本地对局</strong></div><div><span>操作</span><strong>按键 / 拖动</strong></div></div><button id="returnMenuBtn" type="button" class="btn secondary full-width">结束对局 / 返回菜单</button></section>
+      <details id="displaySettings" class="settings-details"><summary>画面与性能<span>本机独立设置</span></summary><div class="details-body">
+        <div id="renderSection" class="section"><div class="section-title">渲染方式</div><div class="select-row"><button class="choice selected" data-setting="renderMode" data-value="ascii" type="button">ASCII 纯字符</button><button class="choice" data-setting="renderMode" data-value="crt" type="button">简洁图形</button></div><p class="small-note">ASCII 使用普通文本节点，无需 Canvas、WebGL 或 WebGPU。</p></div>
+        <div class="section"><div class="section-title">性能档位</div><div class="select-row"><button class="choice selected" data-setting="renderProfile" data-value="auto" type="button">自适应</button><button class="choice" data-setting="renderProfile" data-value="smooth" type="button">60 帧</button><button class="choice" data-setting="renderProfile" data-value="eco" type="button">30 帧节能</button></div><p class="small-note">自适应优先 60 帧，持续负载高时降低字符密度与刷新率；不改球速、判定或键盘移速。再次选择“自适应”可重试高档。</p></div>
+        <div id="themeSection" class="section"><div class="section-title">球场颜色</div><div class="select-row"><button class="choice selected" data-setting="theme" data-value="green" type="button">绿色</button><button class="choice" data-setting="theme" data-value="amber" type="button">琥珀</button><button class="choice" data-setting="theme" data-value="white" type="button">白色</button><button class="choice" data-setting="theme" data-value="blue" type="button">冰蓝</button></div></div>
+        <pre id="renderStats" class="stats-report">开始对局后显示本机数据。</pre><p class="small-note">“脚本耗时”不含浏览器排版与绘制耗时；刷新率为脚本提交次数，不是显示器实测帧率。</p>
+      </div></details>
+      <details class="settings-details" id="helpPanel"><summary>操作与功能球<span>首次游玩</span></summary><div class="details-body"><dl class="key-guide"><div><dt><kbd>W</kbd> <kbd>S</kbd></dt><dd>左拍 / 联机时自己的球拍</dd></div><div><dt><kbd>↑</kbd> <kbd>↓</kbd></dt><dd>右拍 / 人机时也控制左拍</dd></div><div><dt><kbd>空格</kbd> <kbd>回车</kbd></dt><dd>人机 / 联机：自己发球；同屏：分别对应左 / 右</dd></div><div><dt><kbd>P</kbd> <kbd>R</kbd> <kbd>F</kbd></dt><dd>暂停 / 切换渲染 / 全屏</dd></div></dl><p class="small-note">触屏上下拖动，松手发球。同屏双人各用半边球场；触控中断不会自动发球。</p><div class="legend"><span><b>@</b> 常规</span><span><b>*</b> 加速</span><span><b>o</b> 减速</span><span><b>O</b> 大球</span><span><b>.</b> 小球</span><span><b>#</b> 球拍 / 长拍</span><span><b>~</b> 变轨</span><span><b>%</b> 旋转</span></div><p class="small-note">连得 3 分可获得一次护盾。人机模式仅玩家可获增益，电脑不能获得长拍、护盾或强化回球。</p></div></details>
+      <div class="console-bottom">无内置统计 · 无账号 · 单文件运行<br><span>公网联机可能需要 STUN / TURN；请保持页面在前台。</span></div>
+    </aside>
+  </section>
+  <footer class="app-footer"><span>PONG-84 / 原生前端实验</span><span>本地双人 · WebRTC P2P · 静态托管</span></footer>
+</main>
+
+<script>
+
     'use strict';
 
     // ============================================================
@@ -715,11 +212,13 @@
     const MAX_FRAME_DT = 0.08;
     const NETWORK_STATE_HZ = 60;
     const NETWORK_INPUT_HZ = 60;
-    const STORAGE_KEY = 'pong84.rebuilt.settings.v1';
+    const STORAGE_KEY = 'pong84.ui3.settings';
+    const LEGACY_STORAGE_KEY = 'pong84.rebuilt.settings.v1';
     const BALL_TUNING = Object.freeze({ baseSpeed:1200, maxSpeed:1900, hitAcceleration:34, minEffectSpeed:320 });
     const CURVE_CHANCE = 0.24;
     const EFFECT_TIMING = Object.freeze({ firstMin:1.0, firstMax:2.0, gapMin:1.5, gapMax:3.0 });
-    const ASCII_GRID = Object.freeze({ cols:160, rows:45 });
+    const ASCII_GRID = Object.freeze({ cols:96, rows:32 });
+    const RENDER_PROFILES = Object.freeze({auto:'自适应', smooth:'60 帧', eco:'30 帧节能'});
 
     const IS_TOUCH = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
     const IS_MOBILE = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || IS_TOUCH;
@@ -748,7 +247,7 @@
     });
 
     const DEFAULT_SETTINGS = Object.freeze({
-      mode:'ai', difficulty:'normal', score:11, time:30, theme:'green', renderMode:'crt'
+      mode:'ai', difficulty:'normal', score:11, time:30, theme:'green', renderMode:'ascii', renderProfile:'auto', sound:true
     });
 
     const Phase = Object.freeze({ MENU:'menu', COUNTDOWN:'countdown', PLAYING:'playing', PAUSED:'paused', ENDED:'ended' });
@@ -775,8 +274,15 @@
     function loadSettings() {
       let raw = null;
       try { raw = localStorage.getItem(STORAGE_KEY); } catch { /* Storage may be blocked in a local preview. */ }
-      const saved = raw ? safeParseJSON(raw, {}) : {};
+      let saved = raw ? safeParseJSON(raw, {}) : {};
+      if (!raw) {
+        try { saved = safeParseJSON(localStorage.getItem(LEGACY_STORAGE_KEY) || '{}', {}); } catch {}
+        // Preserve match preferences, but first launch of this CPU-oriented edition starts in text mode.
+        saved = { ...saved, renderMode:'ascii', renderProfile:'auto' };
+      }
       const merged = { ...DEFAULT_SETTINGS, ...saved };
+      if (!Object.hasOwn(RENDER_PROFILES, merged.renderProfile)) merged.renderProfile='auto';
+      merged.sound = merged.sound !== false;
       if (!THEMES[merged.theme]) merged.theme = DEFAULT_SETTINGS.theme;
       if (!['crt','ascii'].includes(merged.renderMode)) merged.renderMode = DEFAULT_SETTINGS.renderMode;
       if (!DIFFICULTY[merged.difficulty]) merged.difficulty = DEFAULT_SETTINGS.difficulty;
@@ -794,14 +300,16 @@
     // 3) Audio: centralized and safe to call before first gesture.
     // ============================================================
     class AudioEngine {
-      constructor() { this.ctx = null; }
+      constructor() { this.ctx = null; this.enabled = true; }
       ensure() {
+        if (!this.enabled) return;
         try {
           if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
           if (this.ctx.state === 'suspended') this.ctx.resume();
         } catch { this.ctx = null; }
       }
       tone(freq, duration=.08, type='sine', volume=.06, delay=0) {
+        if (!this.enabled) return;
         this.ensure();
         if (!this.ctx) return;
         const start = this.ctx.currentTime + delay;
@@ -893,7 +401,7 @@
           const rect = layer.getBoundingClientRect();
           if (!rect.height) return;
           const normalizedY = clamp((e.clientY - rect.top) / rect.height, 0, 1);
-          this.touchTarget[prop] = normalizedY * WORLD.height;
+          this.touchTarget[prop] = this.mapTouchY ? this.mapTouchY(normalizedY) : normalizedY * WORLD.height;
           this.updateTouchVisual(prop, e.clientX, e.clientY, true);
           layer.style.setProperty('--touch-x', `${clamp((e.clientX-rect.left)/rect.width,0,1)*100}%`);
           layer.style.setProperty('--touch-y', `${normalizedY*100}%`);
@@ -920,7 +428,7 @@
           const prop = propForPointer(e.pointerId);
           if (!prop) return;
           e.preventDefault();
-          if (this.onServe) this.onServe({ type:'touch', prop });
+          if (e.type === 'pointerup' && this.onServe) this.onServe({ type:'touch', prop });
           this.pointerToProp.delete(e.pointerId);
           if (this.touchPointer[prop] === e.pointerId) {
             this.touchPointer[prop] = null;
@@ -1454,139 +962,140 @@
     // ============================================================
     // 6) Game core. No DOM mutation happens inside physics methods.
     // ============================================================
-    // A 160 x 45 terminal surface (128 x 36 on compact screens). Printable ASCII or LF only.
-    // Its geometry uses the same 960 x 540 world as the graphical renderer and touch input.
+    // A bounded text grid with persistent row Text nodes. No Canvas even for font measurement.
+    // Static cells are cached. Each frame submits only rows whose ASCII bytes changed.
     class AsciiRenderer {
       constructor(element) {
-        this.element = element;
-        this.cols = ASCII_GRID.cols;
-        this.rows = ASCII_GRID.rows;
-        this.lastFrame = '';
-        this.fontFamily = '"Liberation Mono", Consolas, "Courier New", monospace';
-        this.measureCtx = document.createElement('canvas').getContext('2d');
-        this.glyphs = {
-          '0':['###','# #','# #','# #','###'], '1':[' # ','## ',' # ',' # ','###'],
-          '2':['###','  #','###','#  ','###'], '3':['###','  #',' ##','  #','###'],
-          '4':['# #','# #','###','  #','  #'], '5':['###','#  ','###','  #','###'],
-          '6':['###','#  ','###','# #','###'], '7':['###','  #','  #',' # ',' # '],
-          '8':['###','# #','###','# #','###'], '9':['###','# #','###','  #','###'],
+        this.element=element; this.cols=0; this.rows=0; this.ratio=0;
+        this.nodes=[]; this.sizeKey=''; this.totalRowWrites=0;
+        this.glyphs={
+          '1':[' # ','## ',' # ',' # ','###'], '2':['###','  #','###','#  ','###'],
+          '3':['###','  #',' ##','  #','###'],
           'G':['###','#  ','# #','# #','###'], 'O':['###','# #','# #','# #','###']
         };
+        this.build(ASCII_GRID.cols,ASCII_GRID.rows);
       }
-
-      resize(rect) {
-        if (!rect.width || !rect.height) return;
-        const compact = rect.width < 720;
-        this.cols = compact ? 128 : ASCII_GRID.cols;
-        this.rows = compact ? 36 : ASCII_GRID.rows;
-        const cellWidth = rect.width / this.cols;
-        const cellHeight = rect.height / this.rows;
-        this.measureCtx.font = `100px ${this.fontFamily}`;
-        const glyphRatio = this.measureCtx.measureText('M').width / 100;
-        const size = Math.min(cellHeight / 1.2, cellWidth / glyphRatio);
-        this.element.style.fontSize = `${size}px`;
-        this.element.style.lineHeight = `${cellHeight}px`;
-        // Keep each character's advance equal to one world-space grid cell.
-        this.element.style.letterSpacing = `${cellWidth - size * glyphRatio}px`;
+      measureFont() {
+        if(this.ratio) return this.ratio;
+        const span=document.createElement('span');
+        span.textContent='MMMMMMMMMM';
+        span.style.cssText='position:absolute;left:-10000px;top:0;visibility:hidden;white-space:pre;font:100px Consolas,"Liberation Mono","Courier New",monospace;letter-spacing:0;';
+        document.body.appendChild(span);
+        this.ratio=span.getBoundingClientRect().width/1000 || .6;
+        span.remove(); return this.ratio;
       }
-
+      build(cols,rows) {
+        if(cols===this.cols && rows===this.rows) return;
+        this.cols=cols; this.rows=rows;
+        this.base=new Uint8Array(cols*rows); this.base.fill(32);
+        this.bytes=new Uint8Array(cols*rows);
+        this.previous=new Uint8Array(cols*rows);
+        this.dirty=new Uint8Array(rows); this.oldDirty=new Uint8Array(rows); this.oldDirty.fill(1);
+        this.nodes.length=0;
+        for(let x=0;x<cols;x++) {this.base[x]=45;this.base[(rows-1)*cols+x]=45;}
+        for(let y=0;y<rows;y++) {this.base[y*cols]=124;this.base[y*cols+cols-1]=124;}
+        this.base[0]=this.base[cols-1]=this.base[(rows-1)*cols]=this.base[rows*cols-1]=43;
+        for(let y=2;y<rows-2;y+=2) this.base[y*cols+Math.floor(cols/2)]=58;
+        const fragment=document.createDocumentFragment();
+        for(let y=0;y<rows;y++) {
+          const span=document.createElement('span');span.className='ascii-row';
+          const node=document.createTextNode(' '.repeat(cols));span.appendChild(node);
+          fragment.appendChild(span);this.nodes.push(node);
+        }
+        this.element.replaceChildren(fragment); this.sizeKey='';
+      }
+      resize(rect,profile='auto',tier=0) {
+        if(rect.width<=0 || rect.height<=0) return;
+        const compact=rect.width<520;
+        const eco=profile==='eco'||(profile==='auto'&&tier>0);
+        const cols=eco?(compact?64:80):profile==='smooth'?(compact?80:128):(compact?64:96);
+        const rows=eco?(compact?22:26):profile==='smooth'?(compact?26:40):(compact?22:32);
+        this.build(cols,rows);
+        const key=rect.width.toFixed(2)+'/'+rect.height.toFixed(2)+'/'+cols+'/'+rows;
+        if(key===this.sizeKey) return;
+        const cellW=rect.width/cols,cellH=rect.height/rows;
+        const ratio=this.measureFont();
+        const fontSize=Math.min(cellH*.88,cellW/ratio);
+        this.element.style.fontSize=fontSize+'px';
+        this.element.style.setProperty('--line-height',cellH+'px');
+        this.element.style.lineHeight=cellH+'px';
+        this.element.style.letterSpacing=(cellW-fontSize*ratio)+'px';
+        this.sizeKey=key;
+      }
+      put(x,y,text) {
+        y=Math.round(y);x=Math.round(x);
+        if(y<0||y>=this.rows) return;
+        this.dirty[y]=1;
+        for(let i=0;i<text.length;i++) {
+          if(x+i<0||x+i>=this.cols)continue;
+          const code=text.charCodeAt(i);
+          this.bytes[y*this.cols+x+i]=code>=32&&code<=126?code:63;
+        }
+      }
+      center(y,text) {this.put(Math.floor((this.cols-text.length)/2),y,text);}
+      wx(x) {return clamp(1+Math.floor(x/WORLD.width*(this.cols-2)),1,this.cols-2);}
+      wy(y) {return clamp(1+Math.floor(y/WORLD.height*(this.rows-2)),1,this.rows-2);}
       render(g) {
-        const cols = this.cols, rows = this.rows;
-        const grid = Array.from({ length:rows }, () => Array(cols).fill(' '));
-        const put = (x,y,text) => {
-          x = Math.round(x); y = Math.round(y);
-          if (y < 0 || y >= rows) return;
-          const clean = String(text).replace(/[^\x20-\x7E]/g, '?');
-          for (let i=0; i<clean.length; i++) if (x+i >= 0 && x+i < cols) grid[y][x+i] = clean[i];
-        };
-        const center = (y,text) => put(Math.floor((cols-text.length)/2),y,text);
-        const wx = x => clamp(Math.floor(x / WORLD.width * cols),0,cols-1);
-        const wy = y => clamp(Math.floor(y / WORLD.height * rows),0,rows-1);
-        const large = (text,x,y,scale=1) => {
-          for (let n=0; n<text.length; n++) {
-            const glyph = this.glyphs[text[n]];
-            if (!glyph) continue;
-            for (let r=0; r<5; r++) for (let c=0; c<3; c++) {
-              for (let dy=0; dy<scale; dy++) put(x+n*4*scale+c*scale, y+r*scale+dy, glyph[r][c].repeat(scale));
+        this.bytes.set(this.base);this.dirty.fill(0);
+        const pad=n=>String(n).padStart(2,'0');
+        const right=g.settings.mode==='ai'?'CPU':g.isClient()?'YOU':'RIGHT';
+        const left=g.isClient()?'LEFT':g.settings.mode==='ai'||g.isHost()?'YOU':'LEFT';
+        this.center(0,` ${left} ${pad(g.match.leftScore)} : ${pad(g.match.rightScore)} ${right} `);
+        let status='@ BALL / # PADDLE';
+        if(g.phase===Phase.MENU) status='PONG-84 / READY';
+        else if(g.phase===Phase.PAUSED) status='PAUSED / P TO RESUME';
+        else if(g.phase===Phase.ENDED) status='ROUND OVER';
+        else if(g.serveSide) status=(g.serveSide==='left'?'LEFT':'RIGHT')+' SERVE / '+(g.settings.mode==='ai'&&g.serveSide==='right'?'CPU':g.isOnline()?'SPACE OR ENTER':g.serveSide==='left'?'SPACE':'ENTER');
+        else if(g.respawnRemaining>0)status='POINT SCORED';
+        else if(g.effect)status=({speed:'FAST',slow:'SLOW',big:'BIG',small:'SMALL',long:'LONG PADDLE'})[g.effect.type]+(g.effect.applied===false?' READY':'')+' / '+Math.max(0,g.effect.remaining).toFixed(1)+'s';
+        else if(g.curveRemaining>0)status='~ CURVE SHOT';
+        if(g.isTimerMode())status+=' / TIME '+formatTime(g.match.remaining);
+        if(g.match.leftShield)status+=' / L SHIELD';
+        if(g.match.rightShield&&g.settings.mode!=='ai')status+=' / R SHIELD';
+        this.center(this.rows-1,' '+status.slice(0,this.cols-6)+' ');
+        const paddles=[g.left,g.right];
+        for(let i=0;i<2;i++) {
+          const p=paddles[i],x0=this.wx(p.x),x1=x0+Math.max(1,Math.round(p.width/WORLD.width*(this.cols-2)))-1,y0=this.wy(p.y),y1=this.wy(p.y+p.height-0.001);
+          for(let y=y0;y<=y1;y++)this.put(x0,y,'#'.repeat(x1-x0+1));
+        }
+        if(g.respawnRemaining<=0&&g.ball.x>=0&&g.ball.x<=WORLD.width) {
+          const b=g.ball,x=this.wx(b.x),y=this.wy(b.y);
+          const active=g.effect&&g.effect.applied!==false?g.effect.type:null;
+          let symbol=({speed:'*',slow:'o',big:'O',small:'.'})[active]||'@';
+          if(g.curveRemaining>0)symbol='~';else if(Math.abs(b.spin)>.15)symbol='%';
+          if(b.radius>b.baseRadius*1.5) {
+            const x0=this.wx(b.x-b.radius),x1=this.wx(b.x+b.radius),y0=this.wy(b.y-b.radius),y1=this.wy(b.y+b.radius);
+            for(let yy=y0;yy<=y1;yy++)this.put(x0,yy,symbol.repeat(Math.max(2,x1-x0+1)));
+          }else this.put(x,y,symbol);
+          if(g.serveSide)this.put(x+(g.serveSide==='left'?2:-2),y,g.serveSide==='left'?'>':'<');
+        }
+        if(g.phase===Phase.COUNTDOWN) {
+          const mark=g.countdownRemaining>.65?String(clamp(Math.ceil(g.countdownRemaining-.55),1,3)):'GO';
+          const sx=Math.floor((this.cols-(mark.length*4-1)*2)/2),sy=Math.floor(this.rows/2)-5;
+          for(let n=0;n<mark.length;n++) {
+            const glyph=this.glyphs[mark[n]];
+            for(let y=0;y<5;y++)for(let dy=0;dy<2;dy++) {
+              let line='';for(let x=0;x<3;x++)line+=glyph[y][x].repeat(2);
+              this.put(sx+n*8,sy+y*2+dy,line);
             }
           }
-        };
-        put(0,0,'+'+'-'.repeat(cols-2)+'+');
-        put(0,rows-1,'+'+'-'.repeat(cols-2)+'+');
-        for (let y=1; y<rows-1; y++) { put(0,y,'|'); put(cols-1,y,'|'); }
-        for (let y=2; y<rows-2; y+=2) put(cols/2,y,':');
-        put(3,1,'PONG-84 // ASCII');
-        const modeLabels = { ai:'AI', pvp:'LOCAL 2P', timer:'TIMED 2P', online:'ONLINE' };
-        const aiLabel = g.settings.mode === 'ai' ? ` / ${g.settings.difficulty.toUpperCase()} / CPU BUFFS: OFF` : '';
-        put(24,1,`${modeLabels[g.settings.mode]}${aiLabel}`);
-
-        const leftLabel = g.settings.mode === 'ai' ? 'YOU' : 'LEFT';
-        const rightLabel = g.settings.mode === 'ai' ? 'CPU' : 'RIGHT';
-        for (let r=2; r<=10; r++) put(cols/2-18,r,' '.repeat(36));
-        put(cols/2-14,2,leftLabel); put(cols/2+7,2,rightLabel);
-        large(String(g.match.leftScore).padStart(2,'0'),cols/2-14,3);
-        large(String(g.match.rightScore).padStart(2,'0'),cols/2+7,3);
-        put(cols/2-1,5,' : ');
-        if (g.isTimerMode()) center(9,`TIME ${formatTime(g.match.remaining)}`);
-        if (g.match.leftShield) put(cols/2-18,10,'[YOU SHIELD]');
-        if (g.match.rightShield && g.settings.mode !== 'ai') put(cols/2+5,10,'[RIGHT SHIELD]');
-
-        const metaNames = { speed:'FAST', slow:'SLOW', big:'BIG', long:'LONG PADDLE', small:'SMALL' };
-        if (g.effect) {
-          const target = g.effect.type === 'long' ? ` / ${(g.effect.target || 'left').toUpperCase()}` : '';
-          const waiting = g.effect.applied === false ? ' / READY' : '';
-          center(12,`[ ${metaNames[g.effect.type]} ${g.effect.remaining.toFixed(1)}s${target}${waiting} ]`);
-        }
-        if (g.curveRemaining > 0) center(14,'[ ~ CURVE SHOT ~ ]');
-        if (g.cheat) put(3,3,'[PLAYER CHEAT ON]');
-
-        // Low-intensity trails use punctuation only; ball and paddles are drawn last.
-        if (g.respawnRemaining <= 0 && !g.serveSide) {
-          for (let i=0; i<g.trail.length; i+=3) {
-            const p=g.trail[i], x=wx(p.x), y=wy(p.y);
-            if (grid[y][x] === ' ') put(x,y,i < g.trail.length/2 ? '.' : ':');
+        }else if(g.phase===Phase.PAUSED)this.center(Math.floor(this.rows/2),' [ PAUSED ] ');
+        let writes=0;
+        for(let y=0;y<this.rows;y++) {
+          if(!this.dirty[y]&&!this.oldDirty[y])continue;
+          const a=y*this.cols,b=a+this.cols;let changed=false;
+          for(let i=a;i<b;i++)if(this.bytes[i]!==this.previous[i]){changed=true;break;}
+          if(changed) {
+            // A persistent Text node avoids replacing the row/whole <pre> DOM tree.
+            this.nodes[y].data=String.fromCharCode(...this.bytes.subarray(a,b));
+            this.previous.set(this.bytes.subarray(a,b),a);writes++;
           }
         }
-        for (const paddle of [g.left,g.right]) {
-          const x0=wx(paddle.x), x1=wx(paddle.x+paddle.width-0.001);
-          const y0=wy(paddle.y), y1=wy(paddle.y+paddle.height-0.001);
-          for (let y=y0;y<=y1;y++) put(x0,y,'#'.repeat(x1-x0+1));
-        }
-        if (g.respawnRemaining <= 0) {
-          const b=g.ball, x=wx(b.x), y=wy(b.y);
-          const activeEffect = g.effect && g.effect.applied !== false ? g.effect.type : null;
-          let symbol = { speed:'*', slow:'o', big:'O', small:'.' }[activeEffect] || '@';
-          if (g.curveRemaining > 0) symbol='~';
-          else if (Math.abs(b.spin) > .15) symbol='%';
-          if (b.radius > b.baseRadius*1.5) {
-            for (let yy=wy(b.y-b.radius*.7);yy<=wy(b.y+b.radius*.7);yy++) {
-              put(wx(b.x-b.radius*.7),yy,symbol.repeat(Math.max(2,wx(b.x+b.radius*.7)-wx(b.x-b.radius*.7)+1)));
-            }
-          } else put(x,y,symbol);
-          if (g.serveSide) put(x+(g.serveSide==='left' ? 2 : -2),y,g.serveSide==='left' ? '>' : '<');
-        }
-
-        if (g.phase === Phase.COUNTDOWN) {
-          const mark = g.countdownRemaining > .65 ? String(clamp(Math.ceil(g.countdownRemaining-.55),1,3)) : 'GO';
-          center(16,'[ GET READY ]');
-          large(mark,Math.floor((cols-(mark.length*8-2))/2),18,2);
-        }
-        if (g.phase === Phase.PLAYING && g.serveSide) {
-          const side=g.serveSide, cpu=g.settings.mode==='ai' && side==='right';
-          const mine=!g.isOnline() || (g.isHost() && side==='left') || (g.isClient() && side==='right');
-          const action=cpu ? 'CPU PREPARING SERVE' : !mine ? 'WAITING FOR OPPONENT' :
-            IS_TOUCH ? 'DRAG TO AIM / RELEASE TO SERVE' :
-            g.settings.mode==='ai' || g.isOnline() ? 'SPACE / ENTER TO SERVE' : side==='left' ? 'SPACE TO SERVE' : 'ENTER TO SERVE';
-          center(rows-6,`[ ${side.toUpperCase()} SERVE | ${action} ]`);
-        } else if (g.respawnRemaining > 0) center(rows-6,'[ POINT SCORED ]');
-        if (g.isOnline() && g.online.connected) center(rows-8,`[ ${g.online.route==='relay'?'TURN RELAY':g.online.route==='direct'?'P2P DIRECT':'P2P CONNECTED'} | ${Math.round(g.online.rtt)} ms | ${g.isHost()?'YOU: LEFT':'YOU: RIGHT'} ]`);
-        center(rows-4,'@ BALL   * FAST   o SLOW   O BIG   . SMALL   # PADDLE   ~ CURVE   % SPIN');
-        const control=g.settings.mode==='ai'||g.isOnline() ? 'W/S or UP/DOWN: MOVE | SPACE/ENTER: SERVE' : 'W/S: LEFT | UP/DOWN: RIGHT | SPACE: L SERVE | ENTER: R SERVE';
-        center(rows-2,`${IS_TOUCH ? 'DRAG: MOVE | RELEASE: SERVE' : control} | R: RENDER | F: FULLSCREEN${g.isOnline() ? '' : ' | P: PAUSE'}`);
-        const frame=grid.map(row=>row.join('')).join('\n');
-        if (frame !== this.lastFrame) { this.element.textContent=frame; this.lastFrame=frame; }
+        this.oldDirty.set(this.dirty);this.totalRowWrites+=writes;
+        return writes;
       }
     }
+
 
     function validSnapshot(s) {
       if (!s || typeof s!=='object' || !/^[0-9a-f]{32}$/.test(s.matchId || '') || !Number.isSafeInteger(s.seq) ||
@@ -1608,6 +1117,14 @@
         this.input = input;
         this.online = online;
         this.settings = loadSettings();
+        this.audio.enabled = this.settings.sound;
+        this.needsDraw = true;
+        this.lastDrawAt = -1000;
+        this.lastLiveAt = 0;
+        this.autoTier = 0;
+        this.stats = { frames:0, draws:0, steps:0, skippedTime:0, fps:0, rafFps:0, jsMs:0, rowWrites:0 };
+        this.perfWindow = { at:performance.now(), frames:0, draws:0, work:0, slow:0 };
+        this.autoSlowWindows = 0;
         this.phase = Phase.MENU;
         this.pausedFrom = null;
         this.lastTs = performance.now();
@@ -1648,10 +1165,23 @@
         this.input.onCheat = () => this.toggleCheat();
         this.input.onServe = source => this.requestServe(source);
         this.input.isGameplayActive = () => [Phase.COUNTDOWN,Phase.PLAYING].includes(this.phase);
+        this.input.mapTouchY = n => this.settings.renderMode==='ascii' ? clamp((n*this.ascii.rows-1)/(this.ascii.rows-2),0,1)*WORLD.height : n*WORLD.height;
         this.applySettingsToEntities();
+        this.left.y = (WORLD.height-this.left.height)/2;
+        this.right.y = (WORLD.height-this.right.height)/2;
         this.resizeCanvas();
-        window.addEventListener('resize', () => this.resizeCanvas());
-        window.addEventListener('orientationchange', () => setTimeout(()=>this.resizeCanvas(), 100));
+        this.resizeQueued = false;
+        const resize = () => {
+          if (this.resizeQueued) return;
+          this.resizeQueued = true;
+          requestAnimationFrame(() => { this.resizeQueued=false; this.resizeCanvas(); this.requestDraw(); });
+        };
+        window.addEventListener('resize', resize);
+        window.addEventListener('orientationchange', resize);
+        if (typeof ResizeObserver === 'function') {
+          this.resizeObserver = new ResizeObserver(resize);
+          this.resizeObserver.observe(document.getElementById('gameContainer'));
+        }
         this.loop = this.loop.bind(this);
       }
 
@@ -1661,22 +1191,68 @@
       isClient() { return this.isOnline() && this.online.role === 'client'; }
 
       resizeCanvas() {
-        const dpr = clamp(window.devicePixelRatio || 1, 1, 2.5);
-        this.canvas.width = Math.round(WORLD.width * dpr);
-        this.canvas.height = Math.round(WORLD.height * dpr);
-        this.ctx.setTransform(dpr,0,0,dpr,0,0);
-        this.ctx.imageSmoothingEnabled = true;
-        this.ascii.resize(this.canvas.getBoundingClientRect());
+        const field=document.getElementById('gameContainer');
+        const full=!!(document.fullscreenElement||document.webkitFullscreenElement);
+        if(window.innerWidth>800||window.innerHeight<501||full) {
+          const bounds=field.getBoundingClientRect();
+          const perf=document.querySelector('.performance-strip').getBoundingClientRect();
+          const shell=document.getElementById('gameShell');
+          const top=full?bounds.top+shell.scrollTop:bounds.top+window.scrollY;
+          const below=Math.max(90,perf.bottom-bounds.bottom);
+          const maxHeight=Math.max(100,window.innerHeight-top-below-16);
+          const limit=(Math.floor(maxHeight*16/9))+'px';
+          if(field.style.getPropertyValue('--court-limit')!==limit)field.style.setProperty('--court-limit',limit);
+        } else field.style.removeProperty('--court-limit');
+        const rect={width:field.clientWidth,height:field.clientHeight};
+        if(this.settings.renderMode==='ascii') {
+          if(this.canvas.width!==1||this.canvas.height!==1) {this.canvas.width=1;this.canvas.height=1;}
+          this.ctx=null; // release the high-resolution backing store; no draw calls in ASCII mode
+          this.ascii.resize(rect,this.settings.renderProfile,this.autoTier);
+        } else {
+          if(!this.ctx) {
+            try {this.ctx=this.canvas.getContext('2d',{alpha:false});} catch {this.ctx=null;}
+          }
+          if(!this.ctx) {
+            this.settings.renderMode='ascii';saveSettings(this.settings);
+            document.documentElement.classList.add('ascii-mode');
+            this.ascii.resize(rect,this.settings.renderProfile,this.autoTier);
+            const notice=document.getElementById('inlineNotice');
+            notice.hidden=false;notice.textContent='此浏览器的图形画布不可用，已自动使用 ASCII 文本模式。';
+            return;
+          }
+          // A fixed 960 x 540 surface avoids DPR-squared work on software-rendered displays.
+          if(this.canvas.width!==WORLD.width||this.canvas.height!==WORLD.height) {
+            this.canvas.width=WORLD.width;this.canvas.height=WORLD.height;
+            this.ctx.setTransform(1,0,0,1,0,0);this.ctx.imageSmoothingEnabled=false;
+          }
+        }
+        this.needsDraw=true;
+      }
+      targetRenderFps() {
+        return this.settings.renderProfile==='eco'||(this.settings.renderProfile==='auto'&&this.autoTier>0)?30:60;
+      }
+      requestDraw() {
+        this.needsDraw=true;
+        if(!this.raf && !document.hidden && this.loop) this.raf=requestAnimationFrame(this.loop);
+      }
+      resetPerf() {
+        this.perfWindow={at:performance.now(),frames:0,draws:0,work:0,slow:0};
+        this.lastDrawAt=-1000;this.lastLiveAt=0;
+        this.stats.fps=0;this.stats.rafFps=0;this.stats.jsMs=0;
       }
 
       setSetting(key, value) {
         if (key === 'score') value = clamp(Number(value) || 11, 1, 99);
         if (key === 'time') value = Number(value) || 30;
         if (key === 'renderMode' && !['crt','ascii'].includes(value)) return;
+        if (key === 'renderProfile' && !Object.hasOwn(RENDER_PROFILES,value)) return;
+        if (key === 'sound') value = value !== false;
         this.settings[key] = value;
+        if (key === 'renderProfile') { this.autoTier=0; this.autoSlowWindows=0; this.resetPerf(); this.resizeCanvas(); }
+        if (key === 'sound') this.audio.enabled = value;
         saveSettings(this.settings);
         // Display-only changes must never reset an active effect, paddle, score or serve.
-        if (key !== 'theme' && key !== 'renderMode') this.applySettingsToEntities();
+        if (!['theme','renderMode','renderProfile','sound'].includes(key)) this.applySettingsToEntities();
         this.emitUi();
       }
 
@@ -1695,7 +1271,7 @@
         this.ball.maxSpeed = BALL_TUNING.maxSpeed * this.cheatMul;
       }
 
-      emitUi() { if (this.onUiChange) this.onUiChange(); }
+      emitUi() { if (this.onUiChange) this.onUiChange(); this.requestDraw(); }
       emitToast(name, visible) { if (this.onToast) this.onToast(name, visible); }
 
       resetMatch() {
@@ -1834,6 +1410,7 @@
         this.phase = Phase.COUNTDOWN;
         this.countdownRemaining = 3.55;
         this.countdownMark = null;
+        this.resetPerf();
         this.lastTs = performance.now();
         this.accumulator = 0;
         if (!this.raf) this.raf = requestAnimationFrame(this.loop);
@@ -1842,14 +1419,17 @@
 
       setPaused(value) {
         if (this.isOnline()) return;
-        if (value && this.phase === Phase.PLAYING) {
-          this.pausedFrom = Phase.PLAYING;
+        if (value && [Phase.PLAYING,Phase.COUNTDOWN].includes(this.phase)) {
+          this.pausedFrom = this.phase;
           this.phase = Phase.PAUSED;
+          this.input.keys.clear(); this.input.clearTouches(true);
+          this.accumulator = 0;
           this.emitUi();
         } else if (!value && this.phase === Phase.PAUSED) {
           this.phase = this.pausedFrom || Phase.PLAYING;
           this.pausedFrom = null;
           this.lastTs = performance.now();
+          this.accumulator = 0; this.resetPerf();
           this.emitUi();
         }
       }
@@ -1895,23 +1475,48 @@
       }
 
       loop(ts) {
-        this.raf = requestAnimationFrame(this.loop);
-        const frameDt = clamp((ts - this.lastTs) / 1000, 0, MAX_FRAME_DT);
-        this.lastTs = ts;
-        this.accumulator += frameDt;
-
-        if (this.phase !== Phase.PAUSED) {
-          let guard = 0;
-          while (this.accumulator >= FIXED_DT && guard < 20) {
-            this.step(FIXED_DT);
-            this.accumulator -= FIXED_DT;
-            guard++;
+        this.raf=null;
+        if(document.hidden)return;
+        const workStart=performance.now();
+        const rawDt=Math.max(0,(ts-this.lastTs)/1000);
+        const frameDt=clamp(rawDt,0,MAX_FRAME_DT);
+        this.lastTs=ts;
+        const running=[Phase.COUNTDOWN,Phase.PLAYING].includes(this.phase);
+        if(running) {
+          this.accumulator+=frameDt;
+          let guard=0;
+          while(this.accumulator>=FIXED_DT && guard<20) {
+            this.step(FIXED_DT);this.accumulator-=FIXED_DT;guard++;this.stats.steps++;
           }
-        } else {
-          this.accumulator = 0;
+          // Bound catch-up work; never let a stalled tab create an unbounded physics backlog.
+          if(this.accumulator>=FIXED_DT){this.stats.skippedTime+=this.accumulator;this.accumulator=0;}
+          if(rawDt>MAX_FRAME_DT)this.stats.skippedTime+=rawDt-MAX_FRAME_DT;
+        } else this.accumulator=0;
+        const interval=1000/this.targetRenderFps();
+        if((!running&&this.needsDraw)||(running&&ts-this.lastDrawAt>=interval-1)) {
+          // Static/menu states paint only in response to events, never an idle frame stream.
+          if(running || this.needsDraw) {this.render();this.lastDrawAt=ts;this.needsDraw=false;}
         }
-
-        this.render();
+        if(running&&ts-this.lastLiveAt>=250) {
+          this.lastLiveAt=ts;if(this.onLiveUi)this.onLiveUi();
+        }
+        this.stats.frames++;this.perfWindow.frames++;
+        this.perfWindow.work+=performance.now()-workStart;
+        if(rawDt>.024&&rawDt<.15)this.perfWindow.slow++;
+        const elapsed=ts-this.perfWindow.at;
+        if(running&&elapsed>=1000) {
+          const w=this.perfWindow;
+          this.stats.fps=w.draws*1000/elapsed;this.stats.rafFps=w.frames*1000/elapsed;
+          this.stats.jsMs=w.work/Math.max(1,w.frames);
+          const overloaded=w.frames>=12&&(w.slow/w.frames>.25||this.stats.jsMs>6);
+          this.autoSlowWindows=overloaded?this.autoSlowWindows+1:0;
+          if(this.settings.renderProfile==='auto'&&this.autoTier===0&&this.autoSlowWindows>=2) {
+            this.autoTier=1;this.resizeCanvas();this.needsDraw=true;
+          }
+          if(this.onPerformance)this.onPerformance();
+          this.perfWindow={at:ts,frames:0,draws:0,work:0,slow:0};
+        }
+        if([Phase.COUNTDOWN,Phase.PLAYING].includes(this.phase)&&!this.raf) this.raf=requestAnimationFrame(this.loop);
       }
 
       step(dt) {
@@ -2087,8 +1692,12 @@
         }
         this.ball.x += this.ball.vx * dt;
         this.ball.y += this.ball.vy * dt;
-        this.trail.push({ x:this.ball.x, y:this.ball.y, r:this.ball.radius });
-        if (this.trail.length > 18) this.trail.shift();
+        // No cosmetic history or per-step particle allocation in ASCII mode.
+        if (this.settings.renderMode !== 'ascii' && this.elapsed-(this.trailAt||0) >= 1/60) {
+          this.trailAt=this.elapsed;
+          this.trail.push({x:this.ball.x,y:this.ball.y,r:this.ball.radius});
+          if(this.trail.length>6)this.trail.shift();
+        }
       }
 
       resolveWalls() {
@@ -2383,24 +1992,21 @@
       }
 
       render() {
-        if (this.settings.renderMode === 'ascii') { this.ascii.render(this); return; }
+        this.stats.draws++;
+        this.perfWindow.draws++;
+        if (this.settings.renderMode === 'ascii') { this.stats.rowWrites += this.ascii.render(this); return; }
         const ctx = this.ctx;
+        if (!ctx) return;
         const theme = THEMES[this.settings.theme];
         ctx.save();
         ctx.clearRect(0,0,WORLD.width,WORLD.height);
         ctx.fillStyle = theme.bg;
         ctx.fillRect(0,0,WORLD.width,WORLD.height);
 
-        // Sparse CRT noise: deterministic gameplay, cosmetic randomness only.
-        if (Math.random() < .42) {
-          ctx.fillStyle = theme.dim;
-          for (let i=0;i<26;i++) ctx.fillRect(Math.random()*WORLD.width, Math.random()*WORLD.height, 1, Math.random()>.5 ? 1 : 2);
-        }
-
         ctx.strokeStyle = theme.dim; ctx.lineWidth = 2; ctx.setLineDash([10,15]);
         ctx.beginPath(); ctx.moveTo(WORLD.width/2,0); ctx.lineTo(WORLD.width/2,WORLD.height); ctx.stroke(); ctx.setLineDash([]);
 
-        ctx.shadowColor = theme.glow; ctx.shadowBlur = 15; ctx.fillStyle = theme.color;
+        ctx.shadowColor = theme.glow; ctx.shadowBlur = 0; ctx.fillStyle = theme.color;
         ctx.fillRect(this.left.x,this.left.y,this.left.width,this.left.height);
         ctx.fillRect(this.right.x,this.right.y,this.right.width,this.right.height);
         ctx.shadowBlur = 0;
@@ -2412,7 +2018,7 @@
         if (this.effect) {
           const meta = POWERUPS[this.effect.type];
           ctx.save(); ctx.fillStyle = meta.color; ctx.textAlign='center'; ctx.font='700 12px Consolas, monospace';
-          ctx.shadowColor = meta.color; ctx.shadowBlur = 10;
+          ctx.shadowColor = meta.color; ctx.shadowBlur = 0;
           ctx.fillText(`${meta.label} ${this.effect.remaining.toFixed(1)}s${this.effect.applied === false ? " · 待生效" : ""}`, WORLD.width/2, 26); ctx.restore();
         }
         ctx.restore();
@@ -2423,7 +2029,7 @@
         const sideLabel = this.serveSide === 'left' ? '左方发球' : (this.settings.mode === 'ai' ? '电脑发球' : '右方发球');
         ctx.save();
         ctx.strokeStyle = theme.color;
-        ctx.globalAlpha = .55 + Math.sin(this.elapsed * 6) * .18;
+        ctx.globalAlpha = .7;
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.arc(this.ball.x, this.ball.y, this.ball.radius + 10, 0, Math.PI * 2);
@@ -2450,7 +2056,7 @@
         else if (this.effect && this.effect.applied !== false) { color=POWERUPS[this.effect.type].color; glow=color; blur=28; }
         else if (Math.abs(this.ball.spin)>.15) { color='#44ddff'; glow='rgba(68,221,255,.82)'; blur=24; }
 
-        ctx.save(); ctx.fillStyle=color; ctx.shadowColor=glow; ctx.shadowBlur=blur;
+        ctx.save(); ctx.fillStyle=color; ctx.shadowColor=glow; ctx.shadowBlur=0;
         ctx.beginPath(); ctx.arc(this.ball.x,this.ball.y,this.ball.radius,0,Math.PI*2); ctx.fill();
         ctx.shadowBlur=0;
         if (Math.abs(this.ball.spin)>.10) {
@@ -2476,7 +2082,7 @@
         this.fullscreenBtn = document.getElementById('fullscreenBtn');
         this.renderModeBtn = document.getElementById('renderModeBtn');
         this.menuFullscreenBtn = document.getElementById('menuFullscreenBtn');
-        this.fullscreenTarget = document.getElementById('gameContainer');
+        this.fullscreenTarget = document.getElementById('gameShell');
         this.resumeBtn = document.getElementById('resumeBtn');
         this.quitBtn = document.getElementById('quitBtn');
         this.scoreLeft = document.getElementById('scoreLeft');
@@ -2512,6 +2118,7 @@
         this.applyTheme();
         this.applyRenderMode();
         this.syncFullscreenButton();
+        this.bindModernControls();
         this.update();
       }
 
@@ -2578,14 +2185,16 @@
             return;
           }
           if (e.key==='Escape' && this.getFullscreenElement()) return; // let the browser exit fullscreen without also pausing
-          if ((e.key==='p'||e.key==='P'||e.key==='Escape') && !this.game.isOnline()) {
-            if (this.game.phase===Phase.PLAYING) this.game.setPaused(true);
+          if ((e.key==='p'||e.key==='P'||e.key==='Escape') && !e.repeat && !this.isTypingTarget(e.target) && !this.game.isOnline()) {
+            if ([Phase.PLAYING,Phase.COUNTDOWN].includes(this.game.phase)) this.game.setPaused(true);
             else if (this.game.phase===Phase.PAUSED) this.game.setPaused(false);
           }
         });
 
         this.game.onUiChange = ()=>this.update();
         this.game.onCountdownVisual = (mark,show)=>this.setCountdown(mark,show);
+        this.game.onPerformance = ()=>this.updatePerformance();
+        this.game.onLiveUi = ()=>this.updateLive();
         this.game.onToast = (name,show)=>{
           const el = name==='curve' ? this.curveToast : this.cheatToast;
           el.classList.toggle('show',show);
@@ -2741,7 +2350,7 @@
           this.onlineCode.value='';this.onlineCode.classList.add('hidden-section');this.onlineActionBtn.classList.add('hidden-section');
           this.menuSub.textContent=`${this.transportMode==='manual'?'手动 P2P':'云房间'}已连接 · 房主负责物理和比分 · 双方保留各自画面风格`;
           this.updateNetworkControls();this.update();
-          if(role==='host')this.startBtn.scrollIntoView({block:'nearest',behavior:'smooth'});
+          if(role==='host')this.startBtn.scrollIntoView({block:'nearest',behavior:'auto'});
         };
         this.online.onClose=reason=>{
           this.networkActionId++;this.networkBusy=false;
@@ -2791,7 +2400,7 @@
           this.net.manualActionBtn.textContent='确认回应并连接';
           this.net.manualOutputGroup.classList.remove('hidden-section');this.net.manualInputGroup.classList.remove('hidden-section');
           this.net.manualInfo.textContent='请先发送上方邀请码，再将对方返回的回应码粘贴到下方。保持本页打开。';
-          this.net.manualOutputGroup.scrollIntoView({block:'nearest',behavior:'smooth'});
+          this.net.manualOutputGroup.scrollIntoView({block:'nearest',behavior:'auto'});
         } catch(err) {
           if(id!==this.networkActionId)return;
           this.manualStep='idle';this.net.manualChooser.classList.remove('hidden-section');this.net.manualExchange.classList.add('hidden-section');
@@ -2805,7 +2414,7 @@
         this.net.manualInputLabel.textContent='第 1 步：粘贴房主的邀请码（也可从文件读取）';
         this.net.manualActionBtn.textContent='生成回应码';
         this.net.manualInfo.textContent='粘贴房主的邀请码，生成回应码后，必须再把回应码发回房主。';
-        this.updateNetworkControls();this.net.manualInputGroup.scrollIntoView({block:'nearest',behavior:'smooth'});this.net.manualInput.focus({preventScroll:true});
+        this.updateNetworkControls();this.net.manualInputGroup.scrollIntoView({block:'nearest',behavior:'auto'});this.net.manualInput.focus({preventScroll:true});
       }
       async manualAction() {
         if(this.networkBusy || !['guest-offer','host-response'].includes(this.manualStep))return;
@@ -2895,6 +2504,7 @@
           const raw=btn.dataset.value;
           const value=(key==='score'||key==='time') ? Number(raw) : raw;
           btn.classList.toggle('selected', this.game.settings[key]===value);
+          btn.setAttribute('aria-pressed', String(this.game.settings[key]===value));
         });
         this.updateMenuSections();
         this.update();
@@ -2924,23 +2534,27 @@
       }
 
       applyRenderMode() {
-        const ascii = this.game.settings.renderMode === 'ascii';
+        document.documentElement.classList.toggle('ascii-mode',this.game.settings.renderMode==='ascii');
+        this.game.trail.length=0;
+        this.game.resizeCanvas();
+        const ascii=this.game.settings.renderMode==='ascii';
         document.documentElement.classList.toggle('ascii-mode',ascii);
-        this.renderModeBtn.textContent = ascii ? '图形模式' : 'ASCII 模式';
+        this.renderModeBtn.textContent=ascii?'图形 (R)':'ASCII (R)';
         this.renderModeBtn.setAttribute('aria-pressed',String(ascii));
-        this.renderModeBtn.setAttribute('aria-label', ascii ? '切换到原版图形渲染' : '切换到 ASCII 纯字符渲染');
+        this.renderModeBtn.setAttribute('aria-label',ascii?'切换到简洁图形':'切换到 ASCII 纯字符');
         this.game.ascii.element.setAttribute('aria-hidden',String(!ascii));
         this.game.canvas.setAttribute('aria-hidden',String(ascii));
-        this.game.resizeCanvas();
-        this.game.render();
+        document.getElementById('rendererBadge').textContent=ascii?'ASCII / 文本直绘':'CANVAS / 简洁图形';
+        document.querySelectorAll('[data-setting="renderMode"]').forEach(b=>{
+          b.classList.toggle('selected',b.dataset.value===this.game.settings.renderMode);
+          b.setAttribute('aria-pressed',String(b.dataset.value===this.game.settings.renderMode));
+        });
+        this.game.requestDraw();this.updatePerformance();
       }
 
       setCountdown(mark,show) {
-        this.countdown.classList.toggle('hidden',!show);
-        if (show) {
-          this.countdownText.textContent=mark;
-          this.countdownText.style.animation='none'; this.countdownText.offsetHeight; this.countdownText.style.animation='';
-        }
+        this.countdown.classList.toggle('hidden',!show || this.game.phase!==Phase.COUNTDOWN);
+        if(show&&this.countdownText.textContent!==mark)this.countdownText.textContent=mark;
       }
 
       isTypingTarget(target) {
@@ -2989,8 +2603,87 @@
         this.game.resizeCanvas();
       }
 
+      bindModernControls() {
+        const el=id=>document.getElementById(id);
+        el('serveBtn').addEventListener('click',()=>{this.audio.ensure();this.game.requestServe({type:'key',key:' '});});
+        el('serveRightBtn').addEventListener('click',()=>{this.audio.ensure();this.game.requestServe({type:'key',key:'Enter'});});
+        el('returnMenuBtn').addEventListener('click',()=>{
+          this.game.input.keys.clear();this.game.input.clearTouches(true);
+          this.game.quitToMenu();this.menuTitle.textContent='开始一局';
+          this.menuSub.textContent='选择玩法。你的画面，你的节奏。';this.resetOnlineUi();this.update();
+        });
+        el('soundBtn').addEventListener('click',()=>{
+          this.game.setSetting('sound',!this.game.settings.sound);
+          if(this.game.settings.sound)this.audio.ensure();
+          else if(this.audio.ctx)this.audio.ctx.suspend().catch(()=>{});
+          this.updateLive();
+        });
+        el('perfProfileBtn').addEventListener('click',()=>{
+          const options=['auto','smooth','eco'];
+          this.game.setSetting('renderProfile',options[(options.indexOf(this.game.settings.renderProfile)+1)%options.length]);
+          this.syncSettingsButtons();
+        });
+        this.startBtn.addEventListener('click',()=>{
+          if(this.game.phase===Phase.COUNTDOWN && (window.innerWidth<801||window.innerHeight<501))
+            this.fullscreenTarget.scrollIntoView({block:'start',behavior:'auto'});
+        });
+        el('displaySettings').addEventListener('toggle',()=>this.updatePerformance());
+        this.updatePerformance();this.updateLive();
+      }
+      setText(id,text) {
+        const element=document.getElementById(id);
+        if(element&&element.textContent!==String(text))element.textContent=String(text);
+      }
+      updateLive() {
+        const g=this.game;
+        if(g.isTimerMode()) {
+          this.setText('timerDisplay',formatTime(g.match.remaining));
+          this.timer.classList.toggle('urgent',g.match.remaining<=10);
+        }
+        this.updateStatus();
+        const playing=g.phase===Phase.PLAYING;
+        const own=g.isHost()?'left':g.isClient()?'right':'left';
+        const double=g.settings.mode==='pvp'||g.settings.mode==='timer';
+        const canServe=playing&&g.respawnRemaining<=0;
+        document.getElementById('serveBtn').disabled=!(canServe&&g.serveSide===own);
+        const rightBtn=document.getElementById('serveRightBtn');
+        rightBtn.hidden=!double;
+        rightBtn.disabled=!(canServe&&g.serveSide==='right');
+        const hasEffect=g.effect?POWERUPS[g.effect.type].label+(g.effect.applied===false?' · 待生效':''):'常规球';
+        this.setText('liveEffect',g.curveRemaining>0?'变轨球':hasEffect);
+        this.setText('liveNetwork',g.isOnline()?(this.online.connected?(this.online.route==='relay'?'TURN 中继':'P2P')+' · '+Math.round(this.online.rtt||0)+' ms':'等待连接'):'本地对局');
+        this.setText('playAdvice',g.settings.mode==='ai'?'电脑不能获得增益。移动到合适的位置，接住下一球。':g.isOnline()?'双方各自选择画面。联机时请保持游戏页面在前台。':'左方 W/S，右方方向键；触屏时各使用半边球场。');
+        this.setText('soundBtn',g.settings.sound?'声音开':'声音关');
+        document.getElementById('soundBtn').setAttribute('aria-pressed',String(g.settings.sound));
+      }
+      updatePerformance() {
+        const g=this.game,active=[Phase.COUNTDOWN,Phase.PLAYING].includes(g.phase),s=g.stats;
+        const profile=RENDER_PROFILES[g.settings.renderProfile]+(g.settings.renderProfile==='auto'&&g.autoTier?' · 已降档':'');
+        this.setText('perfProfileBtn',profile);
+        this.setText('perfText',!active?(g.phase===Phase.PAUSED?'暂停 · 无持续重绘':'待机 · 无持续重绘'):
+          s.fps>0?Math.round(s.fps)+' 次/秒 · 脚本 '+s.jsMs.toFixed(2)+' ms':'正在采样 · 目标 '+g.targetRenderFps()+' 帧');
+        this.setText('renderStats',[
+          '渲染：'+(g.settings.renderMode==='ascii'?'DOM 文本 · '+g.ascii.cols+' × '+g.ascii.rows:'Canvas 2D · 960 × 540'),
+          '档位：'+profile+' / 目标 '+g.targetRenderFps()+' 帧',
+          '实际提交：'+(active?s.fps.toFixed(1):'0')+' 次/秒',
+          '帧回调频率：'+(active?s.rafFps.toFixed(1):'0')+' 次/秒',
+          '平均脚本：'+(active?s.jsMs.toFixed(2):'0')+' ms/回调',
+          '累计文本行写入：'+s.rowWrites,
+          '物理：240 次/秒固定步长，单帧最多 20 步',
+          '卡顿丢弃时间：'+s.skippedTime.toFixed(3)+' 秒',
+          'ASCII 不请求图形上下文；浏览器仍负责排版、绘制。'
+        ].join('\n'));
+      }
+
       update() {
         const g=this.game, m=g.match, mode=g.settings.mode;
+        document.documentElement.dataset.phase=g.phase;
+        if(this.layoutPhase!==g.phase){this.layoutPhase=g.phase;requestAnimationFrame(()=>{g.resizeCanvas();g.requestDraw();});}
+        document.getElementById('playingPanel').hidden = ![Phase.PLAYING,Phase.COUNTDOWN].includes(g.phase);
+        document.getElementById('sessionPhase').textContent = ({menu:'准备就绪', countdown:'准备发球', playing:'对局进行中', paused:'已暂停', ended:'本局结束'})[g.phase];
+        document.getElementById('playerLeftName').textContent = g.isClient()?'对手':'左方 · 你';
+        document.getElementById('playerRightName').textContent = mode==='ai'?'电脑':g.isClient()?'右方 · 你':'右方';
+        document.getElementById('matchGoal').textContent = g.isTimerMode()?formatTime(g.settings.time)+' 计时赛':'先得 '+g.settings.score+' 分';
         this.scoreLeft.textContent=m.leftScore; this.scoreRight.textContent=m.rightScore;
         this.scoreLeft.classList.toggle('active',m.leftScore>m.rightScore);
         this.scoreRight.classList.toggle('active',m.rightScore>m.leftScore);
@@ -3004,10 +2697,12 @@
         const modeLabels={ ai:'人机', pvp:'双人', timer:'计时', online:'联机' };
         this.modeBadge.textContent = mode==='ai' ? `${modeLabels[mode]} · ${DIFFICULTY[g.settings.difficulty].label}` : mode==='online' && this.online.connected ? `${this.online.route==='relay'?'中继联机':'联机'} · ${this.online.role==='host'?'左拍':'右拍'}` : modeLabels[mode];
 
-        this.pauseBtn.style.display = [Phase.PLAYING].includes(g.phase) && !g.isOnline() ? 'block' : 'none';
+        this.pauseBtn.style.display = [Phase.PLAYING,Phase.COUNTDOWN].includes(g.phase) && !g.isOnline() ? 'block' : 'none';
         const menuVisible = g.phase === Phase.MENU || g.phase === Phase.ENDED;
         const pauseVisible = g.phase === Phase.PAUSED;
         this.pause.classList.toggle('show',pauseVisible);
+        this.countdown.classList.toggle('hidden',g.phase!==Phase.COUNTDOWN);
+        if(g.phase===Phase.COUNTDOWN && g.countdownMark) this.countdownText.textContent=g.countdownMark;
         this.menu.classList.toggle('hidden',!menuVisible);
 
         // 透明隐藏不会自动移走焦点；把隐藏菜单上的焦点交还给游戏区。
@@ -3025,6 +2720,8 @@
         this.updateHint();
         this.updateStatus();
         this.updateNetworkControls();
+        this.updateLive();
+        this.updatePerformance();
       }
 
       updateTouchLayers() {
@@ -3069,31 +2766,27 @@
 
       updateStatus() {
         const g=this.game;
-        if (g.phase === Phase.PLAYING && g.serveSide) {
-          const label = g.serveSide === 'left' ? '左方发球' : (g.settings.mode === 'ai' ? '电脑发球' : '右方发球');
-          this.status.innerHTML=`<span class="dot" style="background:var(--crt-color);color:var(--crt-color)"></span><span>${label}</span>`;
-        } else if (g.effect) {
-          const meta=POWERUPS[g.effect.type];
-          const target = g.effect.type === 'long' ? (g.effect.target === 'right' ? ' · 右方' : ' · 左方') : '';
-          const state = g.effect.applied === false ? ' · 待生效' : '';
-          this.status.innerHTML=`<span class="dot" style="background:${meta.color};color:${meta.color}"></span><span>${meta.label}${target}${state}</span>`;
-        } else if (g.curveRemaining>0) {
-          this.status.innerHTML='<span class="dot" style="background:#ff8844;color:#ff8844"></span><span>变轨中</span>';
-        } else if (g.isOnline() && this.online.connected) {
-          const ping = this.online.rtt > 0 ? `${Math.round(this.online.rtt)} ms` : '测量中';
-          const quality = this.online.rtt <= 70 ? '优' : this.online.rtt <= 140 ? '良' : this.online.rtt > 0 ? '较高延迟' : '连接中';
-          this.status.textContent=`${this.online.route==='relay'?'TURN 中继':this.online.route==='direct'?'P2P 直连':'联机'} ${ping} · ${quality}`;
-        } else {
-          this.status.textContent='';
-        }
+        let text='常规回合';
+        if(g.phase===Phase.MENU) text='选好模式，开始一局。';
+        else if(g.phase===Phase.PAUSED) text='游戏已冻结，继续后恢复。';
+        else if(g.phase===Phase.ENDED) text='本局结束，可保留设置再来一局。';
+        else if(g.serveSide) text=g.serveSide==='left'?'左方准备发球':g.settings.mode==='ai'?'电脑准备发球':'右方准备发球';
+        else if(g.respawnRemaining>0) text='得分 · 准备下一球';
+        else if(g.effect) {
+          const target=g.effect.type==='long'?(g.effect.target==='right'?' · 右方':' · 左方'):'';
+          text=POWERUPS[g.effect.type].label+target+(g.effect.applied===false?' · 待生效':'')+' · '+Math.max(0,g.effect.remaining).toFixed(1)+' 秒';
+        } else if(g.curveRemaining>0) text='变轨球 · 注意方向';
+        if(this.status.textContent!==text) this.status.textContent=text;
       }
     }
 
     // ============================================================
+    // ============================================================
     // 8) Boot.
     // ============================================================
     const canvas=document.getElementById('gameCanvas');
-    const ctx=canvas.getContext('2d');
+    // Never request a canvas context on the default ASCII boot path.
+    const ctx=null;
     const audio=new AudioEngine();
     const input=new InputManager();
     const online=new OnlinePeer();
@@ -3107,19 +2800,34 @@
     window.addEventListener('pagehide',()=>online.cleanup());
 
 
-    // Always keep renderer alive so menu has a live CRT background.
-    game.raf=requestAnimationFrame(game.loop);
-
+    // No perpetual menu animation. One requested frame creates the initial preview.
+    game.requestDraw();
+    document.addEventListener('visibilitychange',()=>{
+      if(document.hidden) {
+        if(game.raf)cancelAnimationFrame(game.raf);
+        game.raf=null;game.accumulator=0;
+        if(!game.isOnline()&&[Phase.PLAYING,Phase.COUNTDOWN].includes(game.phase))game.setPaused(true);
+      } else {
+        game.lastTs=performance.now();game.accumulator=0;game.resetPerf();game.requestDraw();
+      }
+    });
     function updateOrientationHint() {
       const hint=document.getElementById('rotateHint');
-      const portrait=IS_MOBILE && window.innerHeight > window.innerWidth;
-      hint.classList.toggle('show',portrait);
-      hint.setAttribute('aria-hidden', portrait ? 'false':'true');
+      const portrait=IS_MOBILE&&window.innerHeight>window.innerWidth;
+      hint.classList.toggle('show',portrait);hint.setAttribute('aria-hidden',String(!portrait));
     }
     updateOrientationHint();
     window.addEventListener('resize',updateOrientationHint);
-    window.addEventListener('orientationchange',()=>setTimeout(updateOrientationHint,80));
-    if (IS_MOBILE && screen.orientation?.lock) screen.orientation.lock('landscape').catch(()=>{});
-  </script>
+    // Orientation is a hint, never a full-screen blocker or a forced orientation lock.
+
+    window.PONG84 = Object.freeze({
+      version:'3.0.0',
+      diagnostics:()=>({ version:'3.0.0', phase:game.phase, renderer:game.settings.renderMode==='ascii'?'DOM ASCII':'Canvas 2D',
+        profile:game.settings.renderProfile, targetFps:game.targetRenderFps(), grid:[game.ascii.cols,game.ascii.rows],
+        canvasInitialized:!!game.ctx, activeFrameLoop:!!game.raf, stats:{...game.stats},
+        network:{transport:ui.transportMode, connected:online.connected, role:online.role, rtt:Math.round(online.rtt||0)} })
+    });
+
+</script>
 </body>
 </html>
