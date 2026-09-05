@@ -1,63 +1,45 @@
-# 软件渲染与性能说明
+# v4 渲染设计与性能记录
 
-本版的目标是不要求 GPU 加速也能玩，而不是宣称所有硬件、浏览器和系统负载下都锁定 60 FPS。
+## 两条路径各自负责什么
 
-## 实现
+图形路径追求清晰度与光效：按实际显示尺寸创建高清 Canvas 2D，缓存球场背景和光晕，独立粒子与拖尾，提供精致/均衡画质。ASCII 路径为有上限的字节缓冲区和持久 Text 节点，不创建图形上下文，只更新变化行。切回 ASCII 释放图形缓存，取消粒子与拖尾生成，主画布缩为 1×1。
 
-ASCII 默认走 DOM 文本路径，既不创建游戏 Canvas 上下文，也不创建用于测字的隐藏 Canvas。字体宽度仅在初始化测量一次；网格适配在尺寸变化或档位变化时执行，不在每帧查询布局。
+没有为了 ASCII 性能关闭图形模式特效。ASCII 的节能、自适应降档只影响 ASCII 绘制，不会把图形模式固定在低分辨率或 30 次/秒。
 
-网格由固定数量的行元素与 Text 节点组成，使用有上限的 `Uint8Array` 缓冲区。复用静态边框与中线，每帧只向已变化的行写入字符；相同画面没有文本写入。没有为每个字符创建 DOM 元素，也不将整个 `<pre>` 每帧重新生成。
+## 实测口径
 
-ASCII 不生成球拖尾。UI 中没有持续 CSS 动画、滤镜、扫描线和发光。菜单与暂停状态只响应事件重绘；本地游戏隐藏后暂停，回到前台仍等待玩家继续。
+测试日期：2026-09-05。浏览器：144.0.7559.96。1366×768 CSS 像素，设备像素比 1。每组预热约 1.1 秒、采样约 6 秒。
 
-自适应高档目标 60 帧；连续两次采样窗判定为高负载后降到 30 帧，普通尺寸字符网格同时从 96×32 降到 80×26。降档不自动反复升档，可重新选择自适应重试。30 帧档仍通过前台帧回调推进 240 次/秒目标的固定步长物理，而不是把球或球拍运动减速。
+通过 Chromium 启动参数禁用 GPU 合成、加速 Canvas、WebGL 和软件 3D 光栅器；CDP 返回 `gpu_compositing=disabled_software`、`rasterization=disabled_software`、`webgl=disabled_off`、`webgpu=disabled_off`。实际参数及状态写在 `validation/ascii_software_*.json`。
 
-单次帧回调最多补算 20 个物理步；大卡顿时会丢弃过量累计时间，避免无限补算。它不是硬实时系统；极慢 CPU 上不能同时保证准时物理和任意画面帧率。性能详情中的「卡顿丢弃时间」用于观察这一情况。
+在执行未改动 HTML 前，以内存本地存储测试桩指定 ASCII，因而零 Canvas 统计包含冷启动；不是先初始化图形再切换 ASCII。为持续对打，测试桩让双方自动跟随球，关闭音频，不修改发布 HTML。CPU 6× 是 DevTools 节流，不对应某一型号旧 CPU。
 
-## 本次实际环境
+| 工况 | 画面提交 / 秒 | 提交间隔 P95 / ms | 渲染脚本 P95 / ms | Canvas 上下文请求 |
+| --- | ---: | ---: | ---: | ---: |
+| 自适应 / CPU 1× | 60.0 | 17.0 | 0.2 | 0 |
+| 自适应 / CPU 6× 节流 | 60.15 | 18.2 | 1.2 | 0 |
+| 节能 / CPU 6× 节流 | 30.16 | 35.1 | 1.1 | 0 |
 
-- Linux x86-64 / KVM 容器；5 个可见 vCPU，报告型号 AMD EPYC 9V74。
-- Chromium **144.0.7559.96**，无头模式，1366×768，设备像素比 1。
-- 显式禁用 GPU、GPU 合成、加速 Canvas、WebGL 及软件 3D 光栅器路径；通过 DevTools `SystemInfo.getInfo` 核实实际状态，不只凭启动参数判断。
-- 返回状态：`gpu_compositing=disabled_software`、`rasterization=disabled_software`、`2d_canvas=disabled_software`；WebGL、WebGPU、OpenGL 和 Vulkan 为禁用。
-- 使用真实浏览器加载完整 HTML 内容，但通过 `set_content` 注入空白页面。容器禁止直接导航 `file://` 与本地 HTTP，因此**不是本地双击文件或线上 URL 导航测试**。
+以上三组均无未捕获 JavaScript 异常。短时间采样、端点计数和调度误差可使提交次数略高于设定目标，并不表示突破屏幕刷新率。
 
-## 连续运动测试
+**提交频率不是显示器实际呈现帧率。** `render_js_p95_ms` 只计算应用提交文本更新的脚本耗时，不包括随后发生的排版、绘制与显示延迟。本记录不保证任意无独显设备恒定 60 FPS，也不替代实体设备测试。
 
-每种工况预热约 1.1 秒后采样 10 秒，关闭音效。测试夹具只在浏览器内临时让两侧球拍自动接球，保持球连续运动并保留正常碰撞与功能效果；不是在等发球画面上测帧率，也不修改发布的游戏文件。CPU 节流使用 Chromium DevTools 的 6 倍节流设置，不等同于某种具体旧电脑。
+图形模式没有进行实体 GPU 的性能基准；不把其 60 次/秒目标写成实测保证。浏览器是否硬件加速由运行环境决定。
 
-| 工况 | 字符网格 | 画面提交频率 | 绘制函数脚本平均 / P95 | 提交间隔 P95 / 最大 | Canvas 上下文调用 |
-| --- | --- | ---: | ---: | ---: | ---: |
-| 自适应，正常 CPU | 96×32 | 59.99 次/秒 | 0.0645 / 0.20 ms | 17.10 / 49.90 ms | 0 |
-| 自适应，6 倍 CPU 节流 | 96×32 | 59.99 次/秒 | 0.3277 / 1.30 ms | 18.90 / 28.80 ms | 0 |
-| 节能档，6 倍 CPU 节流 | 80×26 | 29.99 次/秒 | 0.4573 / 1.50 ms | 35.60 / 44.20 ms | 0 |
+## 全屏与逻辑几何
 
-**测量口径：**「提交频率」为调用游戏绘制函数的次数，不是显示器实际呈现帧率。绘制函数脚本耗时不包含后续浏览器排版、绘制和显示；因此不能把 0.x ms 的脚本耗时说成完整一帧耗时。提交间隔也并非全部完全均匀，正常工况出现过接近 50 ms 的单次间隔，不宣称完全没有卡顿。
+图形与字符球场均覆盖原生全屏视口；不留固定 16:9 容器、页面外边距、边框或固定侧栏。保留 960×540 逻辑世界，非 16:9 视口采用独立横纵缩放，所以图形比例会随显示比例改变。该做法保留原有碰撞和网络物理规则，触控使用相同归一化映射。
 
-完整结果包含 DevTools 的 TaskDuration、ScriptDuration、LayoutDuration、RecalcStyleDuration 增量，保存在 `validation/`。这些是当前环境单次测试结果，不是跨设备认证或所有配置的最低保证。
+## 复现
 
-## 额外验证
+安装 Python 与 Playwright，并准备 Chromium 浏览器后，在发布目录运行：
 
-完全封锁 `HTMLCanvasElement.getContext` 时，默认 ASCII 仍能进入倒计时；尝试切到图形会显示提示并自动回到 ASCII。菜单与暂停的帧循环停止、相同画面不写文本行、字符模式不记录拖尾均已检查。
-
-向每次绘制注入约 35 ms 的人工主线程阻塞后，自适应降到 30 帧与低密度网格。这个用例用于检验降档逻辑，不能解释成实际无人工阻塞时也达到同等帧率。
-
-## 在自己的电脑上看
-
-直接在游戏内展开「画面与性能」即可看本机采样；较弱设备使用「30 帧节能」。默认 ASCII 已不要求 GPU API，不必为了玩游戏额外安装测试工具。
-
-开发者可选用附带脚本复现相同软件渲染测试。需要 Python 3.10+、Playwright 和可用的 Chromium；已有 Chrome/Chromium 时也可用 `--browser` 指定可执行文件。
-
-```sh
+```bash
 python -m pip install playwright
-python -m playwright install chromium
-python tools/benchmark.py index.html --seconds 10 --profile auto --out result-auto.json
-python tools/benchmark.py index.html --seconds 10 --cpu-rate 6 --profile auto --out result-cpu6.json
-python tools/benchmark.py index.html --seconds 10 --cpu-rate 6 --profile eco --out result-eco.json
+python tools/benchmark.py index.html --seconds 10 --cpu-rate 6 --profile auto --out validation/local-benchmark.json
+python tools/regression.py index.html
 ```
 
-测试脚本注入本地 HTML 内容、运行自动接球夹具并导出 JSON，不会改写 `index.html`，也不会验证公网联机。测试路径与发布游戏的正常操作路径不同，结果需按上述口径解读。
+需要自定义浏览器路径时，采样脚本支持 `--browser`。回归脚本默认查找 PATH 中的 `chromium`；也可在脚本中将 `executable_path` 指向本机 Chromium。游戏运行本身不依赖 Python、Playwright 或这些测试工具。
 
-## 设计参考
-
-[MDN：requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame) 说明帧回调与显示刷新、后台页面调度的关系；[web.dev：避免大规模布局和布局抖动](https://web.dev/articles/avoid-large-complex-layouts-and-layout-thrashing) 说明布局读取、修改交错的开销；[MDN：textContent](https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent) 区分文本内容与依赖样式的文本读取。浏览器仍负责文本的排版和绘制，本项目没有能力保证其在任意设备上的耗时。
+测试使用 `page.set_content` 注入原始 HTML，并非 file:// 或 HTTP 页面导航。测试环境的导航策略限制没有被绕过；这些结果不应描述成双击 HTML、线上 Pages 或系统级浏览器窗口全屏的端到端测试。

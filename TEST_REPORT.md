@@ -1,85 +1,69 @@
-# 测试报告 · v3.0.0
+# v4 回归测试记录
 
-测试对象：本次 UI / CPU 友好 ASCII 重写版。JavaScript 已通过 `node --check`。
+日期：2026-09-05。**55 / 55 项通过，无未捕获 JavaScript 异常。** 原始结果为 `validation/regression.json`。
 
-**53 项回归检查 + 4 项附加检查通过，共 57 项。** 下表的数目来自实际运行结果，不包括未完成的联机测试。无未捕获游戏脚本错误。
+采用真实 Chromium 的 DOM、Canvas 与原生 Fullscreen API，注入发布 HTML；测试使用内存偏好、可复现对局状态与模拟键盘/指针。全屏断言同时检查 `document.fullscreenElement`、球场边界、临时菜单和可操作按钮，不是仅检查 CSS 类。视口覆盖 1920×1080、1440×900、2560×1080、1024×768、390×844 和 844×390；两种画面逐项验证。
 
-| 序号 | 检查 | 结果 |
+未完成：file:// 双击导航、HTTP/Pages 实际部署、实体操作系统的地址栏/任务栏显示验证、实体手机手势与刘海区域、公网 PeerJS/TURN 和两台设备联机。未将上述项目计入通过项。
+
+另完成两个定向检验：`ascii_start.html` 在已有图形偏好时仍以零 Canvas 请求启动；主入口在 Canvas 2D 不可用时正确回退 ASCII。详见 `validation/targeted_checks.json`，不并入上述 55 项回归计数。
+
+软件渲染性能另见 [PERFORMANCE.md](PERFORMANCE.md)。本报告只对应此发布版本，未沿用上一版本的测试计数。
+
+| 编号 | 检查项 | 结果 |
 | --- | --- | --- |
-| 1 | GPU 合成与光栅化均为软件路径 | 通过 |
-| 2 | 首次启动默认 ASCII | 通过 |
-| 3 | 默认启动没有任何 Canvas getContext 调用 | 通过 |
-| 4 | ASCII 字符只含可打印 ASCII | 通过 |
-| 5 | 初始 ASCII 网格有上限 | 通过 |
-| 6 | 菜单停止持续帧循环 | 通过 |
-| 7 | 页面无持续 CSS 动画或滤镜 | 通过 |
-| 8 | 全屏覆盖球场、控制台和按钮 | 通过 |
-| 9 | 全屏底部控制不被裁切 | 通过 |
-| 10 | 开始进入倒计时 | 通过 |
-| 11 | 倒计时可暂停 | 通过 |
-| 12 | 倒计时暂停后恢复原阶段 | 通过 |
-| 13 | 空格发球不清分、不重新倒计时 | 通过 |
-| 14 | 重复发球键不会重开 | 通过 |
-| 15 | 切换图形不清除比分、长拍或发球权 | 通过 |
-| 16 | 图形路径按需创建 2D 上下文 | 通过 |
-| 17 | 切回 ASCII 释放大画布 | 通过 |
-| 18 | ASCII 运行期间不请求图形上下文 | 通过 |
-| 19 | ASCII 不记录拖尾 | 通过 |
-| 20 | 暂停时物理和重绘均停止 | 通过 |
-| 21 | 未变化帧没有文本行写入 | 通过 |
-| 22 | 键盘玩家基础移速仍为 1100 | 通过 |
-| 23 | 按键移速按时间计算 | 通过 |
-| 24 | 人机无增益 / long | 通过 |
-| 25 | 人机无增益 / shield | 通过 |
-| 26 | 人机无增益 / fast | 通过 |
-| 27 | 人机无增益 / small | 通过 |
-| 28 | 人机无增益 / big | 通过 |
-| 29 | 人机无增益 / slow | 通过 |
-| 30 | 人机无增益 / return | 通过 |
-| 31 | 高频功能球设置保留 | 通过 |
-| 32 | 60/30 帧档位的固定步长物理一致 | 通过 |
-| 33 | 计时赛显示时长、隐藏比分设置 | 通过 |
-| 34 | 手动 P2P 控制完整保留 | 通过 |
-| 35 | 云端房间码入口保留 | 通过 |
-| 36 | 选择云联机尚未加载外部脚本 | 通过 |
-| 37 | 非法手动连接码有可见错误 | 通过 |
-| 38 | Canvas API 完全不可用时 ASCII 仍可启动 | 通过 |
-| 39 | 图形创建失败自动回退 ASCII | 通过 |
-| 40 | 旧设置迁移保留玩法而首次默认 ASCII | 通过 |
-| 41 | 新性能设置可保存 | 通过 |
-| 42 | 布局 1440×960 无横向溢出 | 通过 |
-| 43 | 布局 1366×768 无横向溢出 | 通过 |
-| 44 | 布局 800×600 无横向溢出 | 通过 |
-| 45 | 布局 390×844 无横向溢出 | 通过 |
-| 46 | 触控取消不意外发球 | 通过 |
-| 47 | 触控松手发球 | 通过 |
-| 48 | 竖屏不强制遮挡页面 | 通过 |
-| 49 | 布局 844×390 无横向溢出 | 通过 |
-| 50 | 横屏 844×390 球场/工具栏可见 | 通过 |
-| 51 | 布局 667×375 无横向溢出 | 通过 |
-| 52 | 横屏 667×375 球场/工具栏可见 | 通过 |
-| 53 | 测试过程中无未捕获脚本错误 | 通过 |
-| 54 | 持续主线程过载自动切到 30 帧低密度 | 通过 |
-| 55 | 重新选择自适应可恢复高档尝试 | 通过 |
-| 56 | 后台事件暂停本地对局、停止帧循环 | 通过 |
-| 57 | 返回前台仍等待玩家继续 | 通过 |
-
-## 范围与局限
-
-界面尺寸包括 1440×960、1366×768、800×600、390×844、844×390、667×375。实际使用浏览器排版和截图，不只是检查 HTML 是否包含某个标签。触摸用例使用浏览器合成 PointerEvent；后台用例使用可见性属性测试替身和事件分发。它们不能代替实体手机触控、操作系统切后台或浏览器真实后台调度的验证。
-
-软件渲染与 6 倍 CPU 节流的测量见 `PERFORMANCE.md` 与 `validation/new-*.json`。无头环境注入完整 HTML，不等于验证了 `file://` 导航、网页服务器部署、具体旧电脑或物理显示设备的端到端显示效果。
-
-## 原生联机尝试未完成
-
-在两个浏览器上下文中尝试局域网原生 WebRTC。环境未返回可用连接地址，邀请码生成未成功；页面给出「浏览器没有提供可用的连接地址，请检查 WebRTC 权限、防火墙或 TURN 设置」提示。未生成成功的邀请、未建立真实数据通道，**不计入通过项**。原始结果见 `validation/extra_tests.json`。
-
-手动 / 云房间界面、输入错误反馈、按需加载入口和既有协议代码保留；本次未进行公共 PeerJS、有效 TURN、线上 GitHub Pages、不同设备或不同网络的端到端联机实测。
-
-## 文件校验
-
-下面校验值对应发布包中的 `index.html`，与独立提供的 `index_ui.html` 字节相同。
-
-```text
-SHA-256  1d3aa28a046d94475d4fb79bde577a3b50954194cc0b28e88aaf6b8966898772
-```
+| 1 | Fresh default is high-quality graphics | 通过 |
+| 2 | Canvas backing follows displayed size and high DPI | 通过 |
+| 3 | Graphical renderer created lazily in graphic mode | 通过 |
+| 4 | Menu has no continuous game frame loop | 通过 |
+| 5 | ASCII energy profile cannot cap graphical FPS | 通过 |
+| 6 | Graphical quality changes actual resolution | 通过 |
+| 7 | Display changes preserve entire paused gameplay state | 通过 |
+| 8 | Space serves without replacing match ID | 通过 |
+| 9 | Held/repeated Space does not serve the next rally | 通过 |
+| 10 | Released and pressed Space serves again | 通过 |
+| 11 | Uses native Fullscreen API | 通过 |
+| 12 | Graphics full viewport 1920x1080 | 通过 |
+| 13 | ASCII full viewport 1920x1080 | 通过 |
+| 14 | ASCII context/cache released 1920x1080 | 通过 |
+| 15 | Graphics full viewport 1440x900 | 通过 |
+| 16 | ASCII full viewport 1440x900 | 通过 |
+| 17 | ASCII context/cache released 1440x900 | 通过 |
+| 18 | Graphics full viewport 2560x1080 | 通过 |
+| 19 | ASCII full viewport 2560x1080 | 通过 |
+| 20 | ASCII context/cache released 2560x1080 | 通过 |
+| 21 | Graphics full viewport 1024x768 | 通过 |
+| 22 | ASCII full viewport 1024x768 | 通过 |
+| 23 | ASCII context/cache released 1024x768 | 通过 |
+| 24 | Graphics full viewport 390x844 | 通过 |
+| 25 | ASCII full viewport 390x844 | 通过 |
+| 26 | ASCII context/cache released 390x844 | 通过 |
+| 27 | Graphics full viewport 844x390 | 通过 |
+| 28 | ASCII full viewport 844x390 | 通过 |
+| 29 | ASCII context/cache released 844x390 | 通过 |
+| 30 | Fullscreen controls automatically hide and become inert | 通过 |
+| 31 | Reveal button reopens controls | 通过 |
+| 32 | Fullscreen pause shows temporary menu overlay | 通过 |
+| 33 | Pause overlay bounded within screen | 通过 |
+| 34 | Paused frame loop stops | 通过 |
+| 35 | Resume removes sidebar again | 通过 |
+| 36 | F exits native fullscreen and restores normal layout | 通过 |
+| 37 | Human paddle speed remains 1100 | 通过 |
+| 38 | Computer speed and shield remain unboosted | 通过 |
+| 39 | Random effect generation never enlarges AI paddle or grants shield | 通过 |
+| 40 | ASCII cold boot requests zero canvas contexts | 通过 |
+| 41 | ASCII cold boot allocates no graphical renderer | 通过 |
+| 42 | ASCII uses persistent Text nodes only | 通过 |
+| 43 | ASCII menu stops scheduling animation frames | 通过 |
+| 44 | ASCII visible UI has no filters/shadows/animations/compositing hints | 通过 |
+| 45 | ASCII energy mode targets 30 Hz | 通过 |
+| 46 | ASCII gameplay still makes zero Canvas requests | 通过 |
+| 47 | Identical ASCII frames cause no row writes | 通过 |
+| 48 | Denied fullscreen keeps normal layout and informs user | 通过 |
+| 49 | Portrait normal page has no horizontal overflow | 通过 |
+| 50 | Touch layer covers full graphical court | 通过 |
+| 51 | Touch layer remains aligned in fullscreen ASCII | 通过 |
+| 52 | Landscape normal page has no horizontal overflow | 通过 |
+| 53 | No uncaught browser JavaScript errors | 通过 |
+| 54 | OnlinePeer source unchanged by UI rewrite | 通过 |
+| 55 | InputManager source unchanged by UI rewrite | 通过 |

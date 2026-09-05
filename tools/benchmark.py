@@ -46,7 +46,12 @@ def main() -> int:
                 context = browser.new_context(viewport={'width': 1366, 'height': 768}, device_scale_factor=1)
                 page = context.new_page()
                 page.on('pageerror', lambda error: errors.append(str(error)))
-                page.evaluate('''() => { window.__ctxCalls=0;
+                page.evaluate('''() => {
+                    // Cold ASCII boot: seed browser preferences before executing the unchanged HTML.
+                    const store=new Map([['pong84.ui4.settings',JSON.stringify({renderMode:'ascii'})]]);
+                    Object.defineProperty(window,'localStorage',{configurable:true,value:{
+                        getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,String(v)),removeItem:k=>store.delete(k)}});
+                    window.__ctxCalls=0;
                     const original=HTMLCanvasElement.prototype.getContext;
                     HTMLCanvasElement.prototype.getContext=function(...a){
                         window.__ctxCalls++;return original.apply(this,a);
@@ -96,7 +101,7 @@ def main() -> int:
                     return round(ordered[int((len(ordered)-1)*q)], 4) if ordered else None
                 result = {
                     'browser': browser.version, 'viewport': [1366, 768],
-                    'navigation_tested': False, 'auto_return_fixture': True,
+                    'navigation_tested': False, 'auto_return_fixture': True, 'cold_ascii_boot': True, 'storage_fixture': True,
                     'gpu_status': gpu, 'flags': FLAGS, 'cpu_throttle': args.cpu_rate,
                     'seconds': round(seconds, 3), 'submissions': len(times),
                     'submission_hz': round(len(times)/seconds, 2),

@@ -1,315 +1,373 @@
 {
-  "browser": "144.0.7559.96",
-  "flags": [
-    "--no-sandbox",
-    "--disable-gpu",
-    "--disable-gpu-compositing",
-    "--disable-accelerated-2d-canvas",
-    "--disable-webgl",
-    "--disable-software-rasterizer"
-  ],
-  "gpu": {
-    "2d_canvas": "disabled_software",
-    "direct_rendering_display_compositor": "disabled_off_ok",
-    "gpu_compositing": "disabled_software",
-    "multiple_raster_threads": "disabled_off",
-    "opengl": "disabled_off",
-    "rasterization": "disabled_software",
-    "raw_draw": "disabled_off_ok",
-    "skia_graphite": "disabled_off",
-    "trees_in_viz": "disabled_off",
-    "video_decode": "disabled_software",
-    "video_encode": "disabled_software",
-    "vulkan": "disabled_off",
-    "webgl": "disabled_off",
-    "webgpu": "disabled_off",
-    "webnn": "disabled_off"
-  },
-  "checks": [
+  "source": "index.html",
+  "test_method": "Chromium real DOM + native Fullscreen API with page.set_content; no URL navigation; deterministic in-memory gameplay fixtures used",
+  "tests": [
     {
-      "name": "GPU 合成与光栅化均为软件路径",
+      "name": "Fresh default is high-quality graphics",
+      "pass": true
+    },
+    {
+      "name": "Canvas backing follows displayed size and high DPI",
+      "pass": true
+    },
+    {
+      "name": "Graphical renderer created lazily in graphic mode",
+      "pass": true
+    },
+    {
+      "name": "Menu has no continuous game frame loop",
+      "pass": true
+    },
+    {
+      "name": "ASCII energy profile cannot cap graphical FPS",
+      "pass": true
+    },
+    {
+      "name": "Graphical quality changes actual resolution",
+      "pass": true
+    },
+    {
+      "name": "Display changes preserve entire paused gameplay state",
+      "pass": true
+    },
+    {
+      "name": "Space serves without replacing match ID",
+      "pass": true
+    },
+    {
+      "name": "Held/repeated Space does not serve the next rally",
+      "pass": true
+    },
+    {
+      "name": "Released and pressed Space serves again",
+      "pass": true
+    },
+    {
+      "name": "Uses native Fullscreen API",
+      "pass": true
+    },
+    {
+      "name": "Graphics full viewport 1920x1080",
       "pass": true,
       "detail": {
-        "2d_canvas": "disabled_software",
-        "direct_rendering_display_compositor": "disabled_off_ok",
-        "gpu_compositing": "disabled_software",
-        "multiple_raster_threads": "disabled_off",
-        "opengl": "disabled_off",
-        "rasterization": "disabled_software",
-        "raw_draw": "disabled_off_ok",
-        "skia_graphite": "disabled_off",
-        "trees_in_viz": "disabled_off",
-        "video_decode": "disabled_software",
-        "video_encode": "disabled_software",
-        "vulkan": "disabled_off",
-        "webgl": "disabled_off",
-        "webgpu": "disabled_off",
-        "webnn": "disabled_off"
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "iw": 1920,
+        "ih": 1080,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 1920
       }
     },
     {
-      "name": "首次启动默认 ASCII",
+      "name": "ASCII full viewport 1920x1080",
       "pass": true,
-      "detail": null
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "iw": 1920,
+        "ih": 1080,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 1920
+      }
     },
     {
-      "name": "默认启动没有任何 Canvas getContext 调用",
-      "pass": true,
-      "detail": null
+      "name": "ASCII context/cache released 1920x1080",
+      "pass": true
     },
     {
-      "name": "ASCII 字符只含可打印 ASCII",
+      "name": "Graphics full viewport 1440x900",
       "pass": true,
-      "detail": null
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "w": 1440,
+        "h": 900,
+        "iw": 1440,
+        "ih": 900,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 1440
+      }
     },
     {
-      "name": "初始 ASCII 网格有上限",
+      "name": "ASCII full viewport 1440x900",
       "pass": true,
-      "detail": [
-        96,
-        32
-      ]
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "w": 1440,
+        "h": 900,
+        "iw": 1440,
+        "ih": 900,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 1440
+      }
     },
     {
-      "name": "菜单停止持续帧循环",
-      "pass": true,
-      "detail": null
+      "name": "ASCII context/cache released 1440x900",
+      "pass": true
     },
     {
-      "name": "页面无持续 CSS 动画或滤镜",
+      "name": "Graphics full viewport 2560x1080",
       "pass": true,
-      "detail": null
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "w": 2560,
+        "h": 1080,
+        "iw": 2560,
+        "ih": 1080,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 2560
+      }
     },
     {
-      "name": "全屏覆盖球场、控制台和按钮",
+      "name": "ASCII full viewport 2560x1080",
       "pass": true,
-      "detail": null
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "w": 2560,
+        "h": 1080,
+        "iw": 2560,
+        "ih": 1080,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 2560
+      }
     },
     {
-      "name": "全屏底部控制不被裁切",
-      "pass": true,
-      "detail": null
+      "name": "ASCII context/cache released 2560x1080",
+      "pass": true
     },
     {
-      "name": "开始进入倒计时",
+      "name": "Graphics full viewport 1024x768",
       "pass": true,
-      "detail": null
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "w": 1024,
+        "h": 768,
+        "iw": 1024,
+        "ih": 768,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 1024
+      }
     },
     {
-      "name": "倒计时可暂停",
+      "name": "ASCII full viewport 1024x768",
       "pass": true,
-      "detail": null
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "w": 1024,
+        "h": 768,
+        "iw": 1024,
+        "ih": 768,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 1024
+      }
     },
     {
-      "name": "倒计时暂停后恢复原阶段",
-      "pass": true,
-      "detail": null
+      "name": "ASCII context/cache released 1024x768",
+      "pass": true
     },
     {
-      "name": "空格发球不清分、不重新倒计时",
+      "name": "Graphics full viewport 390x844",
       "pass": true,
-      "detail": null
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "w": 390,
+        "h": 844,
+        "iw": 390,
+        "ih": 844,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 390
+      }
     },
     {
-      "name": "重复发球键不会重开",
+      "name": "ASCII full viewport 390x844",
       "pass": true,
-      "detail": null
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "w": 390,
+        "h": 844,
+        "iw": 390,
+        "ih": 844,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 390
+      }
     },
     {
-      "name": "切换图形不清除比分、长拍或发球权",
-      "pass": true,
-      "detail": null
+      "name": "ASCII context/cache released 390x844",
+      "pass": true
     },
     {
-      "name": "图形路径按需创建 2D 上下文",
+      "name": "Graphics full viewport 844x390",
       "pass": true,
-      "detail": null
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "w": 844,
+        "h": 390,
+        "iw": 844,
+        "ih": 390,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 844
+      }
     },
     {
-      "name": "切回 ASCII 释放大画布",
+      "name": "ASCII full viewport 844x390",
       "pass": true,
-      "detail": null
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "w": 844,
+        "h": 390,
+        "iw": 844,
+        "ih": 390,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 844
+      }
     },
     {
-      "name": "ASCII 运行期间不请求图形上下文",
-      "pass": true,
-      "detail": null
+      "name": "ASCII context/cache released 844x390",
+      "pass": true
     },
     {
-      "name": "ASCII 不记录拖尾",
-      "pass": true,
-      "detail": null
+      "name": "Fullscreen controls automatically hide and become inert",
+      "pass": true
     },
     {
-      "name": "暂停时物理和重绘均停止",
-      "pass": true,
-      "detail": null
+      "name": "Reveal button reopens controls",
+      "pass": true
     },
     {
-      "name": "未变化帧没有文本行写入",
-      "pass": true,
-      "detail": null
+      "name": "Fullscreen pause shows temporary menu overlay",
+      "pass": true
     },
     {
-      "name": "键盘玩家基础移速仍为 1100",
-      "pass": true,
-      "detail": null
+      "name": "Pause overlay bounded within screen",
+      "pass": true
     },
     {
-      "name": "按键移速按时间计算",
-      "pass": true,
-      "detail": null
+      "name": "Paused frame loop stops",
+      "pass": true
     },
     {
-      "name": "人机无增益 / long",
-      "pass": true,
-      "detail": null
+      "name": "Resume removes sidebar again",
+      "pass": true
     },
     {
-      "name": "人机无增益 / shield",
-      "pass": true,
-      "detail": null
+      "name": "F exits native fullscreen and restores normal layout",
+      "pass": true
     },
     {
-      "name": "人机无增益 / fast",
+      "name": "Human paddle speed remains 1100",
       "pass": true,
-      "detail": null
+      "detail": {
+        "human": 1100,
+        "computer": 270,
+        "shield": false,
+        "height": 104,
+        "baseHeight": 104
+      }
     },
     {
-      "name": "人机无增益 / small",
-      "pass": true,
-      "detail": null
+      "name": "Computer speed and shield remain unboosted",
+      "pass": true
     },
     {
-      "name": "人机无增益 / big",
-      "pass": true,
-      "detail": null
+      "name": "Random effect generation never enlarges AI paddle or grants shield",
+      "pass": true
     },
     {
-      "name": "人机无增益 / slow",
-      "pass": true,
-      "detail": null
+      "name": "ASCII cold boot requests zero canvas contexts",
+      "pass": true
     },
     {
-      "name": "人机无增益 / return",
-      "pass": true,
-      "detail": null
+      "name": "ASCII cold boot allocates no graphical renderer",
+      "pass": true
     },
     {
-      "name": "高频功能球设置保留",
-      "pass": true,
-      "detail": null
+      "name": "ASCII uses persistent Text nodes only",
+      "pass": true
     },
     {
-      "name": "60/30 帧档位的固定步长物理一致",
-      "pass": true,
-      "detail": null
+      "name": "ASCII menu stops scheduling animation frames",
+      "pass": true
     },
     {
-      "name": "计时赛显示时长、隐藏比分设置",
-      "pass": true,
-      "detail": null
+      "name": "ASCII visible UI has no filters/shadows/animations/compositing hints",
+      "pass": true
     },
     {
-      "name": "手动 P2P 控制完整保留",
-      "pass": true,
-      "detail": null
+      "name": "ASCII energy mode targets 30 Hz",
+      "pass": true
     },
     {
-      "name": "云端房间码入口保留",
-      "pass": true,
-      "detail": null
+      "name": "ASCII gameplay still makes zero Canvas requests",
+      "pass": true
     },
     {
-      "name": "选择云联机尚未加载外部脚本",
-      "pass": true,
-      "detail": null
+      "name": "Identical ASCII frames cause no row writes",
+      "pass": true
     },
     {
-      "name": "非法手动连接码有可见错误",
-      "pass": true,
-      "detail": null
+      "name": "Denied fullscreen keeps normal layout and informs user",
+      "pass": true
     },
     {
-      "name": "Canvas API 完全不可用时 ASCII 仍可启动",
-      "pass": true,
-      "detail": null
+      "name": "Portrait normal page has no horizontal overflow",
+      "pass": true
     },
     {
-      "name": "图形创建失败自动回退 ASCII",
+      "name": "Touch layer covers full graphical court",
       "pass": true,
-      "detail": null
+      "detail": {
+        "active": true,
+        "matches": true
+      }
     },
     {
-      "name": "旧设置迁移保留玩法而首次默认 ASCII",
-      "pass": true,
-      "detail": null
+      "name": "Touch layer remains aligned in fullscreen ASCII",
+      "pass": true
     },
     {
-      "name": "新性能设置可保存",
-      "pass": true,
-      "detail": null
+      "name": "Landscape normal page has no horizontal overflow",
+      "pass": true
     },
     {
-      "name": "布局 1440×960 无横向溢出",
-      "pass": true,
-      "detail": null
-    },
-    {
-      "name": "布局 1366×768 无横向溢出",
-      "pass": true,
-      "detail": null
-    },
-    {
-      "name": "布局 800×600 无横向溢出",
-      "pass": true,
-      "detail": null
-    },
-    {
-      "name": "布局 390×844 无横向溢出",
-      "pass": true,
-      "detail": null
-    },
-    {
-      "name": "触控取消不意外发球",
-      "pass": true,
-      "detail": null
-    },
-    {
-      "name": "触控松手发球",
-      "pass": true,
-      "detail": null
-    },
-    {
-      "name": "竖屏不强制遮挡页面",
-      "pass": true,
-      "detail": null
-    },
-    {
-      "name": "布局 844×390 无横向溢出",
-      "pass": true,
-      "detail": null
-    },
-    {
-      "name": "横屏 844×390 球场/工具栏可见",
-      "pass": true,
-      "detail": null
-    },
-    {
-      "name": "布局 667×375 无横向溢出",
-      "pass": true,
-      "detail": null
-    },
-    {
-      "name": "横屏 667×375 球场/工具栏可见",
-      "pass": true,
-      "detail": null
-    },
-    {
-      "name": "测试过程中无未捕获脚本错误",
+      "name": "No uncaught browser JavaScript errors",
       "pass": true,
       "detail": []
+    },
+    {
+      "name": "OnlinePeer source unchanged by UI rewrite",
+      "pass": true
+    },
+    {
+      "name": "InputManager source unchanged by UI rewrite",
+      "pass": true
     }
   ],
+  "passed": 55,
+  "total": 55,
   "errors": []
 }

@@ -53,4 +53,11 @@ Folder: / (root)
 
 在「高级设置」填写 TURN 地址、用户名与临时凭据；「强制 TURN 中继」仅在有有效 TURN 配置时使用。不要把长期服务凭据提交到公开仓库。本包不提供信令服务器、TURN 服务器或凭据签发后端。
 
-本次验证环境没有提供可用的 WebRTC 连接地址；没有完成公网服务或双设备连接测试。部署后仍需双方在实际网络中验证。
+本次 v4 修改仅涉及显示与全屏，联机传输类未改变；未进行公网服务或双设备端到端连接测试。部署后仍需双方在实际网络中验证。
+
+
+## v4 入口与全屏注意事项
+
+`index.html` 新用户默认精致图形；`ascii_start.html` 每次先进入 ASCII，无需首次启动图形画布。两者包含完整游戏功能，也可用 `index.html?render=ascii` 显式指定普通入口的启动画面。
+
+全屏通过原生 Fullscreen API 请求。直接打开 Pages 游戏页；在其他页面的 iframe 内嵌时，宿主须允许全屏。页面权限和浏览器兼容性详见 [Fullscreen API](https://developer.mozilla.org/en-US/docs/Web/API/Element/requestFullscreen)。没有提供仅靠 CSS 就能移除浏览器地址栏的替代模式。

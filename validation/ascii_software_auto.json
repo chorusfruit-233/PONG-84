@@ -1,0 +1,92 @@
+{
+  "browser": "144.0.7559.96",
+  "viewport": [
+    1366,
+    768
+  ],
+  "navigation_tested": false,
+  "auto_return_fixture": true,
+  "cold_ascii_boot": true,
+  "storage_fixture": true,
+  "gpu_status": {
+    "2d_canvas": "disabled_software",
+    "direct_rendering_display_compositor": "disabled_off_ok",
+    "gpu_compositing": "disabled_software",
+    "multiple_raster_threads": "disabled_off",
+    "opengl": "disabled_off",
+    "rasterization": "disabled_software",
+    "raw_draw": "disabled_off_ok",
+    "skia_graphite": "disabled_off",
+    "trees_in_viz": "disabled_off",
+    "video_decode": "disabled_software",
+    "video_encode": "disabled_software",
+    "vulkan": "disabled_off",
+    "webgl": "disabled_off",
+    "webgpu": "disabled_off",
+    "webnn": "disabled_off"
+  },
+  "flags": [
+    "--disable-gpu",
+    "--disable-gpu-compositing",
+    "--disable-accelerated-2d-canvas",
+    "--disable-webgl",
+    "--disable-software-rasterizer"
+  ],
+  "cpu_throttle": 1.0,
+  "seconds": 6.0,
+  "submissions": 360,
+  "submission_hz": 60.0,
+  "render_js_mean_ms": 0.0561,
+  "render_js_p95_ms": 0.2,
+  "submit_interval_p95_ms": 17.0,
+  "submit_interval_max_ms": 18.7,
+  "renderer_metrics_delta_s": {
+    "TaskDuration": 0.3193,
+    "ScriptDuration": 0.0581,
+    "LayoutDuration": 0.0725,
+    "RecalcStyleDuration": 0.0024
+  },
+  "canvasCalls": 0,
+  "diagnostics": {
+    "version": "4.0.0",
+    "phase": "playing",
+    "renderer": "DOM ASCII",
+    "profile": "auto",
+    "targetFps": 60,
+    "grid": [
+      96,
+      32
+    ],
+    "canvasInitialized": false,
+    "canvasSize": [
+      1,
+      1
+    ],
+    "graphicsQuality": "ultra",
+    "graphicalCaches": 0,
+    "nativeFullscreen": false,
+    "viewport": [
+      1366,
+      768
+    ],
+    "activeFrameLoop": true,
+    "stats": {
+      "frames": 429,
+      "draws": 429,
+      "steps": 1707,
+      "skippedTime": 0,
+      "fps": 60,
+      "rafFps": 60,
+      "jsMs": 0.1099999999976717,
+      "rowWrites": 1171
+    },
+    "network": {
+      "transport": "manual",
+      "connected": false,
+      "role": null,
+      "rtt": 0
+    }
+  },
+  "errors": [],
+  "note": "Submission rate is not physical presentation FPS. JS draw time excludes browser layout/paint. CPU throttling is not an old-computer hardware equivalence."
+}

@@ -1,0 +1,15 @@
+{
+  "method": "Chromium DOM injection; exact entry HTML; simulated browser settings and Canvas unavailability",
+  "checks": [
+    {
+      "name": "ascii_start.html boots without a Canvas request even when saved preference is graphical",
+      "pass": true,
+      "canvas_calls": 0
+    },
+    {
+      "name": "Main entry falls back to ASCII if 2D context is unavailable",
+      "pass": true
+    }
+  ],
+  "uncaught_errors": []
+}

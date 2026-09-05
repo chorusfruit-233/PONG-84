@@ -1,0 +1,21 @@
+{
+  ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "CHANGELOG.md": "0708e4e61ae2567893a928c994dbfb92a05c0adb68b20d77ea081295e051949e",
+  "DEPLOYMENT.md": "d186c41b2a7039ada71f2a78e636eb9e7210aaa9c41aa5a196e53758c03e80ab",
+  "PERFORMANCE.md": "8065ebea271cc3f97140b9610f794d935269a566ec91bc2577cd6f899008c12e",
+  "README.md": "8dc9682c62ddab3feb7f45e261fae7575bc5eec79b47c14067b34c19b853f337",
+  "TEST_REPORT.md": "bcd069facda5bb658c70c42905457941c17de90ed542f7cf76b3a1adf9309e08",
+  "ascii_start.html": "7bf993b81c9ee8ea1a4ecf6758dacf7799330fdf6da28cca7fddcddf2f805587",
+  "index.html": "4d5e28e068b12df01e9a38be9431e17567846ad1cd82006471fa73c20c531eca",
+  "screenshots/ascii.webp": "579055d3f53bd6e162891bc58c4ffe3a743549b2bfca032a776fdb8e5783151a",
+  "screenshots/desktop.webp": "b1d307cf535e61399a59d62215874088d34d0783a248e2a867ed463b8227fee3",
+  "screenshots/fullscreen.webp": "2b1064db49d338ed15df7a55ff4530ad3718d431d1ae8aad5b27b0441c42ec0d",
+  "tools/benchmark.py": "a3cac0157b7cb821f0383f6b3cb80b90abff99331c8e61b4d41d14ded18957d8",
+  "tools/regression.py": "b136a30158b553abc455de7e9694dd699e0e609b6c849740dc14043572433b60",
+  "validation/ascii_software_auto.json": "d38861a2cb5c601209cdfc2774924d6a93635829d4fcdbe8fc8cf654903a6444",
+  "validation/ascii_software_cpu6.json": "88d19c96e8abbd304ddbe84da0ae632f8e41c63b8b46290e8ea3e4287fe11df7",
+  "validation/ascii_software_eco.json": "b2e5500d00bf786dd77dc54673d82dec1d2fb4bd3994797ffb34452f0523dd1d",
+  "validation/mobile_fullscreen.png": "84919af7bf09e761b559ee66bfdadaa862f78fb83b1de2ab5ed4352a384f9418",
+  "validation/regression.json": "0024bf8303dc3549d3e7324cf3dea3172edf2c1aabac6c8e5348cadf8c2b6be2",
+  "validation/targeted_checks.json": "0bd0553b003e9eeaf834c9ca6608f161c7c94e0bdbc28a23459ba4f0f27b650f"
+}
