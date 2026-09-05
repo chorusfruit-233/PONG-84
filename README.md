@@ -278,7 +278,7 @@ TURN 密码 / 临时凭据：与该用户名匹配的有效凭据
 
 ## 许可证
 
-当前发布包未附带 `LICENSE` 文件，尚未指定项目许可证。本 README 不声明采用 MIT、Apache-2.0 或其他许可证；项目授权以仓库另行提供的正式许可证为准。第三方组件遵循各自的许可证。
+本项目采用 [GNU General Public License v3.0](LICENSE)（GPL-3.0）授权，仓库根目录的 `LICENSE` 文件为完整许可证文本。你可以自由使用、修改和分发本项目，但以任何形式发布的修改版本或衍生作品必须基于相同许可证保持开源；第三方组件遵循各自的许可证。
 
 [pages-about]: https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages
 [pages-publish]: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
