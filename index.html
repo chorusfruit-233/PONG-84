@@ -1,0 +1,2702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#050805">
+  <title>PONG-84 · ASCII 字符 / 玩家增强版</title>
+  <style>
+    :root {
+      --crt-color: #33ff33;
+      --crt-glow: rgba(51, 255, 51, .58);
+      --crt-bg: #051005;
+      --crt-dim: rgba(51, 255, 51, .24);
+      --crt-soft: rgba(51, 255, 51, .08);
+      --danger: #ff4d4d;
+      --panel: rgba(7, 10, 7, .96);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: radial-gradient(ellipse at center, #1b1b1b 0%, #080808 78%);
+      color: var(--crt-color);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", "PingFang SC", "Microsoft YaHei", monospace;
+      user-select: none; -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation; overscroll-behavior: none;
+    }
+
+    button, input, textarea { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    #app {
+      width: 100%; height: 100%; display: grid; place-items: center;
+      position: relative; padding: 20px 12px 44px;
+    }
+
+    .crt-assembly {
+      width: min(96vw, 1040px); position: relative; padding: 16px;
+      border-radius: 24px; background: #080808;
+      box-shadow: inset 0 0 60px rgba(0,0,0,.95), 0 0 0 2px #242424,
+                  0 0 0 10px #111, 0 0 0 11px #333, 0 20px 80px rgba(0,0,0,.72);
+    }
+    .crt-bezel { background: #000; border-radius: 19px; padding: 8px; }
+    .crt-screen {
+      position: relative; overflow: hidden; border-radius: 48% / 4%;
+      box-shadow: inset 0 0 110px rgba(0,0,0,.94), inset 0 0 32px rgba(0,0,0,.82), 0 0 30px var(--crt-glow);
+      animation: screenFlicker 7s infinite;
+    }
+    @keyframes screenFlicker {
+      0%, 100% { opacity: 1; filter: brightness(1); }
+      12% { opacity: .985; filter: brightness(.985); }
+      31% { opacity: .97; filter: brightness(.975); }
+      48% { opacity: 1; filter: brightness(1.01); }
+      73% { opacity: .982; filter: brightness(.99); }
+    }
+
+    .game-container {
+      width: 100%; aspect-ratio: 16 / 9; position: relative; overflow: hidden;
+      background: var(--crt-bg); border: 1px solid #181818; touch-action: none;
+    }
+    canvas { display: block; width: 100%; height: 100%; }
+
+    .hud { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
+    .titlebar {
+      position: absolute; top: 8px; left: 12px; right: 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 10px; color: var(--crt-dim); letter-spacing: 2px;
+    }
+    .brand {
+      color: var(--crt-color); font-weight: 800; letter-spacing: 6px;
+      text-shadow: 0 0 10px var(--crt-glow), 0 0 20px var(--crt-glow);
+    }
+    .title-actions { display: flex; align-items: center; gap: 6px; pointer-events: auto; }
+    #pauseBtn, #fullscreenBtn, #renderModeBtn {
+      pointer-events: auto; background: transparent; border: 1px solid var(--crt-dim);
+      color: var(--crt-dim); border-radius: 3px; padding: 3px 8px; cursor: pointer; font-size: 10px;
+      transition: color .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    #pauseBtn { display: none; }
+    #pauseBtn:hover, #fullscreenBtn:hover, #renderModeBtn:hover {
+      color: var(--crt-color); border-color: var(--crt-color); background: var(--crt-soft);
+      box-shadow: 0 0 9px var(--crt-glow);
+    }
+
+    /* Fullscreen keeps every interactive layer aligned to the 16:9 playfield. */
+    #gameContainer:fullscreen,
+    #gameContainer:-webkit-full-screen {
+      width: 100vw; height: 100vh; max-width: none; aspect-ratio: auto;
+      display: block; background: #000; border: 0;
+    }
+    #gameContainer:fullscreen > #asciiScreen,
+    #gameContainer:-webkit-full-screen > #asciiScreen,
+    #gameContainer:fullscreen > canvas,
+    #gameContainer:-webkit-full-screen > canvas,
+    #gameContainer:fullscreen > .hud,
+    #gameContainer:-webkit-full-screen > .hud,
+    #gameContainer:fullscreen > .touch-layer,
+    #gameContainer:-webkit-full-screen > .touch-layer,
+    #gameContainer:fullscreen > .countdown,
+    #gameContainer:-webkit-full-screen > .countdown,
+    #gameContainer:fullscreen > .overlay,
+    #gameContainer:-webkit-full-screen > .overlay {
+      position: absolute; inset: auto;
+      left: 50%; top: 50%; transform: translate(-50%, -50%);
+      width: min(100vw, calc(100vh * 16 / 9));
+      height: min(100vh, calc(100vw * 9 / 16));
+    }
+
+    .scoreboard {
+      position: absolute; top: 24px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 36px; font-size: 34px; font-weight: 800;
+      color: var(--crt-dim); text-shadow: 0 0 6px var(--crt-glow);
+    }
+    .scoreboard .active { color: #fff; text-shadow: 0 0 14px var(--crt-glow), 0 0 28px var(--crt-glow); }
+    .scoreboard .dash { font-size: 14px; font-weight: 400; }
+
+    .timer-display {
+      position: absolute; top: 68px; left: 50%; transform: translateX(-50%);
+      opacity: 0; font-size: 14px; letter-spacing: 2px; color: var(--crt-dim);
+      text-shadow: 0 0 5px var(--crt-glow); transition: opacity .2s;
+    }
+    .timer-display.show { opacity: 1; }
+    .timer-display.urgent { color: var(--danger); text-shadow: 0 0 10px rgba(255,77,77,.72); }
+
+    .shield-row {
+      position: absolute; top: 68px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 42px; font-size: 10px; color: var(--crt-dim);
+    }
+    .shield-row.timer-offset { top: 91px; }
+    .shield {
+      opacity: 0; display: flex; align-items: center; gap: 4px; transition: opacity .2s;
+    }
+    .shield.active { opacity: 1; color: var(--crt-color); text-shadow: 0 0 8px var(--crt-glow); }
+    .shield svg { width: 14px; height: 14px; filter: drop-shadow(0 0 3px var(--crt-glow)); }
+
+    .center-toast {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      opacity: 0; transition: opacity .18s; font-size: 13px; letter-spacing: 3px;
+      pointer-events: none; text-shadow: 0 0 12px currentColor;
+    }
+    .center-toast.show { opacity: 1; }
+    .center-toast.curve { color: #ffaa33; }
+    .center-toast.cheat { color: #ff4a4a; top: 58%; }
+
+    .status-strip {
+      position: absolute; left: 50%; bottom: 30px; transform: translateX(-50%);
+      display: flex; gap: 10px; align-items: center; color: var(--crt-dim); font-size: 10px;
+      white-space: nowrap;
+    }
+    .status-strip .dot { width: 7px; height: 7px; border-radius: 50%; box-shadow: 0 0 5px currentColor; }
+
+    .controls-hint {
+      position: absolute; left: 8px; right: 8px; bottom: 8px; text-align: center;
+      color: var(--crt-dim); font-size: 10px; text-shadow: 0 0 4px var(--crt-glow);
+    }
+
+    .fx-scanlines, .fx-scanbar, .fx-vignette, .fx-reflection { position: absolute; inset: 0; pointer-events: none; }
+    .fx-scanlines {
+      z-index: 25; background: repeating-linear-gradient(0deg, rgba(0,0,0,.24), rgba(0,0,0,.24) 1px, transparent 1px, transparent 3px);
+    }
+    .fx-scanbar {
+      z-index: 26; height: 8px; inset: auto 0 auto 0;
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,.035), transparent);
+      animation: scanMove 9s linear infinite;
+    }
+    @keyframes scanMove { from { top: -10%; } to { top: 110%; } }
+    .fx-vignette { z-index: 27; background: radial-gradient(ellipse at center, transparent 54%, rgba(0,0,0,.62) 100%); }
+    .fx-reflection { z-index: 28; background: linear-gradient(104deg, rgba(255,255,255,.04) 0%, transparent 27%, transparent 58%, rgba(255,255,255,.022) 68%, transparent 100%); }
+
+    .overlay {
+      position: absolute; inset: 0; z-index: 40; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 20px;
+      background: var(--panel); overflow: auto; transition: opacity .2s ease;
+      touch-action: pan-y; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+    }
+    .overlay.hidden { opacity: 0; pointer-events: none; }
+    .overlay h2 {
+      font-size: clamp(20px, 3vw, 28px); letter-spacing: 5px; margin: 0;
+      text-shadow: 0 0 15px var(--crt-glow);
+    }
+    .menu-title-row {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-bottom: 5px;
+    }
+    #menuFullscreenBtn {
+      color: var(--crt-dim); background: transparent; border: 1px solid var(--crt-dim);
+      border-radius: 3px; padding: 4px 9px; cursor: pointer; font-size: 10px;
+      letter-spacing: 1px; white-space: nowrap; box-shadow: none; text-shadow: none;
+      transition: color .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    #menuFullscreenBtn:hover, #menuFullscreenBtn:focus-visible {
+      color: var(--crt-color); border-color: var(--crt-color); background: var(--crt-soft);
+      box-shadow: 0 0 9px var(--crt-glow); outline: none;
+    }
+    .overlay > p { color: var(--crt-dim); font-size: 11px; margin-bottom: 12px; text-align: center; }
+
+    .settings-grid {
+      width: min(100%, 620px); display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px;
+    }
+    .settings-grid .full { grid-column: 1 / -1; }
+    .section { margin-top: 10px; }
+    .section-title { color: var(--crt-dim); font-size: 10px; letter-spacing: 2px; margin-bottom: 7px; text-align: center; }
+    .select-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
+
+    .choice, .btn {
+      color: #777; background: transparent; border: 1px solid #333; border-radius: 4px;
+      cursor: pointer; transition: .16s ease; letter-spacing: 1px;
+    }
+    .choice { padding: 7px 12px; font-size: 11px; }
+    .choice:hover, .choice:focus-visible { color: #ccc; border-color: #666; outline: none; }
+    .choice.selected {
+      color: var(--crt-color); border-color: var(--crt-color); background: var(--crt-soft);
+      box-shadow: 0 0 10px var(--crt-glow), inset 0 0 8px var(--crt-soft); text-shadow: 0 0 5px var(--crt-glow);
+    }
+    .btn {
+      color: var(--crt-color); border-color: var(--crt-color); padding: 10px 30px; font-size: 12px;
+      box-shadow: 0 0 10px var(--crt-glow), inset 0 0 10px var(--crt-soft); text-shadow: 0 0 5px var(--crt-glow);
+    }
+    .btn:hover { color: #fff; background: var(--crt-soft); box-shadow: 0 0 18px var(--crt-glow), inset 0 0 12px var(--crt-soft); }
+    .btn.secondary { color: #999; border-color: #555; box-shadow: none; text-shadow: none; }
+    .btn.small { padding: 7px 14px; font-size: 10px; }
+
+    .score-input {
+      width: 62px; padding: 7px; background: transparent; color: var(--crt-color);
+      border: 1px solid #333; border-radius: 4px; text-align: center; outline: none; font-size: 11px;
+    }
+    .score-input:focus { border-color: var(--crt-color); box-shadow: 0 0 8px var(--crt-glow); }
+
+    .actions { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+    .hidden-section { display: none !important; }
+
+    .online-box { width: min(100%, 520px); margin: 9px auto 0; }
+    .online-info { color: #777; font-size: 10px; line-height: 1.5; text-align: center; margin-bottom: 7px; }
+    .online-code {
+      width: 100%; min-height: 72px; resize: none; background: #090909; color: var(--crt-color);
+      border: 1px solid #333; border-radius: 4px; padding: 7px; outline: none; font-size: 9px; user-select: text;
+    }
+    .online-code:focus { border-color: var(--crt-color); }
+    .cloud-room-code {
+      min-height: 50px; height: 50px; resize: none; text-align: center; font-size: 27px;
+      font-weight: 700; letter-spacing: 12px; padding-left: 18px; user-select: text;
+    }
+    .online-actions { display: flex; gap: 7px; margin-top: 7px; justify-content: center; }
+
+    #pauseOverlay { display: none; z-index: 45; }
+    #pauseOverlay.show { display: flex; }
+
+    .countdown {
+      position: absolute; inset: 0; z-index: 20; display: grid; place-items: center;
+      pointer-events: none;
+    }
+    .countdown.hidden { display: none; }
+    .countdown span {
+      font-size: 76px; font-weight: 900; text-shadow: 0 0 30px var(--crt-glow), 0 0 60px var(--crt-glow);
+      animation: pop .48s ease-out;
+    }
+    @keyframes pop { from { opacity: 0; transform: scale(.55); } 35% { opacity: 1; transform: scale(1.12); } to { opacity: .92; transform: scale(1); } }
+
+    .touch-layer {
+      position: absolute; inset: 0; z-index: 8; display: none;
+      touch-action: none; -webkit-touch-callout: none; overflow: hidden;
+    }
+    .touch-layer.active { display: flex; }
+    .touch-layer.single { flex-direction: column; }
+    .touch-layer.dual { flex-direction: row; }
+    .touch-half, .touch-zone { flex: 1; display: flex; }
+    .touch-half { flex-direction: column; position: relative; }
+    .touch-zone { pointer-events: none; position: relative; }
+    .touch-layer.dual .touch-half + .touch-half {
+      border-left: 1px dashed rgba(255,255,255,.08);
+    }
+    .touch-cursor {
+      position: absolute; left: 50%; top: 50%; width: 44px; height: 44px;
+      border: 1px solid var(--crt-dim); border-radius: 50%; pointer-events: none;
+      opacity: 0; transform: translate(-50%,-50%) scale(.72);
+      transition: opacity .10s ease, transform .10s ease;
+      box-shadow: 0 0 14px var(--crt-glow), inset 0 0 10px var(--crt-soft);
+      background: rgba(0,0,0,.16); z-index: 2;
+    }
+    .touch-cursor::before, .touch-cursor::after {
+      content: ''; position: absolute; left: 50%; top: 50%;
+      background: var(--crt-dim); transform: translate(-50%,-50%);
+    }
+    .touch-cursor::before { width: 20px; height: 1px; }
+    .touch-cursor::after { width: 1px; height: 20px; }
+    .touch-cursor.show { opacity: .72; transform: translate(-50%,-50%) scale(1); }
+    .touch-layer.touching { background: radial-gradient(circle at var(--touch-x,50%) var(--touch-y,50%), var(--crt-soft), transparent 17%); }
+
+    @media (pointer: coarse) {
+      #fullscreenBtn, #pauseBtn, #menuFullscreenBtn, #renderModeBtn { min-height: 34px; min-width: 50px; padding: 6px 10px; }
+      .choice { min-height: 34px; padding: 7px 12px; }
+      .btn { min-height: 40px; }
+      .btn.small { min-height: 34px; }
+      .score-input { min-height: 34px; }
+      .online-code { font-size: 12px; }
+    }
+
+    .crt-label { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px 0; color: #444; font-size: 9px; letter-spacing: 2px; }
+    .power-led { width: 6px; height: 6px; border-radius: 50%; background: var(--crt-color); box-shadow: 0 0 6px var(--crt-glow); animation: pulse 2.8s ease-in-out infinite; }
+    @keyframes pulse { 50% { opacity: .35; } }
+
+    .legend {
+      position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap;
+      color: #555; font-size: 9px; width: min(94vw, 900px); pointer-events: none;
+    }
+    .legend span { display: inline-flex; align-items: center; gap: 4px; }
+    .legend i { width: 6px; height: 6px; border-radius: 50%; box-shadow: 0 0 4px currentColor; }
+
+    .rotate-hint {
+      position: fixed; inset: 0; z-index: 100; background: #080808; display: none;
+      flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: var(--crt-dim);
+    }
+    .rotate-hint.show { display: flex; }
+    .rotate-hint svg { width: 58px; height: 58px; animation: rotatePhone 1.8s ease-in-out infinite; filter: drop-shadow(0 0 5px var(--crt-glow)); }
+    @keyframes rotatePhone { 50% { transform: rotate(90deg); } }
+    .rotate-hint p { font-size: 13px; letter-spacing: 2px; }
+
+    @media (max-width: 720px) {
+      #app { padding: 8px 6px 24px; }
+      .crt-assembly { width: 98vw; padding: 8px; border-radius: 15px; }
+      .crt-bezel { padding: 5px; border-radius: 12px; }
+      .scoreboard { top: 20px; font-size: 25px; gap: 25px; }
+      .timer-display { top: 52px; font-size: 11px; }
+      .shield-row { top: 52px; font-size: 9px; gap: 28px; }
+      .shield-row.timer-offset { top: 70px; }
+      .titlebar { top: 5px; }
+      .brand { letter-spacing: 4px; }
+      .settings-grid { grid-template-columns: 1fr; gap: 0; }
+      .settings-grid .full { grid-column: auto; }
+      .section { margin-top: 7px; }
+      .choice { padding: 5px 9px; font-size: 9px; }
+      .overlay { padding: 12px; justify-content: flex-start; }
+      .overlay h2 { margin-top: 3px; }
+      .overlay > p { margin-bottom: 4px; }
+      .actions { margin-top: 10px; }
+      .btn { padding: 8px 23px; font-size: 10px; }
+      .controls-hint { font-size: 8px; bottom: 5px; }
+      .status-strip { bottom: 20px; font-size: 8px; }
+      .legend { bottom: 4px; gap: 6px; font-size: 8px; }
+    }
+
+    /* ASCII is a real text grid, not a pixel filter applied to the canvas. */
+    #asciiScreen {
+      display: none; position: absolute; inset: 0; z-index: 1; margin: 0; padding: 0;
+      width: 100%; height: 100%; overflow: hidden; white-space: pre;
+      font-family: "Liberation Mono", Consolas, "Courier New", monospace;
+      font-weight: 400; font-variant-ligatures: none; font-kerning: none;
+      background: var(--crt-bg); color: var(--crt-color); text-shadow: none;
+      pointer-events: none; user-select: none; -webkit-user-select: none;
+      text-align: left; border: 0; border-radius: 0;
+    }
+    .ascii-mode #gameCanvas { visibility: hidden; }
+    .ascii-mode #asciiScreen { display: block; }
+    .ascii-mode .crt-screen { animation: none; box-shadow: none; border-radius: 0; }
+    .ascii-mode .fx-scanlines, .ascii-mode .fx-scanbar,
+    .ascii-mode .fx-vignette, .ascii-mode .fx-reflection,
+    .ascii-mode .hud > :not(.titlebar), .ascii-mode .countdown,
+    .ascii-mode .titlebar > .brand, .ascii-mode #modeBadge,
+    .ascii-mode .touch-cursor, .ascii-mode .legend { display: none !important; }
+    .ascii-mode .titlebar { justify-content: flex-end; top: 4px; right: 8px; }
+    .ascii-mode #pauseBtn, .ascii-mode #fullscreenBtn, .ascii-mode #renderModeBtn {
+      color: var(--crt-color); background: var(--crt-bg); box-shadow: none;
+      border-radius: 0; text-shadow: none;
+    }
+    .ascii-mode .touch-layer.touching { background: none; }
+    .ascii-mode .touch-layer.dual .touch-half + .touch-half { border: 0; }
+    .ascii-mode .power-led { animation: none; box-shadow: none; }
+    .render-note { text-align: center; color: #888; font-size: 9px; line-height: 1.5; margin-top: 5px; }
+    #renderModeBtn[aria-pressed="true"] { color: var(--crt-color); border-color: var(--crt-color); }
+
+    /* Landscape phones must fit the entire court, not just its top half. */
+    @media (max-height: 600px) and (orientation: landscape) {
+      #app { padding: 8px 8px 24px; }
+      .crt-assembly {
+        width: min(96vw, 1040px, calc((100vh - 66px) * 16 / 9 + 22px));
+        width: min(96vw, 1040px, calc((100dvh - 66px) * 16 / 9 + 22px));
+        padding: 6px; border-radius: 12px;
+      }
+      .crt-bezel { padding: 4px; border-radius: 8px; }
+      .crt-label { display: none; }
+      .overlay { justify-content: flex-start; padding: 10px; }
+      .overlay h2 { font-size: 22px; }
+      .overlay > p { margin-bottom: 5px; }
+      .settings-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 12px; }
+      .settings-grid .full { grid-column: 1 / -1; }
+      .section { margin-top: 7px; }
+      .section-title { margin-bottom: 5px; }
+      .select-row { gap: 5px; }
+      .choice { padding: 5px 8px; font-size: 10px; }
+      .actions { margin-top: 10px; flex-shrink: 0; }
+      .legend { bottom: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="rotate-hint" id="rotateHint" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+      <circle cx="12" cy="18" r="1.5" fill="currentColor"></circle>
+    </svg>
+    <p>横屏体验更佳 · 进入游戏后可直接拖动球拍</p>
+  </div>
+
+  <main id="app">
+    <section class="crt-assembly" aria-label="PONG-84 游戏机">
+      <div class="crt-bezel">
+        <div class="crt-screen">
+          <div class="game-container" id="gameContainer" tabindex="-1">
+            <canvas id="gameCanvas" aria-label="PONG-84 游戏画面"></canvas>
+            <pre id="asciiScreen" role="img" aria-label="PONG-84 ASCII 纯字符游戏画面" aria-live="off" aria-hidden="true"></pre>
+
+            <div class="hud">
+              <div class="titlebar">
+                <span class="brand">PONG-84</span>
+                <span id="modeBadge">人机 · 普通</span>
+                <span class="title-actions">
+                  <button id="renderModeBtn" type="button" aria-label="切换到 ASCII 纯字符渲染" aria-pressed="false" title="切换渲染模式 (R)">ASCII 模式</button>
+                  <button id="fullscreenBtn" type="button" aria-label="进入全屏" title="全屏 (F)">全屏</button>
+                  <button id="pauseBtn" type="button">暂停</button>
+                </span>
+              </div>
+
+              <div class="scoreboard">
+                <span id="scoreLeft">0</span><span class="dash">—</span><span id="scoreRight">0</span>
+              </div>
+              <div class="timer-display" id="timerDisplay">00:30</div>
+
+              <div class="shield-row" id="shieldRow">
+                <div class="shield" id="shieldLeft">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  <span>护盾</span>
+                </div>
+                <div class="shield" id="shieldRight">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  <span>护盾</span>
+                </div>
+              </div>
+
+              <div class="center-toast curve" id="curveToast">变速变轨球!</div>
+              <div class="center-toast cheat" id="cheatToast">作弊模式激活!</div>
+
+              <div class="status-strip" id="statusStrip"></div>
+              <div class="controls-hint" id="controlsHint">W / S 或 ↑ / ↓ 控制球拍</div>
+            </div>
+
+            <div class="touch-layer single" id="touchSingle" aria-label="拖动控制球拍">
+              <div class="touch-zone"></div>
+              <div class="touch-zone"></div>
+              <div class="touch-cursor" data-cursor="local"></div>
+            </div>
+            <div class="touch-layer dual" id="touchDual" aria-label="左右半屏分别拖动控制球拍">
+              <div class="touch-half" data-side="left">
+                <div class="touch-zone"></div>
+                <div class="touch-zone"></div>
+                <div class="touch-cursor" data-cursor="left"></div>
+              </div>
+              <div class="touch-half" data-side="right">
+                <div class="touch-zone"></div>
+                <div class="touch-zone"></div>
+                <div class="touch-cursor" data-cursor="right"></div>
+              </div>
+            </div>
+
+            <div class="countdown hidden" id="countdown"><span id="countdownText">3</span></div>
+
+            <div class="overlay" id="pauseOverlay">
+              <h2>已暂停</h2>
+              <p>计时、物理和道具效果均已冻结</p>
+              <div class="actions">
+                <button class="btn" id="resumeBtn" type="button">继续游戏</button>
+                <button class="btn secondary" id="quitBtn" type="button">退出到菜单</button>
+              </div>
+            </div>
+
+            <div class="overlay" id="menuOverlay">
+              <div class="menu-title-row">
+                <h2 id="menuTitle">PONG-84</h2>
+                <button id="menuFullscreenBtn" type="button" aria-label="进入全屏" title="全屏 (F)">全屏</button>
+              </div>
+              <p id="menuSub">ASCII 可切换 · 键盘加速 · 高频功能球 · 人机零增益</p>
+
+              <div class="settings-grid">
+                <div class="section full">
+                  <div class="section-title">游戏模式</div>
+                  <div class="select-row" id="modeSelect">
+                    <button class="choice selected" data-setting="mode" data-value="ai">人机对战</button>
+                    <button class="choice" data-setting="mode" data-value="pvp">双人对战</button>
+                    <button class="choice" data-setting="mode" data-value="timer">计时赛</button>
+                    <button class="choice" data-setting="mode" data-value="online">联机对战</button>
+                  </div>
+                </div>
+
+                <div class="section" id="difficultySection">
+                  <div class="section-title">AI 难度</div>
+                  <div class="select-row">
+                    <button class="choice" data-setting="difficulty" data-value="easy">简单</button>
+                    <button class="choice selected" data-setting="difficulty" data-value="normal">普通</button>
+                    <button class="choice" data-setting="difficulty" data-value="hard">困难</button>
+                    <button class="choice" data-setting="difficulty" data-value="hell">地狱</button>
+                  </div>
+                </div>
+
+                <div class="section" id="scoreSection">
+                  <div class="section-title">获胜比分</div>
+                  <div class="select-row">
+                    <button class="choice" data-setting="score" data-value="5">5</button>
+                    <button class="choice" data-setting="score" data-value="7">7</button>
+                    <button class="choice selected" data-setting="score" data-value="11">11</button>
+                    <button class="choice" data-setting="score" data-value="15">15</button>
+                    <button class="choice" data-setting="score" data-value="21">21</button>
+                    <input id="customScore" class="score-input" type="number" inputmode="numeric" min="1" max="99" placeholder="自定">
+                  </div>
+                </div>
+
+                <div class="section hidden-section" id="timeSection">
+                  <div class="section-title">比赛时长</div>
+                  <div class="select-row">
+                    <button class="choice selected" data-setting="time" data-value="30">30 秒</button>
+                    <button class="choice" data-setting="time" data-value="60">1 分钟</button>
+                    <button class="choice" data-setting="time" data-value="120">2 分钟</button>
+                  </div>
+                </div>
+
+                <div class="section" id="themeSection">
+                  <div class="section-title">显示风格</div>
+                  <div class="select-row">
+                    <button class="choice selected" data-setting="theme" data-value="green">绿色磷光</button>
+                    <button class="choice" data-setting="theme" data-value="amber">琥珀色</button>
+                    <button class="choice" data-setting="theme" data-value="white">白色磷光</button>
+                    <button class="choice" data-setting="theme" data-value="blue">蓝色磷光</button>
+                  </div>
+                </div>
+
+                <div class="section" id="renderSection">
+                  <div class="section-title">画面渲染</div>
+                  <div class="select-row">
+                    <button class="choice selected" data-setting="renderMode" data-value="crt" type="button">原版图形</button>
+                    <button class="choice" data-setting="renderMode" data-value="ascii" type="button">ASCII 纯字符</button>
+                  </div>
+                  <p class="render-note">R 键随时切换，不重开对局；人机模式的增益仅供玩家使用。</p>
+                </div>
+
+                <div class="section full hidden-section" id="onlineSection">
+                  <div class="section-title">云端快捷联机 · 4 位房间码</div>
+                  <div class="select-row" id="onlineChooser">
+                    <button class="choice" id="createRoomBtn" type="button">创建云端房间</button>
+                    <button class="choice" id="joinRoomBtn" type="button">输入房间码加入</button>
+                  </div>
+                  <div class="online-box hidden-section" id="onlineBox">
+                    <p class="online-info" id="onlineInfo"></p>
+                    <input class="online-code cloud-room-code" id="onlineCode" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" spellcheck="false" aria-label="4位房间码">
+                    <div class="online-actions">
+                      <button class="btn small" id="onlineActionBtn" type="button">加入房间</button>
+                      <button class="btn small secondary" id="onlineBackBtn" type="button">返回</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="actions">
+                <button class="btn" id="startBtn" type="button">开始游戏</button>
+              </div>
+            </div>
+
+            <div class="fx-scanlines"></div>
+            <div class="fx-scanbar"></div>
+            <div class="fx-vignette"></div>
+            <div class="fx-reflection"></div>
+          </div>
+        </div>
+        <div class="crt-label"><span>MOONSHOT ELECTRONICS · CLOUD ROOM</span><span class="power-led"></span></div>
+      </div>
+    </section>
+
+    <div class="legend" aria-hidden="true">
+      <span><i style="background:#ff4444;color:#ff4444"></i>加速</span>
+      <span><i style="background:#4488ff;color:#4488ff"></i>减速</span>
+      <span><i style="background:#44ff88;color:#44ff88"></i>大球</span>
+      <span><i style="background:#ffaa44;color:#ffaa44"></i>长拍</span>
+      <span><i style="background:#cc44ff;color:#cc44ff"></i>小球</span>
+      <span><i style="background:#ff8844;color:#ff8844"></i>变轨</span>
+      <span><i style="background:#44ddff;color:#44ddff"></i>旋转</span>
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+  <script>
+    'use strict';
+
+    // ============================================================
+    // 1) Configuration: all gameplay values live in one place.
+    // ============================================================
+    const WORLD = Object.freeze({ width: 960, height: 540 });
+    const FIXED_DT = 1 / 240;
+    const MAX_FRAME_DT = 0.08;
+    const NETWORK_STATE_HZ = 60;
+    const NETWORK_INPUT_HZ = 60;
+    const STORAGE_KEY = 'pong84.rebuilt.settings.v1';
+    const BALL_TUNING = Object.freeze({ baseSpeed:1200, maxSpeed:1900, hitAcceleration:34, minEffectSpeed:320 });
+    const CURVE_CHANCE = 0.24;
+    const EFFECT_TIMING = Object.freeze({ firstMin:1.0, firstMax:2.0, gapMin:1.5, gapMax:3.0 });
+    const ASCII_GRID = Object.freeze({ cols:160, rows:45 });
+
+    const IS_TOUCH = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+    const IS_MOBILE = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || IS_TOUCH;
+    const PC_PADDLE_SPEED = 1100; // keyboard-controlled human paddle speed (world units / second)
+
+    const THEMES = Object.freeze({
+      green: { color:'#33ff33', glow:'rgba(51,255,51,.58)', bg:'#051005', dim:'rgba(51,255,51,.24)', soft:'rgba(51,255,51,.08)', trail:[51,255,51] },
+      amber: { color:'#ffb000', glow:'rgba(255,176,0,.58)', bg:'#120d00', dim:'rgba(255,176,0,.24)', soft:'rgba(255,176,0,.08)', trail:[255,176,0] },
+      white: { color:'#e7e7e7', glow:'rgba(231,231,231,.55)', bg:'#050505', dim:'rgba(231,231,231,.22)', soft:'rgba(231,231,231,.07)', trail:[231,231,231] },
+      blue:  { color:'#33ccff', glow:'rgba(51,204,255,.58)', bg:'#000a10', dim:'rgba(51,204,255,.24)', soft:'rgba(51,204,255,.08)', trail:[51,204,255] }
+    });
+
+    const DIFFICULTY = Object.freeze({
+      easy:   { label:'简单', aiSpeed:165, reaction:5.8, deadZone:18, predict:0.10, errorChance:0.22, errorTime:[.34,.70], paddleHeight:132 },
+      normal: { label:'普通', aiSpeed:270, reaction:8.8, deadZone:12, predict:0.28, errorChance:0.12, errorTime:[.25,.55], paddleHeight:110 },
+      hard:   { label:'困难', aiSpeed:375, reaction:12.5, deadZone:8, predict:0.50, errorChance:0.055, errorTime:[.18,.38], paddleHeight:94 },
+      hell:   { label:'地狱', aiSpeed:485, reaction:17.0, deadZone:5, predict:0.78, errorChance:0.018, errorTime:[.12,.25], paddleHeight:78 }
+    });
+
+    const POWERUPS = Object.freeze({
+      speed: { label:'加速', color:'#ff4444', duration:5.0 },
+      slow:  { label:'减速', color:'#4488ff', duration:5.0 },
+      big:   { label:'大球', color:'#44ff88', duration:6.5 },
+      long:  { label:'长拍', color:'#ffaa44', duration:6.5 },
+      small: { label:'小球', color:'#cc44ff', duration:5.0 }
+    });
+
+    const DEFAULT_SETTINGS = Object.freeze({
+      mode:'ai', difficulty:'normal', score:11, time:30, theme:'green', renderMode:'crt'
+    });
+
+    const Phase = Object.freeze({ MENU:'menu', COUNTDOWN:'countdown', PLAYING:'playing', PAUSED:'paused', ENDED:'ended' });
+
+    // ============================================================
+    // 2) Small helpers.
+    // ============================================================
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+    const randomRange = (min, max) => min + Math.random() * (max - min);
+    const choice = arr => arr[Math.floor(Math.random() * arr.length)];
+    const rgba = (rgb, a) => `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`;
+
+    function safeParseJSON(text, fallback) {
+      try { return JSON.parse(text); } catch { return fallback; }
+    }
+
+    function formatTime(seconds) {
+      const safe = Math.max(0, Math.ceil(seconds));
+      const m = Math.floor(safe / 60);
+      const s = safe % 60;
+      return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }
+
+    function loadSettings() {
+      let raw = null;
+      try { raw = localStorage.getItem(STORAGE_KEY); } catch { /* Storage may be blocked in a local preview. */ }
+      const saved = raw ? safeParseJSON(raw, {}) : {};
+      const merged = { ...DEFAULT_SETTINGS, ...saved };
+      if (!THEMES[merged.theme]) merged.theme = DEFAULT_SETTINGS.theme;
+      if (!['crt','ascii'].includes(merged.renderMode)) merged.renderMode = DEFAULT_SETTINGS.renderMode;
+      if (!DIFFICULTY[merged.difficulty]) merged.difficulty = DEFAULT_SETTINGS.difficulty;
+      if (!['ai','pvp','timer','online'].includes(merged.mode)) merged.mode = DEFAULT_SETTINGS.mode;
+      merged.score = clamp(Number(merged.score) || 11, 1, 99);
+      merged.time = [30,60,120].includes(Number(merged.time)) ? Number(merged.time) : 30;
+      return merged;
+    }
+
+    function saveSettings(settings) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); } catch { /* Gameplay does not require storage. */ }
+    }
+
+    // ============================================================
+    // 3) Audio: centralized and safe to call before first gesture.
+    // ============================================================
+    class AudioEngine {
+      constructor() { this.ctx = null; }
+      ensure() {
+        try {
+          if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+          if (this.ctx.state === 'suspended') this.ctx.resume();
+        } catch { this.ctx = null; }
+      }
+      tone(freq, duration=.08, type='sine', volume=.06, delay=0) {
+        this.ensure();
+        if (!this.ctx) return;
+        const start = this.ctx.currentTime + delay;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(Math.max(.001, volume), start);
+        gain.gain.exponentialRampToValueAtTime(.001, start + duration);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(start); osc.stop(start + duration);
+      }
+      hit() { this.tone(440,.055,'square',.045); this.tone(660,.06,'square',.035); }
+      score() { this.tone(880,.11,'sine',.055); this.tone(1100,.15,'sine',.04,.07); }
+      lose() { this.tone(300,.16,'sawtooth',.04); this.tone(200,.22,'sawtooth',.035,.09); }
+      win() { [523,659,784,1047].forEach((f,i)=>this.tone(f,.16,'sine',.045,i*.10)); }
+      countdown() { this.tone(600,.09,'sine',.04); }
+      powerup() { [400,600,800].forEach((f,i)=>this.tone(f,.08,'sine',.035,i*.05)); }
+      powerupEnd() { this.tone(800,.06,'sine',.03); this.tone(400,.09,'sine',.025,.05); }
+      shield() { [500,700,900].forEach((f,i)=>this.tone(f,.10,'sine',.04,i*.06)); }
+      shieldBreak() { this.tone(900,.08,'sine',.045); this.tone(500,.13,'sine',.03,.05); }
+      curve() { [350,500,700].forEach((f,i)=>this.tone(f,.08,'sawtooth',.03,i*.045)); }
+      spin() { this.tone(520,.05,'sine',.035); this.tone(780,.06,'sine',.03); }
+      tick() { this.tone(440,.04,'sine',.025); }
+    }
+
+    // ============================================================
+    // 4) Input: keyboard and touch map to directions (-1 / 0 / 1).
+    // ============================================================
+    class InputManager {
+      constructor() {
+        this.keys = new Set();
+        this.touchTarget = { local:null, left:null, right:null };
+        this.touchPointer = { local:null, left:null, right:null };
+        this.pointerToProp = new Map();
+        this.konami = [];
+        this.onCheat = null;
+        this.onServe = null;
+        this.isGameplayActive = () => false;
+        this.handledServeKeys = new Set();
+        this.KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowLeft','ArrowRight','ArrowRight'];
+        this.bind();
+      }
+      bind() {
+        window.addEventListener('keydown', e => {
+          const wasDown = this.keys.has(e.key);
+          this.keys.add(e.key);
+          const tag = String(e.target && e.target.tagName || '').toUpperCase();
+          const typing = ['INPUT','TEXTAREA','SELECT'].includes(tag) || (e.target && e.target.isContentEditable);
+          const gameplay = this.isGameplayActive();
+          const uiButton = tag === 'BUTTON' && !gameplay;
+          const serveKey = e.key === ' ' || e.key === 'Enter';
+          if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','Escape'].includes(e.key) && !typing && !uiButton) e.preventDefault();
+          if (serveKey && gameplay && !typing) {
+            // 发球键在对局中由游戏独占，不能再次激活仍有焦点的按钮。
+            e.preventDefault();
+            this.handledServeKeys.add(e.key);
+            if (!e.repeat && !wasDown && this.onServe) this.onServe({ type:'key', key:e.key });
+          }
+          if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+            this.konami.push(e.key);
+            if (this.konami.length > this.KONAMI.length) this.konami.shift();
+            if (this.konami.length === this.KONAMI.length && this.konami.every((v,i)=>v===this.KONAMI[i])) {
+              this.konami = [];
+              if (this.onCheat) this.onCheat();
+            }
+          }
+        }, { passive:false });
+        window.addEventListener('keyup', e => {
+          this.keys.delete(e.key);
+          // 空格的按钮点击可能在松键时发生，连同按下事件一起拦截。
+          if (this.handledServeKeys.delete(e.key)) e.preventDefault();
+        }, { passive:false });
+        window.addEventListener('blur', () => { this.keys.clear(); this.handledServeKeys.clear(); this.clearTouches(true); });
+        document.addEventListener('visibilitychange', () => { if (document.hidden) { this.keys.clear(); this.handledServeKeys.clear(); this.clearTouches(true); } });
+
+        this.bindTouchLayer(document.getElementById('touchSingle'), 'single');
+        this.bindTouchLayer(document.getElementById('touchDual'), 'dual');
+      }
+      bindTouchLayer(layer, mode) {
+        if (!layer) return;
+        const propForPoint = e => {
+          if (mode === 'single') return 'local';
+          const rect = layer.getBoundingClientRect();
+          return e.clientX < rect.left + rect.width / 2 ? 'left' : 'right';
+        };
+        const propForPointer = pointerId => this.pointerToProp.get(pointerId) || null;
+        const setTarget = (prop, e) => {
+          const rect = layer.getBoundingClientRect();
+          if (!rect.height) return;
+          const normalizedY = clamp((e.clientY - rect.top) / rect.height, 0, 1);
+          this.touchTarget[prop] = normalizedY * WORLD.height;
+          this.updateTouchVisual(prop, e.clientX, e.clientY, true);
+          layer.style.setProperty('--touch-x', `${clamp((e.clientX-rect.left)/rect.width,0,1)*100}%`);
+          layer.style.setProperty('--touch-y', `${normalizedY*100}%`);
+          layer.classList.add('touching');
+        };
+        layer.addEventListener('pointerdown', e => {
+          if (!layer.classList.contains('active')) return;
+          e.preventDefault();
+          const prop = propForPoint(e);
+          if (this.touchPointer[prop] !== null && this.touchPointer[prop] !== e.pointerId) return;
+          this.touchPointer[prop] = e.pointerId;
+          this.pointerToProp.set(e.pointerId, prop);
+          try { layer.setPointerCapture(e.pointerId); } catch {}
+          setTarget(prop, e);
+          if (e.pointerType !== 'mouse' && navigator.vibrate) navigator.vibrate(6);
+        }, { passive:false });
+        layer.addEventListener('pointermove', e => {
+          const prop = propForPointer(e.pointerId);
+          if (!prop) return;
+          e.preventDefault();
+          setTarget(prop, e);
+        }, { passive:false });
+        const endPointer = e => {
+          const prop = propForPointer(e.pointerId);
+          if (!prop) return;
+          e.preventDefault();
+          if (this.onServe) this.onServe({ type:'touch', prop });
+          this.pointerToProp.delete(e.pointerId);
+          if (this.touchPointer[prop] === e.pointerId) {
+            this.touchPointer[prop] = null;
+            this.touchTarget[prop] = null;
+            this.updateTouchVisual(prop, e.clientX, e.clientY, false);
+          }
+          try { if (layer.hasPointerCapture(e.pointerId)) layer.releasePointerCapture(e.pointerId); } catch {}
+          if (!this.pointerToProp.size) layer.classList.remove('touching');
+        };
+        layer.addEventListener('pointerup', endPointer, { passive:false });
+        layer.addEventListener('pointercancel', endPointer, { passive:false });
+        layer.addEventListener('lostpointercapture', e => {
+          const prop = propForPointer(e.pointerId);
+          if (!prop) return;
+          this.pointerToProp.delete(e.pointerId);
+          if (this.touchPointer[prop] === e.pointerId) {
+            this.touchPointer[prop] = null;
+            this.touchTarget[prop] = null;
+            this.updateTouchVisual(prop, e.clientX, e.clientY, false);
+          }
+          if (!this.pointerToProp.size) layer.classList.remove('touching');
+        });
+      }
+      updateTouchVisual(prop, clientX, clientY, visible) {
+        const cursor = document.querySelector(`[data-cursor="${prop}"]`);
+        if (!cursor) return;
+        if (visible) {
+          const rect = cursor.parentElement.getBoundingClientRect();
+          cursor.style.left = `${clamp(clientX - rect.left, 0, rect.width)}px`;
+          cursor.style.top = `${clamp(clientY - rect.top, 0, rect.height)}px`;
+        }
+        cursor.classList.toggle('show', visible);
+      }
+      clearTouches(hideVisual=false) {
+        this.pointerToProp.clear();
+        for (const prop of ['local','left','right']) {
+          this.touchTarget[prop] = null;
+          this.touchPointer[prop] = null;
+          if (hideVisual) this.updateTouchVisual(prop, 0, 0, false);
+        }
+        document.querySelectorAll('.touch-layer').forEach(el => el.classList.remove('touching'));
+      }
+      keyDir(upKeys, downKeys) {
+        const up = upKeys.some(k => this.keys.has(k));
+        const down = downKeys.some(k => this.keys.has(k));
+        return up === down ? 0 : (up ? -1 : 1);
+      }
+      leftDir(allowArrows=false) {
+        return this.keyDir(['w','W', ...(allowArrows ? ['ArrowUp'] : [])], ['s','S', ...(allowArrows ? ['ArrowDown'] : [])]);
+      }
+      rightDir() {
+        return this.keyDir(['ArrowUp'], ['ArrowDown']);
+      }
+      onlineLocalDir() {
+        return this.keyDir(['w','W','ArrowUp'], ['s','S','ArrowDown']);
+      }
+      targetFor(prop) {
+        const value = this.touchTarget[prop];
+        return Number.isFinite(value) ? value : null;
+      }
+    }
+
+    // ============================================================
+    // 5) Cloud room-code WebRTC transport via PeerJS Cloud signaling.
+    //    Signaling is cloud-brokered; gameplay data is browser-to-browser P2P.
+    // ============================================================
+    class OnlinePeer {
+      constructor() {
+        this.peer = null;
+        this.ctrl = null;
+        this.rt = null;
+        this.role = null;
+        this.room = '';
+        this.remotePeerId = null;
+        this.remoteInput = 0;
+        this.remoteTarget = null;
+        this.remoteInputSeq = -1;
+        this.state = 'idle';
+        this.rtt = 0;
+        this.jitter = 0;
+        this.lastReceiveAt = 0;
+        this.openNotified = false;
+        this.keepaliveTimer = null;
+        this.disconnectTimer = null;
+        this.closing = false;
+        this.connectResolve = null;
+        this.connectReject = null;
+        this.connectTimer = null;
+        this.onOpen = null;
+        this.onClose = null;
+        this.onMessage = null;
+        this.onStats = null;
+        this.onConnectionState = null;
+        this.iceConfig = {
+          iceServers:[
+            { urls:'stun:stun.l.google.com:19302' },
+            { urls:'stun:stun1.l.google.com:19302' }
+          ],
+          iceCandidatePoolSize: 4
+        };
+      }
+
+      get connected() {
+        return !!this.ctrl && !!this.rt && this.ctrl.open === true && this.rt.open === true;
+      }
+
+      peerOptions() {
+        return { debug:0, config:this.iceConfig };
+      }
+
+      siteNamespace() {
+        const base = (location.hostname || 'local-pong84').toLowerCase();
+        let h = 2166136261;
+        for (let i=0;i<base.length;i++) {
+          h ^= base.charCodeAt(i);
+          h = Math.imul(h, 16777619);
+        }
+        return (h >>> 0).toString(36).slice(0,6);
+      }
+
+      peerIdForRoom(code) {
+        return `p84-${this.siteNamespace()}-${String(code)}`;
+      }
+
+      randomRoom() {
+        return String(1000 + Math.floor(Math.random()*9000));
+      }
+
+      ensureLibrary() {
+        if (typeof window.Peer !== 'function') throw new Error('云联机组件加载失败，请检查网络后刷新页面');
+      }
+
+      attachPeerCommon(peer) {
+        peer.on('disconnected', () => {
+          if (this.closing) return;
+          if (this.onConnectionState) this.onConnectionState(this.connected ? 'signaling-lost' : 'reconnecting');
+          if (!peer.destroyed) setTimeout(() => {
+            try { if (peer.disconnected && !peer.destroyed) peer.reconnect(); } catch {}
+          }, 900);
+        });
+        peer.on('open', () => {
+          if (this.onConnectionState && !this.connected) this.onConnectionState('ready');
+        });
+        peer.on('error', err => this.handlePeerError(err));
+      }
+
+      handlePeerError(err) {
+        if (this.closing) return;
+        const type = err?.type || '';
+        const message = type === 'peer-unavailable' ? '房间不存在或房主已离开' :
+          type === 'network' ? '无法连接云端信令服务' :
+          type === 'server-error' ? '云端信令服务暂时不可用' :
+          type === 'socket-error' || type === 'socket-closed' ? '云端信令连接异常' :
+          (err?.message || '联机连接失败');
+        if (this.connectReject) {
+          const reject = this.connectReject;
+          this.clearConnectWait();
+          reject(new Error(message));
+          return;
+        }
+        if (!this.openNotified && type !== 'unavailable-id') {
+          if (this.onConnectionState) this.onConnectionState('failed');
+        }
+      }
+
+      waitPeerOpen(peer, timeout=9000) {
+        return new Promise((resolve,reject) => {
+          let done=false;
+          const finish=(fn,val)=>{ if(done)return; done=true; clearTimeout(timer); fn(val); };
+          const timer=setTimeout(()=>finish(reject,new Error('连接云端信令超时')),timeout);
+          peer.on('open', id=>finish(resolve,id));
+          peer.on('error', err=>{
+            if (err?.type==='unavailable-id') finish(reject,err);
+            else if (['network','server-error','socket-error','socket-closed','invalid-id'].includes(err?.type)) finish(reject,err);
+          });
+        });
+      }
+
+      async createRoom() {
+        this.ensureLibrary();
+        this.cleanup(false);
+        this.closing = false;
+        this.role = 'host';
+        this.state = 'creating-room';
+        for (let attempt=0; attempt<18; attempt++) {
+          const code = this.randomRoom();
+          const peer = new window.Peer(this.peerIdForRoom(code), this.peerOptions());
+          try {
+            await this.waitPeerOpen(peer, 9000);
+            this.peer = peer;
+            this.room = code;
+            this.attachPeerCommon(peer);
+            peer.on('connection', conn => this.acceptIncoming(conn));
+            this.state = 'waiting-peer';
+            if (this.onConnectionState) this.onConnectionState('waiting');
+            return code;
+          } catch (err) {
+            try { peer.destroy(); } catch {}
+            if (err?.type === 'unavailable-id') continue;
+            this.role = null;
+            throw new Error(err?.type === 'network' ? '无法连接云端信令服务' : (err?.message || '创建房间失败'));
+          }
+        }
+        this.role = null;
+        throw new Error('房间号暂时冲突，请重新创建');
+      }
+
+      acceptIncoming(conn) {
+        if (this.closing || this.role !== 'host' || !conn) { try { conn?.close(); } catch {} return; }
+        if (!['pong84-ctrl','pong84-rt'].includes(conn.label)) { try { conn.close(); } catch {} return; }
+        if (this.remotePeerId && conn.peer !== this.remotePeerId) { try { conn.close(); } catch {} return; }
+        if (!this.remotePeerId) this.remotePeerId = conn.peer;
+        this.wireConnection(conn);
+      }
+
+      async joinRoom(code) {
+        this.ensureLibrary();
+        const room = String(code || '').trim();
+        if (!/^\d{4}$/.test(room)) throw new Error('请输入 4 位房间码');
+        this.cleanup(false);
+        this.closing = false;
+        this.role = 'client';
+        this.room = room;
+        this.state = 'joining-room';
+        const peer = new window.Peer(undefined, this.peerOptions());
+        this.peer = peer;
+        this.attachPeerCommon(peer);
+        try {
+          await this.waitPeerOpen(peer, 9000);
+          const hostId = this.peerIdForRoom(room);
+          this.remotePeerId = hostId;
+          this.wireConnection(peer.connect(hostId, {
+            label:'pong84-ctrl', metadata:{ game:'pong84', channel:'ctrl' }, serialization:'json', reliable:true
+          }));
+          this.wireConnection(peer.connect(hostId, {
+            label:'pong84-rt', metadata:{ game:'pong84', channel:'rt' }, serialization:'json', reliable:false
+          }));
+          this.state = 'connecting';
+          await this.waitUntilConnected(12000);
+          return true;
+        } catch (err) {
+          const message = err?.type === 'peer-unavailable' ? '房间不存在或房主已离开' : (err?.message || '加入房间失败');
+          this.cleanup(false);
+          throw new Error(message);
+        }
+      }
+
+      waitUntilConnected(timeout=12000) {
+        if (this.connected) return Promise.resolve();
+        this.clearConnectWait();
+        return new Promise((resolve,reject) => {
+          this.connectResolve = resolve;
+          this.connectReject = reject;
+          this.connectTimer = setTimeout(() => {
+            const rej=this.connectReject;
+            this.clearConnectWait();
+            if (rej) rej(new Error('连接房主超时，请确认房间号和双方网络'));
+          }, timeout);
+        });
+      }
+
+      clearConnectWait() {
+        clearTimeout(this.connectTimer);
+        this.connectTimer = null;
+        this.connectResolve = null;
+        this.connectReject = null;
+      }
+
+      wireConnection(conn) {
+        if (!conn) return;
+        if (conn.label === 'pong84-rt') {
+          if (this.rt && this.rt !== conn) { try { this.rt.close(); } catch {} }
+          this.rt = conn;
+        } else if (conn.label === 'pong84-ctrl') {
+          if (this.ctrl && this.ctrl !== conn) { try { this.ctrl.close(); } catch {} }
+          this.ctrl = conn;
+        } else {
+          try { conn.close(); } catch {}
+          return;
+        }
+        conn.on('open', () => {
+          this.watchUnderlyingPeer(conn);
+          this.checkOpen();
+        });
+        conn.on('data', data => this.handleChannelMessage(conn, data));
+        conn.on('close', () => {
+          if (!this.closing && this.openNotified) this.notifyClosed('数据通道已关闭');
+        });
+        conn.on('error', () => {
+          if (!this.closing && this.openNotified && this.onConnectionState) this.onConnectionState('reconnecting');
+        });
+      }
+
+      watchUnderlyingPeer(conn) {
+        const pc = conn?.peerConnection;
+        if (!pc || pc.__pong84Watched) return;
+        pc.__pong84Watched = true;
+        const update = () => {
+          if (this.closing) return;
+          const cs = pc.connectionState || pc.iceConnectionState || 'new';
+          if (cs === 'connected') {
+            clearTimeout(this.disconnectTimer); this.disconnectTimer=null;
+            if (this.onConnectionState) this.onConnectionState('connected');
+          } else if (cs === 'disconnected') {
+            if (this.onConnectionState) this.onConnectionState('reconnecting');
+            clearTimeout(this.disconnectTimer);
+            this.disconnectTimer=setTimeout(()=>{
+              if (!this.closing && (pc.connectionState==='disconnected' || pc.connectionState==='failed')) this.notifyClosed('连接超时');
+            },7000);
+          } else if (cs === 'failed' || cs === 'closed') {
+            this.notifyClosed('连接失败');
+          }
+        };
+        pc.addEventListener?.('connectionstatechange',update);
+        pc.addEventListener?.('iceconnectionstatechange',update);
+      }
+
+      checkOpen() {
+        if (!this.connected || this.openNotified) return;
+        this.openNotified = true;
+        this.state = 'connected';
+        this.lastReceiveAt = performance.now();
+        this.startKeepalive();
+        const resolve = this.connectResolve;
+        this.clearConnectWait();
+        if (resolve) resolve();
+        if (this.onConnectionState) this.onConnectionState('connected');
+        if (this.onOpen) this.onOpen(this.role);
+      }
+
+      handleChannelMessage(conn, raw) {
+        this.lastReceiveAt = performance.now();
+        const msg = (raw && typeof raw === 'object') ? raw : safeParseJSON(raw, null);
+        if (!msg) return;
+        if (msg.t === 'ping') {
+          this.sendRealtime({ t:'pong', id:msg.id });
+          return;
+        }
+        if (msg.t === 'pong') {
+          const sent = Number(msg.id);
+          if (Number.isFinite(sent)) {
+            const sample = Math.max(0, performance.now() - sent);
+            const old = this.rtt || sample;
+            this.rtt = old * .72 + sample * .28;
+            this.jitter = this.jitter * .75 + Math.abs(sample - old) * .25;
+            if (this.onStats) this.onStats({ rtt:this.rtt, jitter:this.jitter });
+          }
+          return;
+        }
+        if (this.onMessage) this.onMessage(msg, conn === this.rt ? 'rt' : 'ctrl');
+      }
+
+      startKeepalive() {
+        clearInterval(this.keepaliveTimer);
+        this.keepaliveTimer = setInterval(() => {
+          if (!this.connected) return;
+          this.sendRealtime({ t:'ping', id:performance.now() });
+        }, 1000);
+      }
+
+      sendControl(payload) { return this.sendOn(this.ctrl, payload, false); }
+      sendRealtime(payload) { return this.sendOn(this.rt, payload, true); }
+      send(payload) {
+        const realtime = payload && ['state','input','ping','pong'].includes(payload.t);
+        return realtime ? this.sendRealtime(payload) : this.sendControl(payload);
+      }
+
+      sendOn(conn, payload, dropWhenBusy) {
+        if (!conn || conn.open !== true) return false;
+        const buffered = conn.dataChannel?.bufferedAmount ?? conn.bufferSize ?? 0;
+        if (dropWhenBusy && buffered > 96 * 1024) return false;
+        try { conn.send(payload); return true; } catch { return false; }
+      }
+
+      notifyClosed(reason='连接断开') {
+        if (this.closing) return;
+        const hadSession = this.openNotified;
+        this.cleanup(false);
+        if (hadSession && this.onClose) this.onClose(reason);
+      }
+
+      cleanup(notify=false) {
+        const hadSession = this.openNotified;
+        this.closing = true;
+        clearInterval(this.keepaliveTimer);
+        clearTimeout(this.disconnectTimer);
+        this.clearConnectWait();
+        this.keepaliveTimer = null;
+        this.disconnectTimer = null;
+        try { if (this.ctrl) this.ctrl.close(); } catch {}
+        try { if (this.rt && this.rt !== this.ctrl) this.rt.close(); } catch {}
+        try { if (this.peer && !this.peer.destroyed) this.peer.destroy(); } catch {}
+        this.peer = null;
+        this.ctrl = null;
+        this.rt = null;
+        this.role = null;
+        this.room = '';
+        this.remotePeerId = null;
+        this.remoteInput = 0;
+        this.remoteTarget = null;
+        this.remoteInputSeq = -1;
+        this.state = 'idle';
+        this.rtt = 0;
+        this.jitter = 0;
+        this.lastReceiveAt = 0;
+        this.openNotified = false;
+        this.closing = false;
+        if (notify && hadSession && this.onClose) this.onClose('连接已关闭');
+      }
+    }
+
+    // ============================================================
+    // 6) Game core. No DOM mutation happens inside physics methods.
+    // ============================================================
+    // A 160 x 45 terminal surface (128 x 36 on compact screens). Printable ASCII or LF only.
+    // Its geometry uses the same 960 x 540 world as the graphical renderer and touch input.
+    class AsciiRenderer {
+      constructor(element) {
+        this.element = element;
+        this.cols = ASCII_GRID.cols;
+        this.rows = ASCII_GRID.rows;
+        this.lastFrame = '';
+        this.fontFamily = '"Liberation Mono", Consolas, "Courier New", monospace';
+        this.measureCtx = document.createElement('canvas').getContext('2d');
+        this.glyphs = {
+          '0':['###','# #','# #','# #','###'], '1':[' # ','## ',' # ',' # ','###'],
+          '2':['###','  #','###','#  ','###'], '3':['###','  #',' ##','  #','###'],
+          '4':['# #','# #','###','  #','  #'], '5':['###','#  ','###','  #','###'],
+          '6':['###','#  ','###','# #','###'], '7':['###','  #','  #',' # ',' # '],
+          '8':['###','# #','###','# #','###'], '9':['###','# #','###','  #','###'],
+          'G':['###','#  ','# #','# #','###'], 'O':['###','# #','# #','# #','###']
+        };
+      }
+
+      resize(rect) {
+        if (!rect.width || !rect.height) return;
+        const compact = rect.width < 720;
+        this.cols = compact ? 128 : ASCII_GRID.cols;
+        this.rows = compact ? 36 : ASCII_GRID.rows;
+        const cellWidth = rect.width / this.cols;
+        const cellHeight = rect.height / this.rows;
+        this.measureCtx.font = `100px ${this.fontFamily}`;
+        const glyphRatio = this.measureCtx.measureText('M').width / 100;
+        const size = Math.min(cellHeight / 1.2, cellWidth / glyphRatio);
+        this.element.style.fontSize = `${size}px`;
+        this.element.style.lineHeight = `${cellHeight}px`;
+        // Keep each character's advance equal to one world-space grid cell.
+        this.element.style.letterSpacing = `${cellWidth - size * glyphRatio}px`;
+      }
+
+      render(g) {
+        const cols = this.cols, rows = this.rows;
+        const grid = Array.from({ length:rows }, () => Array(cols).fill(' '));
+        const put = (x,y,text) => {
+          x = Math.round(x); y = Math.round(y);
+          if (y < 0 || y >= rows) return;
+          const clean = String(text).replace(/[^\x20-\x7E]/g, '?');
+          for (let i=0; i<clean.length; i++) if (x+i >= 0 && x+i < cols) grid[y][x+i] = clean[i];
+        };
+        const center = (y,text) => put(Math.floor((cols-text.length)/2),y,text);
+        const wx = x => clamp(Math.floor(x / WORLD.width * cols),0,cols-1);
+        const wy = y => clamp(Math.floor(y / WORLD.height * rows),0,rows-1);
+        const large = (text,x,y,scale=1) => {
+          for (let n=0; n<text.length; n++) {
+            const glyph = this.glyphs[text[n]];
+            if (!glyph) continue;
+            for (let r=0; r<5; r++) for (let c=0; c<3; c++) {
+              for (let dy=0; dy<scale; dy++) put(x+n*4*scale+c*scale, y+r*scale+dy, glyph[r][c].repeat(scale));
+            }
+          }
+        };
+        put(0,0,'+'+'-'.repeat(cols-2)+'+');
+        put(0,rows-1,'+'+'-'.repeat(cols-2)+'+');
+        for (let y=1; y<rows-1; y++) { put(0,y,'|'); put(cols-1,y,'|'); }
+        for (let y=2; y<rows-2; y+=2) put(cols/2,y,':');
+        put(3,1,'PONG-84 // ASCII');
+        const modeLabels = { ai:'AI', pvp:'LOCAL 2P', timer:'TIMED 2P', online:'ONLINE' };
+        const aiLabel = g.settings.mode === 'ai' ? ` / ${g.settings.difficulty.toUpperCase()} / CPU BUFFS: OFF` : '';
+        put(24,1,`${modeLabels[g.settings.mode]}${aiLabel}`);
+
+        const leftLabel = g.settings.mode === 'ai' ? 'YOU' : 'LEFT';
+        const rightLabel = g.settings.mode === 'ai' ? 'CPU' : 'RIGHT';
+        for (let r=2; r<=10; r++) put(cols/2-18,r,' '.repeat(36));
+        put(cols/2-14,2,leftLabel); put(cols/2+7,2,rightLabel);
+        large(String(g.match.leftScore).padStart(2,'0'),cols/2-14,3);
+        large(String(g.match.rightScore).padStart(2,'0'),cols/2+7,3);
+        put(cols/2-1,5,' : ');
+        if (g.isTimerMode()) center(9,`TIME ${formatTime(g.match.remaining)}`);
+        if (g.match.leftShield) put(cols/2-18,10,'[YOU SHIELD]');
+        if (g.match.rightShield && g.settings.mode !== 'ai') put(cols/2+5,10,'[RIGHT SHIELD]');
+
+        const metaNames = { speed:'FAST', slow:'SLOW', big:'BIG', long:'LONG PADDLE', small:'SMALL' };
+        if (g.effect) {
+          const target = g.effect.type === 'long' ? ` / ${(g.effect.target || 'left').toUpperCase()}` : '';
+          const waiting = g.effect.applied === false ? ' / READY' : '';
+          center(12,`[ ${metaNames[g.effect.type]} ${g.effect.remaining.toFixed(1)}s${target}${waiting} ]`);
+        }
+        if (g.curveRemaining > 0) center(14,'[ ~ CURVE SHOT ~ ]');
+        if (g.cheat) put(3,3,'[PLAYER CHEAT ON]');
+
+        // Low-intensity trails use punctuation only; ball and paddles are drawn last.
+        if (g.respawnRemaining <= 0 && !g.serveSide) {
+          for (let i=0; i<g.trail.length; i+=3) {
+            const p=g.trail[i], x=wx(p.x), y=wy(p.y);
+            if (grid[y][x] === ' ') put(x,y,i < g.trail.length/2 ? '.' : ':');
+          }
+        }
+        for (const paddle of [g.left,g.right]) {
+          const x0=wx(paddle.x), x1=wx(paddle.x+paddle.width-0.001);
+          const y0=wy(paddle.y), y1=wy(paddle.y+paddle.height-0.001);
+          for (let y=y0;y<=y1;y++) put(x0,y,'#'.repeat(x1-x0+1));
+        }
+        if (g.respawnRemaining <= 0) {
+          const b=g.ball, x=wx(b.x), y=wy(b.y);
+          const activeEffect = g.effect && g.effect.applied !== false ? g.effect.type : null;
+          let symbol = { speed:'*', slow:'o', big:'O', small:'.' }[activeEffect] || '@';
+          if (g.curveRemaining > 0) symbol='~';
+          else if (Math.abs(b.spin) > .15) symbol='%';
+          if (b.radius > b.baseRadius*1.5) {
+            for (let yy=wy(b.y-b.radius*.7);yy<=wy(b.y+b.radius*.7);yy++) {
+              put(wx(b.x-b.radius*.7),yy,symbol.repeat(Math.max(2,wx(b.x+b.radius*.7)-wx(b.x-b.radius*.7)+1)));
+            }
+          } else put(x,y,symbol);
+          if (g.serveSide) put(x+(g.serveSide==='left' ? 2 : -2),y,g.serveSide==='left' ? '>' : '<');
+        }
+
+        if (g.phase === Phase.COUNTDOWN) {
+          const mark = g.countdownRemaining > .65 ? String(clamp(Math.ceil(g.countdownRemaining-.55),1,3)) : 'GO';
+          center(16,'[ GET READY ]');
+          large(mark,Math.floor((cols-(mark.length*8-2))/2),18,2);
+        }
+        if (g.phase === Phase.PLAYING && g.serveSide) {
+          const side=g.serveSide, cpu=g.settings.mode==='ai' && side==='right';
+          const mine=!g.isOnline() || (g.isHost() && side==='left') || (g.isClient() && side==='right');
+          const action=cpu ? 'CPU PREPARING SERVE' : !mine ? 'WAITING FOR OPPONENT' :
+            IS_TOUCH ? 'DRAG TO AIM / RELEASE TO SERVE' :
+            g.settings.mode==='ai' || g.isOnline() ? 'SPACE / ENTER TO SERVE' : side==='left' ? 'SPACE TO SERVE' : 'ENTER TO SERVE';
+          center(rows-6,`[ ${side.toUpperCase()} SERVE | ${action} ]`);
+        } else if (g.respawnRemaining > 0) center(rows-6,'[ POINT SCORED ]');
+        center(rows-4,'@ BALL   * FAST   o SLOW   O BIG   . SMALL   # PADDLE   ~ CURVE   % SPIN');
+        const control=g.settings.mode==='ai'||g.isOnline() ? 'W/S or UP/DOWN: MOVE | SPACE/ENTER: SERVE' : 'W/S: LEFT | UP/DOWN: RIGHT | SPACE: L SERVE | ENTER: R SERVE';
+        center(rows-2,`${IS_TOUCH ? 'DRAG: MOVE | RELEASE: SERVE' : control} | R: RENDER | F: FULLSCREEN${g.isOnline() ? '' : ' | P: PAUSE'}`);
+        const frame=grid.map(row=>row.join('')).join('\n');
+        if (frame !== this.lastFrame) { this.element.textContent=frame; this.lastFrame=frame; }
+      }
+    }
+
+    class PongGame {
+      constructor(canvas, ctx, audio, input, online) {
+        this.canvas = canvas;
+        this.ascii = new AsciiRenderer(document.getElementById('asciiScreen'));
+        this.ctx = ctx;
+        this.audio = audio;
+        this.input = input;
+        this.online = online;
+        this.settings = loadSettings();
+        this.phase = Phase.MENU;
+        this.pausedFrom = null;
+        this.lastTs = performance.now();
+        this.accumulator = 0;
+        this.raf = null;
+        this.networkAccumulator = 0;
+        this.networkInputAccumulator = 0;
+        this.stateSeq = 0;
+        this.inputSeq = 0;
+        this.lastSnapshotSeq = -1;
+        this.clientAuthRightY = null;
+        this.toastTimers = { curve:0, cheat:0 };
+        this.countdownRemaining = 0;
+        this.countdownMark = null;
+        this.respawnRemaining = 0;
+        this.nextServeDir = 1;
+        this.serveSide = null;
+        this.aiServeRemaining = 0;
+        this.elapsed = 0;
+        this.effectCooldown = 0;
+        this.curveRemaining = 0;
+        this.curveChangeRemaining = 0;
+        this.aiError = { remaining:0, kind:'none', cooldown:0 };
+        this.trail = [];
+        this.cheat = false;
+        this.cheatMul = 1;
+        this.match = { leftScore:0, rightScore:0, leftStreak:0, rightStreak:0, leftShield:false, rightShield:false, remaining:0 };
+        this.effect = null;
+        this.left = { x:30, y:0, width:12, height:110, baseHeight:110, speed:PC_PADDLE_SPEED };
+        this.right = { x:WORLD.width-42, y:0, width:12, height:110, baseHeight:110, speed:PC_PADDLE_SPEED };
+        this.ball = { x:WORLD.width/2, y:WORLD.height/2, radius:5, baseRadius:5, vx:0, vy:0, speed:BALL_TUNING.baseSpeed, baseSpeed:BALL_TUNING.baseSpeed, maxSpeed:BALL_TUNING.maxSpeed, spin:0 };
+        this.clientTarget = null;
+        this.onUiChange = null;
+        this.onEnd = null;
+        this.onCountdownVisual = null;
+        this.onToast = null;
+        this.input.onCheat = () => this.toggleCheat();
+        this.input.onServe = source => this.requestServe(source);
+        this.input.isGameplayActive = () => [Phase.COUNTDOWN,Phase.PLAYING].includes(this.phase);
+        this.applySettingsToEntities();
+        this.resizeCanvas();
+        window.addEventListener('resize', () => this.resizeCanvas());
+        window.addEventListener('orientationchange', () => setTimeout(()=>this.resizeCanvas(), 100));
+        this.loop = this.loop.bind(this);
+      }
+
+      isTimerMode() { return this.settings.mode === 'timer'; }
+      isOnline() { return this.settings.mode === 'online'; }
+      isHost() { return this.isOnline() && this.online.role === 'host'; }
+      isClient() { return this.isOnline() && this.online.role === 'client'; }
+
+      resizeCanvas() {
+        const dpr = clamp(window.devicePixelRatio || 1, 1, 2.5);
+        this.canvas.width = Math.round(WORLD.width * dpr);
+        this.canvas.height = Math.round(WORLD.height * dpr);
+        this.ctx.setTransform(dpr,0,0,dpr,0,0);
+        this.ctx.imageSmoothingEnabled = true;
+        this.ascii.resize(this.canvas.getBoundingClientRect());
+      }
+
+      setSetting(key, value) {
+        if (key === 'score') value = clamp(Number(value) || 11, 1, 99);
+        if (key === 'time') value = Number(value) || 30;
+        if (key === 'renderMode' && !['crt','ascii'].includes(value)) return;
+        this.settings[key] = value;
+        saveSettings(this.settings);
+        // Display-only changes must never reset an active effect, paddle, score or serve.
+        if (key !== 'theme' && key !== 'renderMode') this.applySettingsToEntities();
+        this.emitUi();
+      }
+
+      applySettingsToEntities() {
+        const d = DIFFICULTY[this.settings.difficulty] || DIFFICULTY.normal;
+        const competitiveHeight = 104;
+        this.left.baseHeight = competitiveHeight;
+        this.left.height = this.cheat ? WORLD.height : competitiveHeight;
+        if (this.cheat) this.left.y = 0;
+        const rightHeight = this.settings.mode === 'ai' ? Math.min(d.paddleHeight, competitiveHeight) : competitiveHeight;
+        this.right.height = this.right.baseHeight = rightHeight;
+        this.right.speed = this.settings.mode === 'ai' ? d.aiSpeed : PC_PADDLE_SPEED;
+        this.left.speed = PC_PADDLE_SPEED;
+        if (this.settings.mode === 'ai') this.match.rightShield = false;
+        this.ball.baseSpeed = BALL_TUNING.baseSpeed * this.cheatMul;
+        this.ball.maxSpeed = BALL_TUNING.maxSpeed * this.cheatMul;
+      }
+
+      emitUi() { if (this.onUiChange) this.onUiChange(); }
+      emitToast(name, visible) { if (this.onToast) this.onToast(name, visible); }
+
+      resetMatch() {
+        this.match = {
+          leftScore:0, rightScore:0, leftStreak:0, rightStreak:0,
+          leftShield:false, rightShield:false,
+          remaining:this.settings.time
+        };
+        this.effect = null;
+        this.effectCooldown = randomRange(EFFECT_TIMING.firstMin, EFFECT_TIMING.firstMax);
+        this.curveRemaining = 0;
+        this.curveChangeRemaining = 0;
+        this.toastTimers.curve = 0;
+        this.respawnRemaining = 0;
+        this.serveSide = null;
+        this.aiServeRemaining = 0;
+        this.trail.length = 0;
+        this.networkAccumulator = 0;
+        this.networkInputAccumulator = 0;
+        this.stateSeq = 0;
+        this.inputSeq = 0;
+        this.lastSnapshotSeq = -1;
+        this.clientAuthRightY = null;
+        this.online.remoteInput = 0;
+        this.online.remoteTarget = null;
+        this.online.remoteInputSeq = -1;
+        this.cheat = false;
+        this.cheatMul = 1;
+        this.applySettingsToEntities();
+        this.left.y = WORLD.height/2 - this.left.height/2;
+        this.right.y = WORLD.height/2 - this.right.height/2;
+        this.prepareServe(Math.random() < .5 ? 'left' : 'right');
+        this.emitUi();
+      }
+
+      prepareServe(side) {
+        this.clearEffect(false);
+        this.applySettingsToEntities();
+        this.serveSide = side === 'right' ? 'right' : 'left';
+        this.aiServeRemaining = (this.settings.mode === 'ai' && this.serveSide === 'right') ? randomRange(.65, 1.15) : 0;
+        this.ball.radius = this.ball.baseRadius;
+        this.ball.spin = 0;
+        this.ball.rallySpeed = this.ball.baseSpeed;
+        this.ball.speed = this.ball.baseSpeed;
+        this.ball.vx = 0;
+        this.ball.vy = 0;
+        this.trail.length = 0;
+        this.curveRemaining = 0;
+        this.curveChangeRemaining = 0;
+        this.emitToast('curve', false);
+        this.positionServeBall();
+        this.emitUi();
+      }
+
+      positionServeBall() {
+        if (!this.serveSide) return;
+        const paddle = this.serveSide === 'left' ? this.left : this.right;
+        const gap = 12;
+        this.ball.y = clamp(paddle.y + paddle.height / 2, this.ball.radius, WORLD.height - this.ball.radius);
+        this.ball.x = this.serveSide === 'left'
+          ? paddle.x + paddle.width + this.ball.radius + gap
+          : paddle.x - this.ball.radius - gap;
+        this.ball.vx = 0;
+        this.ball.vy = 0;
+      }
+
+      launchServe(side) {
+        if (this.phase !== Phase.PLAYING || !this.serveSide || side !== this.serveSide) return false;
+        this.positionServeBall();
+        const dir = side === 'left' ? 1 : -1;
+        const angle = randomRange(-0.18, 0.18) * Math.PI;
+        this.ball.speed = this.ball.baseSpeed;
+        this.ball.vx = Math.cos(angle) * this.ball.speed * dir;
+        this.ball.vy = Math.sin(angle) * this.ball.speed;
+        this.syncBallEffect();
+        this.serveSide = null;
+        this.aiServeRemaining = 0;
+        this.trail.length = 0;
+        this.audio.hit();
+        this.emitUi();
+        return true;
+      }
+
+      requestServe(source={}) {
+        if (this.phase !== Phase.PLAYING || !this.serveSide || this.respawnRemaining > 0) return false;
+        let requestedSide = null;
+
+        if (this.isOnline()) {
+          requestedSide = this.isHost() ? 'left' : (this.isClient() ? 'right' : null);
+        } else if (this.settings.mode === 'ai') {
+          requestedSide = 'left';
+        } else if (source.type === 'touch') {
+          requestedSide = source.prop === 'right' ? 'right' : 'left';
+        } else {
+          requestedSide = source.key === 'Enter' ? 'right' : 'left';
+        }
+
+        if (!requestedSide || requestedSide !== this.serveSide) return false;
+        if (this.isClient()) {
+          return this.online.sendControl({ t:'serve' });
+        }
+        return this.launchServe(requestedSide);
+      }
+
+      startLocal() {
+        if (this.isOnline() || ![Phase.MENU,Phase.ENDED].includes(this.phase)) return;
+        this.resetMatch();
+        this.beginCountdown();
+      }
+
+      startOnlineHost() {
+        if (!this.isHost() || !this.online.connected || ![Phase.MENU,Phase.ENDED].includes(this.phase)) return false;
+        this.resetMatch();
+        this.beginCountdown();
+        this.online.sendControl({
+          t:'start',
+          settings:{ score:this.settings.score },
+          countdown:this.countdownRemaining,
+          snapshot:this.snapshot()
+        });
+        return true;
+      }
+
+      startOnlineClient(remoteSettings={}, remoteSnapshot=null, remoteCountdown=null) {
+        if (remoteSettings.score) this.settings.score = clamp(Number(remoteSettings.score),1,99);
+        this.resetMatch();
+        this.beginCountdown();
+        if (Number.isFinite(remoteCountdown)) this.countdownRemaining = Math.max(0, Number(remoteCountdown));
+        if (remoteSnapshot) this.applySnapshot(remoteSnapshot, true);
+      }
+
+      beginCountdown() {
+        this.phase = Phase.COUNTDOWN;
+        this.countdownRemaining = 3.55;
+        this.countdownMark = null;
+        this.lastTs = performance.now();
+        this.accumulator = 0;
+        if (!this.raf) this.raf = requestAnimationFrame(this.loop);
+        this.emitUi();
+      }
+
+      setPaused(value) {
+        if (this.isOnline()) return;
+        if (value && this.phase === Phase.PLAYING) {
+          this.pausedFrom = Phase.PLAYING;
+          this.phase = Phase.PAUSED;
+          this.emitUi();
+        } else if (!value && this.phase === Phase.PAUSED) {
+          this.phase = this.pausedFrom || Phase.PLAYING;
+          this.pausedFrom = null;
+          this.lastTs = performance.now();
+          this.emitUi();
+        }
+      }
+
+      quitToMenu() {
+        this.phase = Phase.MENU;
+        this.effect = null;
+        this.curveRemaining = 0;
+        this.trail.length = 0;
+        this.online.cleanup();
+        this.emitUi();
+      }
+
+      endGame(message, leftWins=null, fromNetwork=false) {
+        this.phase = Phase.ENDED;
+        if (leftWins === true) this.audio.win();
+        else if (leftWins === false) this.audio.lose();
+        else this.audio.countdown();
+        if (this.isHost() && !fromNetwork) {
+          this.online.send({ t:'end', message, leftWins, score:[this.match.leftScore, this.match.rightScore] });
+        }
+        this.emitUi();
+        if (this.onEnd) this.onEnd(message, leftWins);
+      }
+
+      toggleCheat() {
+        if (this.isOnline() || this.phase === Phase.MENU || this.phase === Phase.ENDED) return;
+        this.cheat = !this.cheat;
+        this.cheatMul = this.cheat ? 2.0 : 1.0;
+        this.applySettingsToEntities();
+        if (this.cheat) {
+          this.left.height = WORLD.height;
+          this.left.y = 0;
+          this.toastTimers.cheat = 1.6;
+          this.emitToast('cheat', true);
+          this.audio.powerup();
+        } else {
+          this.left.height = this.left.baseHeight;
+          this.left.y = clamp(this.left.y,0,WORLD.height-this.left.height);
+          this.emitToast('cheat', false);
+        }
+        this.emitUi();
+      }
+
+      loop(ts) {
+        this.raf = requestAnimationFrame(this.loop);
+        const frameDt = clamp((ts - this.lastTs) / 1000, 0, MAX_FRAME_DT);
+        this.lastTs = ts;
+        this.accumulator += frameDt;
+
+        if (this.phase !== Phase.PAUSED) {
+          let guard = 0;
+          while (this.accumulator >= FIXED_DT && guard < 20) {
+            this.step(FIXED_DT);
+            this.accumulator -= FIXED_DT;
+            guard++;
+          }
+        } else {
+          this.accumulator = 0;
+        }
+
+        this.render();
+      }
+
+      step(dt) {
+        this.elapsed += dt;
+        this.stepToasts(dt);
+        if (this.phase === Phase.COUNTDOWN) {
+          this.stepCountdown(dt);
+          if (this.isHost()) this.sendNetworkIfNeeded(dt);
+          return;
+        }
+        if (this.phase !== Phase.PLAYING) return;
+
+        if (this.isClient()) {
+          this.stepClient(dt);
+          this.networkInputAccumulator += dt;
+          if (this.networkInputAccumulator >= 1/NETWORK_INPUT_HZ) {
+            this.networkInputAccumulator = 0;
+            this.online.sendRealtime({
+              t:'input',
+              seq:++this.inputSeq,
+              dir:this.input.onlineLocalDir(),
+              target:this.input.targetFor('local')
+            });
+          }
+          return;
+        }
+
+        this.movePaddles(dt);
+
+        if (this.respawnRemaining > 0) {
+          this.respawnRemaining -= dt;
+          if (this.respawnRemaining <= 0) this.prepareServe(this.nextServeDir > 0 ? 'left' : 'right');
+          this.sendNetworkIfNeeded(dt);
+          return;
+        }
+
+        if (this.serveSide) {
+          this.positionServeBall();
+          if (this.settings.mode === 'ai' && this.serveSide === 'right') {
+            this.aiServeRemaining -= dt;
+            if (this.aiServeRemaining <= 0) this.launchServe('right');
+          }
+          this.sendNetworkIfNeeded(dt);
+          return;
+        }
+
+        if (this.isTimerMode()) {
+          const previous = Math.ceil(this.match.remaining);
+          this.match.remaining = Math.max(0, this.match.remaining - dt);
+          const current = Math.ceil(this.match.remaining);
+          if (current !== previous && current <= 10 && current > 0) this.audio.tick();
+          if (this.match.remaining <= 0) {
+            const l = this.match.leftScore, r = this.match.rightScore;
+            if (l > r) this.endGame('左方获胜！', true);
+            else if (r > l) this.endGame('右方获胜！', false);
+            else this.endGame('平局！', null);
+            return;
+          }
+        }
+
+        this.updateEffect(dt);
+        this.updateCurve(dt);
+        this.updateBall(dt);
+        this.resolveWalls();
+        this.resolvePaddle(this.left, true);
+        this.resolvePaddle(this.right, false);
+        this.resolveScore();
+        this.sendNetworkIfNeeded(dt);
+      }
+
+      stepCountdown(dt) {
+        this.countdownRemaining -= dt;
+        const v = this.countdownRemaining > .65 ? Math.ceil(this.countdownRemaining - .55) : 0;
+        const mark = this.countdownRemaining > .65 ? String(clamp(v,1,3)) : 'GO';
+        if (mark !== this.countdownMark) {
+          this.countdownMark = mark;
+          this.audio.countdown();
+          if (this.onCountdownVisual) this.onCountdownVisual(mark, true);
+        }
+        if (this.countdownRemaining <= 0) {
+          this.phase = Phase.PLAYING;
+          if (this.onCountdownVisual) this.onCountdownVisual('', false);
+          this.emitUi();
+        }
+      }
+
+      stepToasts(dt) {
+        for (const key of Object.keys(this.toastTimers)) {
+          if (this.toastTimers[key] > 0) {
+            this.toastTimers[key] -= dt;
+            if (this.toastTimers[key] <= 0) this.emitToast(key, false);
+          }
+        }
+      }
+
+      movePaddles(dt) {
+        let leftDir = 0, rightDir = 0, leftTarget = null, rightTarget = null;
+        if (this.isHost()) {
+          leftDir = this.input.onlineLocalDir();
+          leftTarget = this.input.targetFor('local');
+          rightDir = this.online.remoteInput || 0;
+          rightTarget = this.online.remoteTarget;
+        } else if (this.settings.mode === 'ai') {
+          leftDir = this.input.leftDir(true);
+          leftTarget = this.input.targetFor('local');
+          this.updateAI(dt);
+        } else {
+          leftDir = this.input.leftDir(false);
+          rightDir = this.input.rightDir();
+          leftTarget = this.input.targetFor('left');
+          rightTarget = this.input.targetFor('right');
+        }
+
+        this.moveHumanPaddle(this.left, leftDir, leftTarget, dt);
+        if (this.settings.mode !== 'ai') this.moveHumanPaddle(this.right, rightDir, rightTarget, dt);
+        this.left.y = clamp(this.left.y, 0, WORLD.height - this.left.height);
+        this.right.y = clamp(this.right.y, 0, WORLD.height - this.right.height);
+      }
+
+      moveHumanPaddle(paddle, dir, targetY, dt) {
+        if (Number.isFinite(targetY)) {
+          const center = paddle.y + paddle.height / 2;
+          const delta = targetY - center;
+          if (Math.abs(delta) > 2) {
+            const velocity = clamp(delta * 14, -900, 900);
+            paddle.y += velocity * dt;
+          }
+          return;
+        }
+        if (dir) paddle.y += dir * paddle.speed * dt;
+      }
+
+      updateAI(dt) {
+        const d = DIFFICULTY[this.settings.difficulty];
+        const ai = this.right;
+        if (this.aiError.cooldown > 0) this.aiError.cooldown -= dt;
+        if (this.aiError.remaining <= 0 && this.aiError.cooldown <= 0 && Math.random() < d.errorChance * dt) {
+          this.aiError.kind = choice(['freeze','overshoot','slow','wrong']);
+          this.aiError.remaining = randomRange(d.errorTime[0], d.errorTime[1]);
+          this.aiError.cooldown = randomRange(.25,.8);
+        }
+        if (this.aiError.remaining > 0) this.aiError.remaining -= dt;
+
+        let targetY = this.ball.y;
+        if (this.ball.vx > 0) {
+          const timeToAI = Math.max(0, (ai.x - this.ball.x) / Math.max(1, this.ball.vx));
+          targetY += this.ball.vy * timeToAI * d.predict;
+          while (targetY < 0 || targetY > WORLD.height) {
+            if (targetY < 0) targetY = -targetY;
+            if (targetY > WORLD.height) targetY = WORLD.height - (targetY - WORLD.height);
+          }
+        }
+        const center = ai.y + ai.height/2;
+        const delta = targetY - center;
+        let dir = Math.abs(delta) <= d.deadZone ? 0 : Math.sign(delta);
+        let speedMul = 1;
+        if (this.aiError.remaining > 0) {
+          if (this.aiError.kind === 'freeze') dir = 0;
+          else if (this.aiError.kind === 'wrong') dir *= -1;
+          else if (this.aiError.kind === 'slow') speedMul = .24;
+          else if (this.aiError.kind === 'overshoot') dir *= -1; // Mistakes cannot grant a speed bonus.
+        }
+        const smooth = clamp(Math.abs(delta) / Math.max(1, d.reaction), .25, 1);
+        ai.y += dir * Math.min(ai.speed, d.aiSpeed) * Math.min(speedMul, 1) * smooth * dt;
+        ai.y = clamp(ai.y,0,WORLD.height-ai.height);
+      }
+
+      updateBall(dt) {
+        if (Math.abs(this.ball.spin) > .002) {
+          this.ball.vy += this.ball.spin * 84 * dt;
+          this.ball.spin *= Math.pow(.985, dt * 60);
+        }
+        this.ball.x += this.ball.vx * dt;
+        this.ball.y += this.ball.vy * dt;
+        this.trail.push({ x:this.ball.x, y:this.ball.y, r:this.ball.radius });
+        if (this.trail.length > 18) this.trail.shift();
+      }
+
+      resolveWalls() {
+        const b = this.ball;
+        if (b.y - b.radius <= 0 && b.vy < 0) { b.y = b.radius; b.vy *= -1; }
+        else if (b.y + b.radius >= WORLD.height && b.vy > 0) { b.y = WORLD.height - b.radius; b.vy *= -1; }
+      }
+
+      resolvePaddle(paddle, isLeft) {
+        const b = this.ball;
+        const movingToward = isLeft ? b.vx < 0 : b.vx > 0;
+        if (!movingToward) return false;
+        const bx0 = b.x - b.radius, bx1 = b.x + b.radius;
+        const px0 = paddle.x, px1 = paddle.x + paddle.width;
+        const overlapX = bx1 >= px0 && bx0 <= px1;
+        const overlapY = b.y + b.radius >= paddle.y && b.y - b.radius <= paddle.y + paddle.height;
+        if (!overlapX || !overlapY) return false;
+
+        const aiReturn = this.settings.mode === 'ai' && !isLeft;
+        const hitPos = clamp((b.y - (paddle.y + paddle.height/2)) / (paddle.height/2), -1, 1);
+        const angle = hitPos * (Math.PI / 3);
+        b.rallySpeed = Math.min((b.rallySpeed || b.baseSpeed) + (aiReturn ? 0 : BALL_TUNING.hitAcceleration), b.maxSpeed);
+        b.vx = Math.cos(angle) * b.rallySpeed * (isLeft ? 1 : -1);
+        b.vy = Math.sin(angle) * b.rallySpeed;
+        // Re-evaluate directional powerups immediately on contact, not one frame later.
+        this.syncBallEffect();
+        b.spin = aiReturn ? 0 : hitPos * .92 * Math.abs(hitPos);
+        if (!aiReturn && Math.abs(b.spin) > .15) { b.vx *= 1.12; this.audio.spin(); }
+        const absSpeed = Math.hypot(b.vx,b.vy);
+        if (absSpeed > b.maxSpeed) { const k = b.maxSpeed/absSpeed; b.vx*=k; b.vy*=k; }
+        b.x = isLeft ? paddle.x + paddle.width + b.radius + .5 : paddle.x - b.radius - .5;
+        this.audio.hit();
+        if (aiReturn) this.clearCurve();
+        else this.tryStartCurve(isLeft);
+        this.emitUi();
+        return true;
+      }
+
+      resolveScore() {
+        const b = this.ball;
+        if (b.x < -b.radius) this.scorePoint('right');
+        else if (b.x > WORLD.width + b.radius) this.scorePoint('left');
+      }
+
+      scorePoint(side) {
+        // Defensive gate: a CPU shield can neither be earned nor consume a player's point.
+        if (this.settings.mode === 'ai') this.match.rightShield = false;
+        if (side === 'right') {
+          if (this.match.leftShield) {
+            this.match.leftShield = false; this.match.leftStreak = 0; this.audio.shieldBreak();
+            this.respawnRemaining = .45; this.nextServeDir = 1; this.emitUi(); return;
+          }
+          this.match.rightScore++; this.match.leftStreak = 0; this.match.rightStreak++;
+          if (this.settings.mode !== 'ai' && this.match.rightStreak >= 3 && !this.match.rightShield) {
+            this.match.rightShield = true; this.match.rightStreak = 0; this.audio.shield();
+          }
+          this.audio.lose();
+          this.nextServeDir = 1;
+        } else {
+          if (this.match.rightShield) {
+            this.match.rightShield = false; this.match.rightStreak = 0; this.audio.shieldBreak();
+            this.respawnRemaining = .45; this.nextServeDir = -1; this.emitUi(); return;
+          }
+          this.match.leftScore++; this.match.leftStreak++; this.match.rightStreak = 0;
+          if (this.match.leftStreak >= 3 && !this.match.leftShield) {
+            this.match.leftShield = true; this.match.leftStreak = 0; this.audio.shield();
+          }
+          this.audio.score();
+          this.nextServeDir = -1;
+        }
+
+        this.emitUi();
+        if (!this.isTimerMode()) {
+          if (this.match.leftScore >= this.settings.score) { this.endGame('左方获胜！', true); return; }
+          if (this.match.rightScore >= this.settings.score) { this.endGame(this.settings.mode === 'ai' ? '电脑获胜！' : '右方获胜！', false); return; }
+        }
+        this.respawnRemaining = .45;
+      }
+
+      updateEffect(dt) {
+        if (this.effect) {
+          this.effect.remaining -= dt;
+          if (this.effect.remaining <= 0) this.clearEffect(true);
+          return;
+        }
+        this.effectCooldown -= dt;
+        if (this.effectCooldown <= 0) this.spawnEffect();
+      }
+
+      spawnEffect(type=choice(Object.keys(POWERUPS))) {
+        const meta = POWERUPS[type];
+        if (!meta) return false;
+        if (this.effect) this.clearEffect(false);
+        this.effect = { type, remaining:meta.duration, applied:true };
+        if (type === 'long') {
+          // Human-only in AI mode, including while the player's cheat is active.
+          const target = this.settings.mode === 'ai' ? 'left' : (this.cheat ? 'right' : (Math.random()<.5 ? 'left' : 'right'));
+          this.effect.target = target;
+          const paddle = target === 'left' ? this.left : this.right;
+          if (!(target === 'left' && this.cheat)) paddle.height = Math.min(WORLD.height, paddle.baseHeight * 1.5);
+          paddle.y = clamp(paddle.y,0,WORLD.height-paddle.height);
+        }
+        this.syncBallEffect();
+        this.audio.powerup();
+        this.emitUi();
+        return true;
+      }
+
+      syncBallEffect() {
+        const b = this.ball;
+        const aiMode = this.settings.mode === 'ai';
+        const type = this.effect ? this.effect.type : null;
+        let applied = !!this.effect;
+        if (aiMode && type) {
+          // Fast/small attack the CPU; slow/big make the human's return easier.
+          // The effect remains available across rebounds, but never buffs the CPU.
+          if (type === 'speed' || type === 'small') applied = b.vx > 0;
+          else if (type === 'slow' || type === 'big') applied = b.vx < 0;
+        }
+        let speed = b.rallySpeed || b.baseSpeed;
+        // CPU serves/returns cannot inherit accelerated rallies or the player's cheat boost.
+        if (aiMode && b.vx < 0) speed = Math.min(speed, BALL_TUNING.baseSpeed);
+        b.radius = b.baseRadius;
+        if (applied) {
+          if (type === 'speed') speed *= 1.5;
+          else if (type === 'slow') speed *= .58;
+          else if (type === 'big') b.radius = b.baseRadius * 2;
+          else if (type === 'small') b.radius = b.baseRadius * .55;
+        }
+        b.speed = clamp(speed, BALL_TUNING.minEffectSpeed, b.maxSpeed);
+        b.y = clamp(b.y,b.radius,WORLD.height-b.radius);
+        this.normalizeBallVelocityToSpeed();
+        if (this.effect) this.effect.applied = applied;
+      }
+
+      clearEffect(playSound=true) {
+        if (!this.effect) return;
+        const was = this.effect.type;
+        this.effect = null;
+        this.effectCooldown = randomRange(EFFECT_TIMING.gapMin, EFFECT_TIMING.gapMax);
+        if (was === 'long') {
+          this.left.height = this.cheat ? WORLD.height : this.left.baseHeight;
+          this.right.height = this.right.baseHeight;
+          this.left.y = clamp(this.left.y,0,WORLD.height-this.left.height);
+          this.right.y = clamp(this.right.y,0,WORLD.height-this.right.height);
+        }
+        this.syncBallEffect();
+        if (playSound) this.audio.powerupEnd();
+        this.emitUi();
+      }
+
+      normalizeBallVelocityToSpeed() {
+        const mag = Math.hypot(this.ball.vx,this.ball.vy) || 1;
+        this.ball.vx = this.ball.vx / mag * this.ball.speed;
+        this.ball.vy = this.ball.vy / mag * this.ball.speed;
+      }
+
+      tryStartCurve(isLeft) {
+        if (this.settings.mode === 'ai' && (!isLeft || this.ball.vx <= 0)) return;
+        if (this.curveRemaining > 0) return;
+        if (Math.random() < CURVE_CHANCE) {
+          this.curveRemaining = randomRange(2.8, 5.2);
+          this.curveChangeRemaining = randomRange(.32, .62);
+          this.toastTimers.curve = 1.25;
+          this.emitToast('curve', true);
+          this.audio.curve();
+        }
+      }
+
+      clearCurve() {
+        this.curveRemaining = 0;
+        this.curveChangeRemaining = 0;
+        this.toastTimers.curve = 0;
+        this.emitToast('curve', false);
+      }
+
+      updateCurve(dt) {
+        if (this.curveRemaining <= 0) return;
+        if (this.settings.mode === 'ai' && this.ball.vx < 0) { this.clearCurve(); return; }
+        this.curveRemaining -= dt;
+        this.curveChangeRemaining -= dt;
+        if (this.curveChangeRemaining <= 0) {
+          this.ball.vy += randomRange(-115,115);
+          this.ball.vx *= randomRange(.93,1.08);
+          const mag = Math.hypot(this.ball.vx,this.ball.vy);
+          if (mag > this.ball.maxSpeed) { const k=this.ball.maxSpeed/mag; this.ball.vx*=k; this.ball.vy*=k; }
+          this.curveChangeRemaining = randomRange(.30,.56);
+        }
+        if (this.curveRemaining <= 0) this.emitToast('curve', false);
+      }
+
+      sendNetworkIfNeeded(dt) {
+        if (!this.isHost()) return;
+        this.networkAccumulator += dt;
+        if (this.networkAccumulator < 1/NETWORK_STATE_HZ) return;
+        this.networkAccumulator = 0;
+        this.online.sendRealtime({ t:'state', s:this.snapshot() });
+      }
+
+      snapshot() {
+        return {
+          seq:++this.stateSeq,
+          ackInput:this.online.remoteInputSeq,
+          phase:this.phase,
+          countdown:this.countdownRemaining,
+          ball:{ x:this.ball.x,y:this.ball.y,vx:this.ball.vx,vy:this.ball.vy,r:this.ball.radius,spin:this.ball.spin,speed:this.ball.speed },
+          left:{ y:this.left.y,h:this.left.height }, right:{ y:this.right.y,h:this.right.height },
+          match:{ ...this.match },
+          effect:this.effect ? { ...this.effect } : null,
+          curve:this.curveRemaining,
+          respawn:this.respawnRemaining,
+          serve:this.serveSide
+        };
+      }
+
+      applySnapshot(s, force=false) {
+        if (!s || !s.ball || !s.match) return;
+        const seq = Number(s.seq);
+        if (!force && Number.isFinite(seq) && seq <= this.lastSnapshotSeq) return;
+        if (Number.isFinite(seq)) this.lastSnapshotSeq = seq;
+
+        const oldPhase = this.phase;
+        const oldScoreL = this.match.leftScore, oldScoreR = this.match.rightScore;
+        const oldShieldL = this.match.leftShield, oldShieldR = this.match.rightShield;
+        const oldEffect = this.effect ? this.effect.type : null;
+
+        const lerp = (a,b,t) => a + (b-a)*t;
+        const rttLead = clamp((this.online.rtt || 0) / 2000, 0, .07);
+        const canPredict = s.phase === Phase.PLAYING && !(s.respawn > 0) && !s.serve;
+        let targetBallX = s.ball.x;
+        let targetBallY = s.ball.y;
+        if (canPredict) {
+          targetBallX += s.ball.vx * rttLead;
+          targetBallY += s.ball.vy * rttLead;
+          // Only use a short prediction window; authoritative snapshots correct wall/paddle bounces.
+          targetBallY = clamp(targetBallY, s.ball.r, WORLD.height - s.ball.r);
+        }
+        const ballError = Math.hypot(targetBallX-this.ball.x, targetBallY-this.ball.y);
+        const ballBlend = force || ballError > 170 ? 1 : .82;
+        this.ball.x = lerp(this.ball.x, targetBallX, ballBlend);
+        this.ball.y = lerp(this.ball.y, targetBallY, ballBlend);
+        this.ball.vx = s.ball.vx; this.ball.vy = s.ball.vy; this.ball.radius = s.ball.r;
+        this.ball.spin = s.ball.spin; this.ball.speed = s.ball.speed;
+
+        this.left.y = lerp(this.left.y, s.left.y, force ? 1 : .76);
+        this.left.height = s.left.h;
+        this.right.height = s.right.h;
+        this.clientAuthRightY = s.right.y;
+        const rightError = Math.abs(s.right.y - this.right.y);
+        if (force || rightError > 120) this.right.y = s.right.y;
+        else this.right.y = lerp(this.right.y, s.right.y, .10);
+
+        this.match = { ...this.match, ...s.match };
+        this.effect = s.effect ? { ...s.effect } : null;
+        this.curveRemaining = s.curve || 0;
+        this.respawnRemaining = s.respawn || 0;
+        this.serveSide = s.serve === 'right' ? 'right' : (s.serve === 'left' ? 'left' : null);
+        if (this.serveSide) this.aiServeRemaining = 0;
+
+        if (Number.isFinite(s.countdown) && s.phase === Phase.COUNTDOWN) {
+          // Never let the client countdown drift ahead of the host.
+          this.countdownRemaining = Math.max(0, Number(s.countdown));
+        }
+        if ([Phase.COUNTDOWN,Phase.PLAYING,Phase.ENDED].includes(s.phase)) {
+          this.phase = s.phase;
+          if (s.phase !== Phase.COUNTDOWN && this.onCountdownVisual) this.onCountdownVisual('', false);
+        }
+
+        const effectNow = this.effect ? this.effect.type : null;
+        const uiChanged = oldPhase !== this.phase || oldScoreL !== this.match.leftScore || oldScoreR !== this.match.rightScore ||
+          oldShieldL !== this.match.leftShield || oldShieldR !== this.match.rightShield || oldEffect !== effectNow;
+        if (uiChanged) this.emitUi();
+      }
+
+      stepClient(dt) {
+        const dir = this.input.onlineLocalDir();
+        const target = this.input.targetFor('local');
+        this.moveHumanPaddle(this.right, dir, target, dt);
+        this.right.y = clamp(this.right.y,0,WORLD.height-this.right.height);
+        if (this.serveSide === 'right') this.positionServeBall();
+
+        // Local prediction keeps the player's own paddle responsive; host snapshots only reconcile drift softly.
+        if (Number.isFinite(this.clientAuthRightY)) {
+          const error = this.clientAuthRightY - this.right.y;
+          if (Math.abs(error) > 140) this.right.y = this.clientAuthRightY;
+          else if (Math.abs(error) > 4) this.right.y += error * (1 - Math.exp(-4.5 * dt));
+          this.right.y = clamp(this.right.y,0,WORLD.height-this.right.height);
+        }
+      }
+
+      render() {
+        if (this.settings.renderMode === 'ascii') { this.ascii.render(this); return; }
+        const ctx = this.ctx;
+        const theme = THEMES[this.settings.theme];
+        ctx.save();
+        ctx.clearRect(0,0,WORLD.width,WORLD.height);
+        ctx.fillStyle = theme.bg;
+        ctx.fillRect(0,0,WORLD.width,WORLD.height);
+
+        // Sparse CRT noise: deterministic gameplay, cosmetic randomness only.
+        if (Math.random() < .42) {
+          ctx.fillStyle = theme.dim;
+          for (let i=0;i<26;i++) ctx.fillRect(Math.random()*WORLD.width, Math.random()*WORLD.height, 1, Math.random()>.5 ? 1 : 2);
+        }
+
+        ctx.strokeStyle = theme.dim; ctx.lineWidth = 2; ctx.setLineDash([10,15]);
+        ctx.beginPath(); ctx.moveTo(WORLD.width/2,0); ctx.lineTo(WORLD.width/2,WORLD.height); ctx.stroke(); ctx.setLineDash([]);
+
+        ctx.shadowColor = theme.glow; ctx.shadowBlur = 15; ctx.fillStyle = theme.color;
+        ctx.fillRect(this.left.x,this.left.y,this.left.width,this.left.height);
+        ctx.fillRect(this.right.x,this.right.y,this.right.width,this.right.height);
+        ctx.shadowBlur = 0;
+
+        if (this.respawnRemaining <= 0) {
+          this.renderBall(theme);
+          if (this.serveSide) this.renderServeMarker(theme);
+        }
+        if (this.effect) {
+          const meta = POWERUPS[this.effect.type];
+          ctx.save(); ctx.fillStyle = meta.color; ctx.textAlign='center'; ctx.font='700 12px Consolas, monospace';
+          ctx.shadowColor = meta.color; ctx.shadowBlur = 10;
+          ctx.fillText(`${meta.label} ${this.effect.remaining.toFixed(1)}s${this.effect.applied === false ? " · 待生效" : ""}`, WORLD.width/2, 26); ctx.restore();
+        }
+        ctx.restore();
+      }
+
+      renderServeMarker(theme) {
+        const ctx = this.ctx;
+        const sideLabel = this.serveSide === 'left' ? '左方发球' : (this.settings.mode === 'ai' ? '电脑发球' : '右方发球');
+        ctx.save();
+        ctx.strokeStyle = theme.color;
+        ctx.globalAlpha = .55 + Math.sin(this.elapsed * 6) * .18;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(this.ball.x, this.ball.y, this.ball.radius + 10, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = .82;
+        ctx.fillStyle = theme.color;
+        ctx.textAlign = this.serveSide === 'left' ? 'left' : 'right';
+        ctx.font = '700 11px Consolas, monospace';
+        const tx = this.serveSide === 'left' ? this.ball.x + 22 : this.ball.x - 22;
+        ctx.fillText(sideLabel, tx, this.ball.y - 16);
+        ctx.restore();
+      }
+
+      renderBall(theme) {
+        const ctx = this.ctx;
+        this.trail.forEach((p,i)=>{
+          const a = ((i+1)/this.trail.length) * .18;
+          ctx.fillStyle = rgba(theme.trail,a);
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r*(.35+.65*i/Math.max(1,this.trail.length)),0,Math.PI*2); ctx.fill();
+        });
+
+        let color=theme.color, glow=theme.glow, blur=20;
+        if (this.curveRemaining > 0) { color='#ffaa33'; glow='rgba(255,170,51,.82)'; blur=34; }
+        else if (this.effect && this.effect.applied !== false) { color=POWERUPS[this.effect.type].color; glow=color; blur=28; }
+        else if (Math.abs(this.ball.spin)>.15) { color='#44ddff'; glow='rgba(68,221,255,.82)'; blur=24; }
+
+        ctx.save(); ctx.fillStyle=color; ctx.shadowColor=glow; ctx.shadowBlur=blur;
+        ctx.beginPath(); ctx.arc(this.ball.x,this.ball.y,this.ball.radius,0,Math.PI*2); ctx.fill();
+        ctx.shadowBlur=0;
+        if (Math.abs(this.ball.spin)>.10) {
+          ctx.strokeStyle=theme.dim; ctx.lineWidth=2; ctx.beginPath();
+          ctx.arc(this.ball.x,this.ball.y,this.ball.radius*1.7,-Math.PI/2,Math.PI/2,this.ball.spin<0); ctx.stroke();
+        }
+        ctx.restore();
+      }
+    }
+
+    // ============================================================
+    // 7) UI Controller: DOM concerns are isolated from the game core.
+    // ============================================================
+    class UIController {
+      constructor(game, online, audio) {
+        this.game = game; this.online = online; this.audio = audio;
+        this.menu = document.getElementById('menuOverlay');
+        this.pause = document.getElementById('pauseOverlay');
+        this.menuTitle = document.getElementById('menuTitle');
+        this.menuSub = document.getElementById('menuSub');
+        this.startBtn = document.getElementById('startBtn');
+        this.pauseBtn = document.getElementById('pauseBtn');
+        this.fullscreenBtn = document.getElementById('fullscreenBtn');
+        this.renderModeBtn = document.getElementById('renderModeBtn');
+        this.menuFullscreenBtn = document.getElementById('menuFullscreenBtn');
+        this.fullscreenTarget = document.getElementById('gameContainer');
+        this.resumeBtn = document.getElementById('resumeBtn');
+        this.quitBtn = document.getElementById('quitBtn');
+        this.scoreLeft = document.getElementById('scoreLeft');
+        this.scoreRight = document.getElementById('scoreRight');
+        this.timer = document.getElementById('timerDisplay');
+        this.shieldRow = document.getElementById('shieldRow');
+        this.shieldLeft = document.getElementById('shieldLeft');
+        this.shieldRight = document.getElementById('shieldRight');
+        this.modeBadge = document.getElementById('modeBadge');
+        this.status = document.getElementById('statusStrip');
+        this.hint = document.getElementById('controlsHint');
+        this.curveToast = document.getElementById('curveToast');
+        this.cheatToast = document.getElementById('cheatToast');
+        this.countdown = document.getElementById('countdown');
+        this.countdownText = document.getElementById('countdownText');
+        this.touchSingle = document.getElementById('touchSingle');
+        this.touchDual = document.getElementById('touchDual');
+        this.difficultySection = document.getElementById('difficultySection');
+        this.scoreSection = document.getElementById('scoreSection');
+        this.timeSection = document.getElementById('timeSection');
+        this.onlineSection = document.getElementById('onlineSection');
+        this.onlineChooser = document.getElementById('onlineChooser');
+        this.onlineBox = document.getElementById('onlineBox');
+        this.onlineInfo = document.getElementById('onlineInfo');
+        this.onlineCode = document.getElementById('onlineCode');
+        this.onlineActionBtn = document.getElementById('onlineActionBtn');
+        this.onlineBackBtn = document.getElementById('onlineBackBtn');
+        this.customScore = document.getElementById('customScore');
+        this.onlineUiState = 'idle';
+        this.bind();
+        this.syncSettingsButtons();
+        this.applyTheme();
+        this.applyRenderMode();
+        this.syncFullscreenButton();
+        this.update();
+      }
+
+      bind() {
+        document.querySelectorAll('[data-setting]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const key = btn.dataset.setting;
+            let value = btn.dataset.value;
+            if (key === 'score' || key === 'time') value = Number(value);
+            this.game.setSetting(key,value);
+            if (key === 'score') this.customScore.value='';
+            if (key === 'theme') this.applyTheme();
+            if (key === 'renderMode') this.applyRenderMode();
+            if (key === 'mode') {
+              this.online.cleanup();
+              this.resetOnlineUi();
+            }
+            this.syncSettingsButtons();
+          });
+        });
+
+        this.customScore.addEventListener('input', () => {
+          const v = Number(this.customScore.value);
+          if (Number.isFinite(v) && v>=1) {
+            this.game.setSetting('score', clamp(v,1,99));
+            document.querySelectorAll('[data-setting="score"]').forEach(b=>b.classList.remove('selected'));
+          }
+        });
+
+        this.startBtn.addEventListener('click', () => {
+          // 隐藏按钮的意外点击不能清空当前比分或重新进入倒计时。
+          if (![Phase.MENU,Phase.ENDED].includes(this.game.phase)) return;
+          this.audio.ensure();
+          if (this.game.isOnline()) {
+            if (!this.online.connected || this.online.role !== 'host') return;
+            this.game.startOnlineHost();
+          } else {
+            this.game.startLocal();
+          }
+        });
+
+        this.pauseBtn.addEventListener('click', ()=>this.game.setPaused(true));
+        this.fullscreenBtn.addEventListener('click', ()=>this.toggleFullscreen());
+        this.renderModeBtn.addEventListener('click', ()=>this.toggleRenderMode());
+        this.menuFullscreenBtn.addEventListener('click', ()=>this.toggleFullscreen());
+        document.addEventListener('fullscreenchange', ()=>this.syncFullscreenButton());
+        document.addEventListener('webkitfullscreenchange', ()=>this.syncFullscreenButton());
+        this.resumeBtn.addEventListener('click', ()=>this.game.setPaused(false));
+        this.quitBtn.addEventListener('click', ()=>{
+          this.game.input.clearTouches(true); this.game.quitToMenu(); this.menuTitle.textContent='PONG-84'; this.menuSub.textContent='配置游戏后开始'; this.resetOnlineUi();
+        });
+
+        document.getElementById('createRoomBtn').addEventListener('click', ()=>this.createRoom());
+        document.getElementById('joinRoomBtn').addEventListener('click', ()=>this.joinRoomUi());
+        this.onlineActionBtn.addEventListener('click', ()=>this.onlineAction());
+        this.onlineCode.addEventListener('input', ()=>{ if (!this.onlineCode.readOnly) this.onlineCode.value=this.onlineCode.value.replace(/\D/g,'').slice(0,4); });
+        this.onlineBackBtn.addEventListener('click', ()=>{
+          this.online.cleanup(); this.resetOnlineUi(); this.update();
+        });
+
+        window.addEventListener('keydown', e => {
+          if ((e.key==='r'||e.key==='R') && !e.ctrlKey && !e.metaKey && !e.altKey && !this.isTypingTarget(e.target)) {
+            e.preventDefault();
+            if (!e.repeat) this.toggleRenderMode();
+            return;
+          }
+          if ((e.key==='f'||e.key==='F') && !e.repeat && !e.ctrlKey && !e.metaKey && !e.altKey && !this.isTypingTarget(e.target)) {
+            e.preventDefault();
+            this.toggleFullscreen();
+            return;
+          }
+          if (e.key==='Escape' && this.getFullscreenElement()) return; // let the browser exit fullscreen without also pausing
+          if ((e.key==='p'||e.key==='P'||e.key==='Escape') && !this.game.isOnline()) {
+            if (this.game.phase===Phase.PLAYING) this.game.setPaused(true);
+            else if (this.game.phase===Phase.PAUSED) this.game.setPaused(false);
+          }
+        });
+
+        this.game.onUiChange = ()=>this.update();
+        this.game.onCountdownVisual = (mark,show)=>this.setCountdown(mark,show);
+        this.game.onToast = (name,show)=>{
+          const el = name==='curve' ? this.curveToast : this.cheatToast;
+          el.classList.toggle('show',show);
+        };
+        this.game.onEnd = (message)=>{
+          this.menuTitle.textContent=message;
+          const suffix = this.game.isTimerMode() ? ` · ${formatTime(this.game.settings.time)}` : '';
+          this.menuSub.textContent=`最终比分 ${this.game.match.leftScore} : ${this.game.match.rightScore}${suffix}`;
+          this.startBtn.textContent=this.game.isOnline() ? '再来一局（主机）' : '再来一局';
+          this.menu.classList.remove('hidden');
+          this.update();
+        };
+
+        this.online.onOpen = role => {
+          this.onlineUiState='connected';
+          this.onlineInfo.textContent = role==='host' ? '连接成功。你是主机，点击“开始游戏”。' : '连接成功。等待主机开始游戏。';
+          this.onlineCode.value='';
+          this.onlineActionBtn.classList.add('hidden-section');
+          this.startBtn.style.display = role==='host' ? '' : 'none';
+          this.menuSub.textContent = role==='host' ? '对手已加入 · 云房间已转为 P2P · 60Hz 主机权威同步' : '已连接 · P2P · 本地预测 + 主机校正';
+          this.update();
+        };
+        this.online.onClose = reason=>{
+          if ([Phase.PLAYING,Phase.COUNTDOWN].includes(this.game.phase)) this.game.endGame(reason || '连接断开', false, true);
+          this.onlineInfo.textContent=reason || '连接已断开';
+          this.update();
+        };
+        this.online.onConnectionState = state => {
+          if (state==='reconnecting') this.onlineInfo.textContent='网络波动，正在尝试恢复连接…';
+          else if (state==='signaling-lost' && this.online.connected) this.onlineInfo.textContent='云信令暂时断开，但当前 P2P 对局仍可继续。';
+          else if (state==='waiting' && this.online.role==='host') this.onlineInfo.textContent=`房间 ${this.online.room} 已创建 · 等待对手加入`;
+          else if (state==='connected' && this.online.connected) {
+            this.onlineInfo.textContent = this.online.role==='host' ? '连接稳定。你是主机。' : '连接稳定。等待主机开始。';
+          }
+          this.update();
+        };
+        this.online.onStats = ()=>this.update();
+        this.online.onMessage = msg => this.handleOnlineMessage(msg);
+      }
+
+      handleOnlineMessage(msg) {
+        if (msg.t==='serve' && this.online.role==='host') {
+          if (this.game.phase === Phase.PLAYING && this.game.serveSide === 'right') this.game.launchServe('right');
+        } else if (msg.t==='input' && this.online.role==='host') {
+          const seq = Number(msg.seq);
+          if (Number.isFinite(seq) && seq <= this.online.remoteInputSeq) return;
+          if (Number.isFinite(seq)) this.online.remoteInputSeq = seq;
+          this.online.remoteInput = clamp(Number(msg.dir)||0,-1,1);
+          const hasTarget = msg.target !== null && msg.target !== undefined && msg.target !== '';
+          const target = hasTarget ? Number(msg.target) : NaN;
+          this.online.remoteTarget = Number.isFinite(target) ? clamp(target,0,WORLD.height) : null;
+        } else if (msg.t==='state' && this.online.role==='client') {
+          this.game.applySnapshot(msg.s);
+        } else if (msg.t==='start' && this.online.role==='client') {
+          this.menu.classList.add('hidden');
+          this.game.startOnlineClient(msg.settings || {}, msg.snapshot || null, msg.countdown);
+        } else if (msg.t==='end' && this.online.role==='client') {
+          if (Array.isArray(msg.score)) {
+            this.game.match.leftScore=msg.score[0]; this.game.match.rightScore=msg.score[1];
+          }
+          this.game.endGame(msg.message || '比赛结束', msg.leftWins ?? null, true);
+          this.startBtn.style.display='none';
+        }
+      }
+
+      async createRoom() {
+        try {
+          this.audio.ensure();
+          this.onlineUiState='creating';
+          this.showOnlineBox();
+          this.onlineInfo.textContent='正在创建云端房间…';
+          this.onlineCode.value='';
+          this.onlineCode.readOnly=true;
+          this.onlineActionBtn.classList.add('hidden-section');
+          this.startBtn.style.display='none';
+          const room = await this.online.createRoom();
+          this.onlineCode.value=room;
+          this.onlineUiState='host-room-ready';
+          this.onlineInfo.textContent='房间已创建。把这 4 位房间码告诉对方，等待加入。';
+          this.onlineActionBtn.textContent='复制房间码';
+          this.onlineActionBtn.classList.remove('hidden-section');
+          this.menuSub.textContent=`云端房间 ${room} · 等待对手加入`;
+          this.update();
+        } catch (err) {
+          this.onlineInfo.textContent='创建失败：'+err.message;
+          this.online.cleanup();
+          this.startBtn.style.display='';
+        }
+      }
+
+      joinRoomUi() {
+        this.onlineUiState='join-wait-room';
+        this.showOnlineBox();
+        this.onlineInfo.textContent='输入房主屏幕上的 4 位房间码。';
+        this.onlineCode.readOnly=false;
+        this.onlineCode.value='';
+        this.onlineCode.placeholder='0000';
+        this.onlineActionBtn.textContent='加入房间';
+        this.onlineActionBtn.classList.remove('hidden-section');
+        this.startBtn.style.display='none';
+        setTimeout(()=>this.onlineCode.focus(),30);
+      }
+
+      async onlineAction() {
+        try {
+          if (this.onlineUiState==='host-room-ready') {
+            const text=this.onlineCode.value.trim();
+            if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(text);
+            else { this.onlineCode.focus(); this.onlineCode.select(); document.execCommand('copy'); }
+            this.onlineInfo.textContent=`房间码 ${text} 已复制 · 等待对手加入`;
+          } else if (this.onlineUiState==='join-wait-room') {
+            const room=this.onlineCode.value.replace(/\D/g,'').slice(0,4);
+            this.onlineCode.value=room;
+            if (!/^\d{4}$/.test(room)) throw new Error('请输入 4 位房间码');
+            this.onlineUiState='joining';
+            this.onlineCode.readOnly=true;
+            this.onlineActionBtn.classList.add('hidden-section');
+            this.onlineInfo.textContent=`正在加入房间 ${room}…`;
+            this.menuSub.textContent=`云端房间 ${room} · 正在建立 P2P 连接`;
+            await this.online.joinRoom(room);
+          }
+        } catch (err) {
+          this.onlineUiState='join-wait-room';
+          this.onlineCode.readOnly=false;
+          this.onlineActionBtn.textContent='重新加入';
+          this.onlineActionBtn.classList.remove('hidden-section');
+          this.onlineInfo.textContent='加入失败：'+err.message;
+          this.startBtn.style.display='none';
+        }
+      }
+
+      showOnlineBox() {
+        this.onlineChooser.classList.add('hidden-section');
+        this.onlineBox.classList.remove('hidden-section');
+      }
+      resetOnlineUi() {
+        this.onlineUiState='idle'; this.onlineChooser.classList.remove('hidden-section'); this.onlineBox.classList.add('hidden-section');
+        this.onlineCode.value=''; this.onlineInfo.textContent=''; this.startBtn.style.display='';
+      }
+
+      syncSettingsButtons() {
+        document.querySelectorAll('[data-setting]').forEach(btn=>{
+          const key=btn.dataset.setting;
+          const raw=btn.dataset.value;
+          const value=(key==='score'||key==='time') ? Number(raw) : raw;
+          btn.classList.toggle('selected', this.game.settings[key]===value);
+        });
+        this.updateMenuSections();
+        this.update();
+      }
+
+      updateMenuSections() {
+        const mode=this.game.settings.mode;
+        this.difficultySection.classList.toggle('hidden-section', mode!=='ai');
+        this.scoreSection.classList.toggle('hidden-section', mode==='timer');
+        this.timeSection.classList.toggle('hidden-section', mode!=='timer');
+        this.onlineSection.classList.toggle('hidden-section', mode!=='online');
+        if (mode!=='online') this.startBtn.style.display='';
+        else this.startBtn.style.display=this.online.connected && this.online.role==='host' ? '' : 'none';
+      }
+
+      applyTheme() {
+        const t=THEMES[this.game.settings.theme]; const root=document.documentElement;
+        root.style.setProperty('--crt-color',t.color); root.style.setProperty('--crt-glow',t.glow);
+        root.style.setProperty('--crt-bg',t.bg); root.style.setProperty('--crt-dim',t.dim); root.style.setProperty('--crt-soft',t.soft);
+      }
+
+      toggleRenderMode() {
+        this.game.setSetting('renderMode', this.game.settings.renderMode === 'ascii' ? 'crt' : 'ascii');
+        this.syncSettingsButtons();
+        this.applyRenderMode();
+        if ([Phase.COUNTDOWN,Phase.PLAYING].includes(this.game.phase)) this.fullscreenTarget.focus({ preventScroll:true });
+      }
+
+      applyRenderMode() {
+        const ascii = this.game.settings.renderMode === 'ascii';
+        document.documentElement.classList.toggle('ascii-mode',ascii);
+        this.renderModeBtn.textContent = ascii ? '图形模式' : 'ASCII 模式';
+        this.renderModeBtn.setAttribute('aria-pressed',String(ascii));
+        this.renderModeBtn.setAttribute('aria-label', ascii ? '切换到原版图形渲染' : '切换到 ASCII 纯字符渲染');
+        this.game.ascii.element.setAttribute('aria-hidden',String(!ascii));
+        this.game.canvas.setAttribute('aria-hidden',String(ascii));
+        this.game.resizeCanvas();
+        this.game.render();
+      }
+
+      setCountdown(mark,show) {
+        this.countdown.classList.toggle('hidden',!show);
+        if (show) {
+          this.countdownText.textContent=mark;
+          this.countdownText.style.animation='none'; this.countdownText.offsetHeight; this.countdownText.style.animation='';
+        }
+      }
+
+      isTypingTarget(target) {
+        if (!target) return false;
+        const tag = target.tagName;
+        return tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable;
+      }
+
+      getFullscreenElement() {
+        return document.fullscreenElement || document.webkitFullscreenElement || null;
+      }
+
+      async toggleFullscreen() {
+        try {
+          if (this.getFullscreenElement()) {
+            if (document.exitFullscreen) await document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+          } else {
+            const target = this.fullscreenTarget;
+            if (target.requestFullscreen) await target.requestFullscreen({ navigationUI: 'hide' });
+            else if (target.webkitRequestFullscreen) target.webkitRequestFullscreen();
+            else {
+              this.status.textContent = '当前浏览器不支持网页全屏';
+              return;
+            }
+          }
+        } catch (err) {
+          console.warn('Fullscreen request failed:', err);
+          this.status.textContent = '全屏请求被浏览器阻止';
+        } finally {
+          this.syncFullscreenButton();
+        }
+      }
+
+      syncFullscreenButton() {
+        const active = !!this.getFullscreenElement();
+        const label = active ? '退出全屏' : '全屏';
+        const aria = active ? '退出全屏' : '进入全屏';
+        const title = active ? '退出全屏 (F)' : '全屏 (F)';
+        this.fullscreenBtn.textContent = label;
+        this.fullscreenBtn.setAttribute('aria-label', aria);
+        this.fullscreenBtn.title = title;
+        this.menuFullscreenBtn.textContent = label;
+        this.menuFullscreenBtn.setAttribute('aria-label', aria);
+        this.menuFullscreenBtn.title = title;
+        this.game.resizeCanvas();
+      }
+
+      update() {
+        const g=this.game, m=g.match, mode=g.settings.mode;
+        this.scoreLeft.textContent=m.leftScore; this.scoreRight.textContent=m.rightScore;
+        this.scoreLeft.classList.toggle('active',m.leftScore>m.rightScore);
+        this.scoreRight.classList.toggle('active',m.rightScore>m.leftScore);
+        this.shieldLeft.classList.toggle('active',m.leftShield);
+        this.shieldRight.classList.toggle('active',m.rightShield && mode !== 'ai');
+        this.timer.classList.toggle('show',g.isTimerMode());
+        this.timer.classList.toggle('urgent',g.isTimerMode() && m.remaining<=10);
+        if (g.isTimerMode()) this.timer.textContent=formatTime(m.remaining);
+        this.shieldRow.classList.toggle('timer-offset',g.isTimerMode());
+
+        const modeLabels={ ai:'人机', pvp:'双人', timer:'计时', online:'联机' };
+        this.modeBadge.textContent = mode==='ai' ? `${modeLabels[mode]} · ${DIFFICULTY[g.settings.difficulty].label}` : modeLabels[mode];
+
+        this.pauseBtn.style.display = [Phase.PLAYING].includes(g.phase) && !g.isOnline() ? 'block' : 'none';
+        const menuVisible = g.phase === Phase.MENU || g.phase === Phase.ENDED;
+        const pauseVisible = g.phase === Phase.PAUSED;
+        this.pause.classList.toggle('show',pauseVisible);
+        this.menu.classList.toggle('hidden',!menuVisible);
+
+        // 透明隐藏不会自动移走焦点；把隐藏菜单上的焦点交还给游戏区。
+        const focused = document.activeElement;
+        if ((!menuVisible && this.menu.contains(focused)) || (!pauseVisible && this.pause.contains(focused))) {
+          this.fullscreenTarget.focus({ preventScroll:true });
+        }
+        this.menu.inert = !menuVisible;
+        this.pause.inert = !pauseVisible;
+        this.menu.setAttribute('aria-hidden', String(!menuVisible));
+        this.pause.setAttribute('aria-hidden', String(!pauseVisible));
+
+        this.updateMenuSections();
+        this.updateTouchLayers();
+        this.updateHint();
+        this.updateStatus();
+      }
+
+      updateTouchLayers() {
+        this.touchSingle.classList.remove('active'); this.touchDual.classList.remove('active');
+        if (!IS_TOUCH || ![Phase.COUNTDOWN,Phase.PLAYING].includes(this.game.phase)) { this.game.input.clearTouches(true); return; }
+        if (this.game.settings.mode==='ai' || this.game.isOnline()) this.touchSingle.classList.add('active');
+        else this.touchDual.classList.add('active');
+      }
+
+      updateHint() {
+        const g=this.game;
+        if (g.phase === Phase.PLAYING && g.serveSide) {
+          const who = g.serveSide === 'left' ? '左方' : (g.settings.mode === 'ai' ? '电脑' : '右方');
+          if (g.settings.mode === 'ai' && g.serveSide === 'right') {
+            this.hint.textContent='电脑准备发球…';
+          } else if (g.isOnline()) {
+            const mine = (this.online.role === 'host' && g.serveSide === 'left') || (this.online.role === 'client' && g.serveSide === 'right');
+            this.hint.textContent = mine
+              ? (IS_TOUCH ? `${who}发球 · 拖动调整位置，松手发球` : `${who}发球 · 空格 / 回车发球`)
+              : `等待${who}发球…`;
+          } else if (g.settings.mode === 'pvp' || g.settings.mode === 'timer') {
+            this.hint.textContent = IS_TOUCH
+              ? `${who}发球 · 在对应半屏拖动调整，松手发球`
+              : `${who}发球 · 左方空格 / 右方回车`;
+          } else {
+            this.hint.textContent = IS_TOUCH ? '左方发球 · 拖动调整位置，松手发球' : '左方发球 · 按空格发球';
+          }
+          return;
+        }
+        if (g.isOnline()) {
+          if (this.online.role==='host') this.hint.textContent=IS_TOUCH?'上下拖动控制左拍 · 60Hz 主机权威同步':'W/S 或 ↑/↓ 控制左拍 · 60Hz 主机权威同步';
+          else if (this.online.role==='client') this.hint.textContent=IS_TOUCH?'上下拖动控制右拍 · 60Hz 输入同步 · 本地预测':'W/S 或 ↑/↓ 控制右拍 · 60Hz 输入同步 · 本地预测';
+          else this.hint.textContent='创建或输入 4 位房间码开始联机';
+        } else if (g.settings.mode==='ai') {
+          this.hint.textContent=IS_TOUCH?`上下拖动控制球拍 · 先得 ${g.settings.score} 分获胜`:`W/S 或 ↑/↓ 控制 · 先得 ${g.settings.score} 分获胜`;
+        } else if (g.settings.mode==='timer') {
+          this.hint.textContent=IS_TOUCH?'左半屏拖动左拍 · 右半屏拖动右拍 · 支持双指同时操作 · 时间到分高者胜':'W/S 左拍 · ↑/↓ 右拍 · 时间到分高者胜';
+        } else {
+          this.hint.textContent=IS_TOUCH?`左右半屏分别拖动 · 支持双指同时操作 · 先得 ${g.settings.score} 分获胜`:`W/S 左拍 · ↑/↓ 右拍 · 先得 ${g.settings.score} 分获胜`;
+        }
+      }
+
+      updateStatus() {
+        const g=this.game;
+        if (g.phase === Phase.PLAYING && g.serveSide) {
+          const label = g.serveSide === 'left' ? '左方发球' : (g.settings.mode === 'ai' ? '电脑发球' : '右方发球');
+          this.status.innerHTML=`<span class="dot" style="background:var(--crt-color);color:var(--crt-color)"></span><span>${label}</span>`;
+        } else if (g.effect) {
+          const meta=POWERUPS[g.effect.type];
+          const target = g.effect.type === 'long' ? (g.effect.target === 'right' ? ' · 右方' : ' · 左方') : '';
+          const state = g.effect.applied === false ? ' · 待生效' : '';
+          this.status.innerHTML=`<span class="dot" style="background:${meta.color};color:${meta.color}"></span><span>${meta.label}${target}${state}</span>`;
+        } else if (g.curveRemaining>0) {
+          this.status.innerHTML='<span class="dot" style="background:#ff8844;color:#ff8844"></span><span>变轨中</span>';
+        } else if (g.isOnline() && this.online.connected) {
+          const ping = this.online.rtt > 0 ? `${Math.round(this.online.rtt)} ms` : '测量中';
+          const quality = this.online.rtt <= 70 ? '优' : this.online.rtt <= 140 ? '良' : this.online.rtt > 0 ? '较高延迟' : '连接中';
+          this.status.textContent=`联机 ${ping} · ${quality}`;
+        } else {
+          this.status.textContent='';
+        }
+      }
+    }
+
+    // ============================================================
+    // 8) Boot.
+    // ============================================================
+    const canvas=document.getElementById('gameCanvas');
+    const ctx=canvas.getContext('2d');
+    const audio=new AudioEngine();
+    const input=new InputManager();
+    const online=new OnlinePeer();
+    const game=new PongGame(canvas,ctx,audio,input,online);
+    const ui=new UIController(game,online,audio);
+
+    // Always keep renderer alive so menu has a live CRT background.
+    game.raf=requestAnimationFrame(game.loop);
+
+    function updateOrientationHint() {
+      const hint=document.getElementById('rotateHint');
+      const portrait=IS_MOBILE && window.innerHeight > window.innerWidth;
+      hint.classList.toggle('show',portrait);
+      hint.setAttribute('aria-hidden', portrait ? 'false':'true');
+    }
+    updateOrientationHint();
+    window.addEventListener('resize',updateOrientationHint);
+    window.addEventListener('orientationchange',()=>setTimeout(updateOrientationHint,80));
+    if (IS_MOBILE && screen.orientation?.lock) screen.orientation.lock('landscape').catch(()=>{});
+  </script>
+</body>
+</html>
