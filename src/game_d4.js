@@ -712,8 +712,10 @@
         const b=this.extraBalls[0];if(!b)return;
         // Reuse the swept solver so the second ball cannot tunnel through paddles.
         const main=this.ball,trail=this.trail,trailAt=this.trailAt;
+        const lastHit=this.lastHitSeat;
         try{this.ball=b;this.trail=[];this.sweepD4Ball(dt);}
         finally{this.ball=main;this.trail=trail;this.trailAt=trailAt;}
+        this.lastHitSeat=lastHit;
         if(b.x<-b.radius||b.x>WORLD.width+b.radius){b.x=WORLD.width/2;b.y=randomRange(b.radius,WORLD.height-b.radius);b.vx=(b.vx<0?1:-1)*Math.abs(b.rallySpeed);}
       }
       // Swept point against radius-expanded rectangles, plus chronological wall
@@ -781,7 +783,7 @@
         if(fresh){this.pendingInputs=[];this.inputSeq=0;this.samples=[];this.graphics?.clearMotion?.();this.trail.length=0;}
         this.room.formation=s.formation;this.ensureD4Pads();this.matchId=s.matchId;this.lastSnapshotSeq=s.seq;this.snapshotTerm=s.term;this.roundId=s.round;this.eventId=s.event;
         this.simTime=s.time;this.phase=s.phase;this.countdownRemaining=s.countdown;this.respawnRemaining=s.respawn;this.serveSlot=s.serve;this.serveSide=s.serve?seatSide(s.serve):null;
-        this.pauseReason=String(s.pauseReason||'').slice(0,180);this.match={...s.match};this.effect=s.effect?{...s.effect}:null;this.extraBalls=s.extraBall?[{x:s.extraBall.x,y:s.extraBall.y,vx:s.extraBall.vx,vy:s.extraBall.vy,radius:s.extraBall.r,baseRadius:s.extraBall.r,rallySpeed:this.ball.baseSpeed,maxSpeed:this.ball.maxSpeed}]:[];this.syncD4Benefits();this.curveRemaining=s.curve;
+        this.pauseReason=String(s.pauseReason||'').slice(0,180);this.match={...s.match};this.effect=s.effect?{...s.effect}:null;this.extraBalls=s.extraBall?[{x:s.extraBall.x,y:s.extraBall.y,vx:s.extraBall.vx,vy:s.extraBall.vy,radius:s.extraBall.r,baseRadius:s.extraBall.r,baseSpeed:this.ball.baseSpeed,speed:Math.hypot(s.extraBall.vx,s.extraBall.vy),rallySpeed:Math.hypot(s.extraBall.vx,s.extraBall.vy),maxSpeed:this.ball.maxSpeed,spin:0}]:[];this.syncD4Benefits();this.curveRemaining=s.curve;
         const aux=s.aux;this.serveTurns={...aux.serveTurns};this.nextServeDir=aux.nextServeDir;this.lastHitSeat=aux.lastHit;this.botTactics=cloneJSON(aux.tactics);
         if(force){this.clientSafety=false;this.samples=[];this.lastTs=performance.now();this.accumulator=0;this.pendingInputs=[];this.localInputElapsed=0;}
         const own=new Map(this.localPlayers().filter(p=>!this.room.isBot(p)).map(p=>[p.seat,p.id]));
@@ -802,6 +804,9 @@
         for(const pb of b.s.paddles){const pa=a.s.paddles.find(p=>p.id===pb.id)||pb,p=this.padFor(pb.id);
           if(!this.isLocalSeat(pb.id)||this.isBotSeat(pb.id))p.y=clamp(lerp(pa.y,pb.y),p.minY,p.maxY-p.height);}
         const ba=a.s.ball,bb=b.s.ball;Object.assign(this.ball,{x:lerp(ba.x,bb.x),y:lerp(ba.y,bb.y),vx:bb.vx,vy:bb.vy,radius:bb.r,spin:bb.spin,speed:bb.speed,rallySpeed:bb.rallySpeed});
+        const ea=a.s.extraBall,eb=b.s.extraBall;
+        if(eb){const current=this.extraBalls[0]||{};this.extraBalls=[{...current,x:ea?lerp(ea.x,eb.x):eb.x,y:ea?lerp(ea.y,eb.y):eb.y,vx:eb.vx,vy:eb.vy,radius:eb.r,baseRadius:eb.r,baseSpeed:this.ball.baseSpeed,speed:Math.hypot(eb.vx,eb.vy),rallySpeed:Math.hypot(eb.vx,eb.vy),maxSpeed:this.ball.maxSpeed,spin:0}];}
+        else this.extraBalls=[];
         if(this.isLocalSeat(this.serveSlot)&&!this.isBotSeat(this.serveSlot))this.positionServeBall();
         if(this.settings.renderMode!=='ascii'&&!this.serveSlot&&this.respawnRemaining<=0&&now-(this.clientTrailAt||0)>8){this.clientTrailAt=now;this.trail.push({x:this.ball.x,y:this.ball.y,r:this.ball.radius});if(this.trail.length>18)this.trail.shift();}
       }

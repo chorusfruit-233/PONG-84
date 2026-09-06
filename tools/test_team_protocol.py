@@ -103,6 +103,7 @@ class Harness:
     game.sweepExtraBall(.02);const moved=game.extraBalls[0]?.x!==before,snapshot=game.snapshotD4(),valid=validD4Snapshot(snapshot);game.clearEffect(false);
     return {spawned,heights,extra:!!snapshot.extraBall,moved,valid,cleared:game.extraBalls.length===0&&game.getPaddles().every(p=>p.height===p.baseHeight)};}''')
   await self.check('Multi-ball event gives all four paddles the long effect and syncs the extra ball',multi['spawned'] and multi['heights']==[120,120,120,120] and multi['extra'] and multi['moved'] and multi['valid'] and multi['cleared'],multi)
+  await self.check('Multi-ball client state clears the extra ball when the host expires the event',await h.evaluate("game.effect={type:'multi',target:null,remaining:1,applied:true};game.extraBalls=[{x:400,y:200,vx:300,vy:100,radius:5,baseRadius:5,baseSpeed:1200,speed:316,rallySpeed:316,maxSpeed:1900,spin:0}];game.clearEffect(false);game.extraBalls.length===0"))
   # Stale packets, wrong player, wrong term and unsafe data.
   guard=await h.evaluate('''()=>{const l=doubles.links.get('G1'),base={v:D4.version,rid:doubles.id,term:doubles.term,t:'d4_input',matchId:game.matchId,round:game.roundId};
    const send=(inputs,x={})=>doubles.receive(l,{...base,...x,inputs},'rt');doubles.inputByPlayer.clear();
