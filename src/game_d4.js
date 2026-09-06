@@ -34,7 +34,7 @@
       if(![s.match.leftScore,s.match.rightScore].every(x=>Number.isInteger(x)&&x>=0&&x<=99))return false;
       if(![s.match.leftStreak,s.match.rightStreak].every(x=>Number.isInteger(x)&&x>=0&&x<=99))return false;
       const ids=new Set();for(const p of s.paddles){if(!D4.seats.includes(p.id)||ids.has(p.id)||!Number.isFinite(p.y)||!Number.isFinite(p.h)||p.h<40||p.h>160)return false;
-        const [lo,hi]=seatZone(p.id,s.formation);if(p.y<lo-.01||p.y+p.h>hi+.01)return false;ids.add(p.id);}
+        const [zoneLo,zoneHi]=seatZone(p.id,s.formation),lo=s.formation==='split'?0:zoneLo,hi=s.formation==='split'?WORLD.height:zoneHi;if(p.y<lo-.01||p.y+p.h>hi+.01)return false;ids.add(p.id);}
       if(s.serve!==null&&!D4.seats.includes(s.serve))return false;
       if(s.effect&&(!Object.hasOwn(POWERUPS,s.effect.type)||!Number.isFinite(s.effect.remaining)||s.effect.remaining<0||s.effect.remaining>10||
         (s.effect.type==='long'&&!D4.seats.includes(s.effect.target))||
@@ -151,7 +151,10 @@
           if(this.effect)this.clearEffect(false);
           const dir=this.ball.vx>=0?1:-1, speed=Math.min(this.ball.maxSpeed,Math.max(this.ball.baseSpeed,this.ball.rallySpeed||this.ball.baseSpeed));
           this.effect={type:'multi',target:null,remaining:POWERUPS.multi.duration,applied:true};
-          this.extraBalls=[{x:WORLD.width/2,y:WORLD.height*.34,radius:this.ball.baseRadius,baseRadius:this.ball.baseRadius,baseSpeed:this.ball.baseSpeed,vx:dir*speed*Math.cos(.35),vy:speed*Math.sin(.35),spin:0,speed,rallySpeed:speed,maxSpeed:this.ball.maxSpeed}];
+          // Launch the bonus ball away from the main ball with its own lane and
+          // angle, so the two balls do not settle into a visual tail formation.
+          const extraY=this.ball.y< WORLD.height/2?WORLD.height*.66:WORLD.height*.34;
+          this.extraBalls=[{x:clamp(this.ball.x+dir*42,this.ball.radius,WORLD.width-this.ball.radius),y:extraY,radius:this.ball.baseRadius,baseRadius:this.ball.baseRadius,baseSpeed:this.ball.baseSpeed,vx:-dir*speed*Math.cos(.42),vy:(extraY>this.ball.y?1:-1)*speed*Math.sin(.42),spin:0,speed,rallySpeed:speed,maxSpeed:this.ball.maxSpeed}];
           for(const p of this.ensureD4Pads()){p.height=Math.min(p.maxY-p.minY,p.baseHeight*1.5);p.y=clamp(p.y,p.minY,p.maxY-p.height);}
           this.audio.powerup();this.eventId++;this.emitUi();return true;
         }
@@ -201,7 +204,23 @@
         const dir=dual?(index===0?this.input.leftDir(false):this.input.rightDir()):this.input.onlineLocalDir();
         const raw=this.input.targetFor(dual?(index===0?'left':'right'):'local');return {dir,target:Number.isFinite(raw)?clamp(raw/540,0,1):null};
       }
-      moveD4Pad(p,dir,target,dt){if(!p)return;if(Number.isFinite(target)){const dest=p.minY+clamp(target,0,1)*(p.maxY-p.minY-p.height);p.y+=clamp(dest-p.y,-p.speed*dt,p.speed*dt);}else p.y+=clamp(dir||0,-1,1)*p.speed*dt;p.y=clamp(p.y,p.minY,p.maxY-p.height);}
+      constrainD4Pad(p,next,previous=p.y){
+        const split=this.room?.formation==='split',lo=split?0:p.minY,hi=split?WORLD.height:p.maxY;
+        next=clamp(next,lo,hi-p.height);
+        if(split){
+          const mate=this.ensureD4Pads().find(other=>other!==p&&other.side===p.side);
+          if(mate){
+            const wasAbove=previous+p.height<=mate.y+0.0001,wasBelow=previous>=mate.y+mate.height-0.0001;
+            if(wasAbove&&next>previous&&next+p.height>mate.y)next=mate.y-p.height;
+            else if(wasBelow&&next<previous&&next<mate.y+mate.height)next=mate.y+mate.height;
+            else if(!wasAbove&&!wasBelow)next=p.id.endsWith('1')?mate.y-p.height:mate.y+mate.height;
+            next=clamp(next,lo,hi-p.height);
+          }
+        }
+        p.y=next;return next;
+      }
+      d4PadBounds(p){return this.room?.formation==='split'?{lo:0,hi:WORLD.height}:{lo:p.minY,hi:p.maxY};}
+      moveD4Pad(p,dir,target,dt){if(!p)return;const previous=p.y;let next;if(Number.isFinite(target)){const split=this.room?.formation==='split',lo=split?0:p.minY,hi=split?WORLD.height:p.maxY;const dest=lo+clamp(target,0,1)*(hi-lo-p.height);next=p.y+clamp(dest-p.y,-p.speed*dt,p.speed*dt);}else next=p.y+clamp(dir||0,-1,1)*p.speed*dt;this.constrainD4Pad(p,next,previous);}
       predictD4Intercept(p,source=this.ball,effectOverride=this.effect){
         if(!p||!source)return null;
         let {x,y,vx,vy,spin=0}=source,r=source.radius;
@@ -297,8 +316,9 @@
           const hit=this.predictD4Intercept(opponent,source,shot.effect);
           if(!hit)continue;
           // At a split seam BOTH defenders can cover; use the better defence.
-          if(hit.y+hit.radius<opponent.minY||hit.y-hit.radius>opponent.maxY)continue;
-          const h=this.d4FutureHeight(opponent,delay+hit.time),lo=opponent.minY+h/2,hi=opponent.maxY-h/2;
+          const bounds=this.d4PadBounds(opponent);
+          if(hit.y+hit.radius<bounds.lo||hit.y-hit.radius>bounds.hi)continue;
+          const h=this.d4FutureHeight(opponent,delay+hit.time),lo=bounds.lo+h/2,hi=bounds.hi-h/2;
           const obs=motion[opponent.id],velocity=clamp(obs?.vy||0,-opponent.speed,opponent.speed);
           const centre=Number.isFinite(obs?.y)?obs.y:opponent.y+opponent.height/2;
           // Extrapolation is short and bounded. The rest of the flight gives the
@@ -354,8 +374,8 @@
         const urgency=clamp(this.ensureD4Tactics().rallyHits/18,0,1);
         // Aggressive contact near the edge carries genuine error risk. No forced misses.
         const reserve=Math.min(h*.16,3.5-urgency*1.5+((this.botSense?.curve||0)>0?3:0));
-        const low=Math.max(p.minY,range[0],arrival.y-h+reserve);
-        const high=Math.min(p.maxY-p.height,p.maxY-h,range[1],arrival.y-reserve);
+        const bounds=this.d4PadBounds(p),low=Math.max(bounds.lo,range[0],arrival.y-h+reserve);
+        const high=Math.min(bounds.hi-p.height,bounds.hi-h,range[1],arrival.y-reserve);
         if(low>high)return null; // A contact already safely covered keeps its chosen angle, even in the final step.
         const proposals=D4_ATTACK.offsets.map(offset=>clamp(arrival.y-h/2-offset*h/2,low,high));
         // Include the currently feasible contact and both extremes of the safe
@@ -395,7 +415,7 @@
         // The serve angle is STILL sampled by the existing common serve rule.
         // Select a launch POSITION for several equally weighted legal angles;
         // do not read or replace the future random angle.
-        const lo=p.minY+p.height/2,hi=p.maxY-p.height/2;let best=null;
+        const bounds=this.d4PadBounds(p),lo=bounds.lo+p.height/2,hi=bounds.hi-p.height/2;let best=null;
         for(const f of [.10,.30,.50,.70,.90]){
           const target=lo+(hi-lo)*f;let sum=0,count=0;
           for(const angle of [-.18*Math.PI,0,.18*Math.PI]){
@@ -508,10 +528,10 @@
           const initial=v*sign,tCap=Math.max(0,(cap-initial)/a),ta=Math.min(t,tCap);
           return sign*(initial*ta+.5*a*ta*ta+cap*Math.max(0,t-ta));
         };
-        return [clamp(p.y+travel(-1),p.minY,p.maxY-p.height),clamp(p.y+travel(1),p.minY,p.maxY-p.height)];
+        const bounds=this.d4PadBounds(p);return [clamp(p.y+travel(-1),bounds.lo,bounds.hi-p.height),clamp(p.y+travel(1),bounds.lo,bounds.hi-p.height)];
       }
       guardD4Observed(p){
-        const centre=(p.minY+p.maxY)/2,s=this.botSense,b=s?.ball;
+        const bounds=this.d4PadBounds(p),lo=bounds.lo+p.height/2,hi=bounds.hi-p.height/2,centre=(lo+hi)/2,s=this.botSense,b=s?.ball;
         if(!b||Math.abs(b.vx)<1)return centre;
         // Modest recovery only. Outgoing shots no longer cause perfect defensive
         // pre-positioning at the true future return coordinate.
@@ -521,7 +541,7 @@
         for(const other of this.ensureD4Pads())if(other.side!==p.side){
           const hit=this.predictD4Intercept(other,b,s.effect);if(hit&&(!next||hit.time<next.time))next=hit;
         }
-        return clamp(centre+((next?.y??centre)-centre)*D4_AI.guardBias,p.minY+p.height/2,p.maxY-p.height/2);
+        return clamp(centre+((next?.y??centre)-centre)*D4_AI.guardBias,lo,hi);
       }
       // Limited reply look-ahead. It prices exposure AFTER our shot and supplies
       // a partner cover location, not a claim to solve an entire rally optimally.
@@ -544,7 +564,8 @@
           let safest=Infinity,helper=null,hitY=270;
           for(const ally of this.ensureD4Pads())if(ally.side===p.side){
             const hit=this.predictD4Intercept(ally,source,known);
-            if(!hit||hit.y+hit.radius<ally.minY||hit.y-hit.radius>ally.maxY)continue;
+            const bounds=this.d4PadBounds(ally);
+            if(!hit||hit.y+hit.radius<bounds.lo||hit.y-hit.radius>bounds.hi)continue;
             const isSelf=ally.id===p.id,centre=isSelf?candidate.target:ally.y+ally.height/2;
             const cap=ally.speed*(this.isBotSeat(ally.id)?D4_AI.speedRatio:1);
             const available=cap*Math.max(0,candidate.flight+hit.time-D4_AI.perception);
@@ -564,12 +585,12 @@
         const both=mates.every(p=>this.isBotSeat(p.id));
         if(!both){delete this.botTeam[side];return;}
         const roles={},depth=this.room.formation==='depth';
-        const centre=p=>(p.minY+p.maxY)/2;
-        const assign=(p,role,target)=>roles[p.id]={role,target:clamp(target,p.minY+p.height/2,p.maxY-p.height/2)};
+        const centre=p=>{const b=this.d4PadBounds(p);return (b.lo+b.hi)/2;};
+        const assign=(p,role,target)=>{const bounds=this.d4PadBounds(p);roles[p.id]={role,target:clamp(target,bounds.lo+p.height/2,bounds.hi-p.height/2)};};
         let primary=null;
         const incoming=sense&&(side==='left'?sense.ball.vx<0:sense.ball.vx>0)&&!this.serveSlot&&this.respawnRemaining<=0;
         const hits=new Map(mates.map(p=>[p.id,incoming?this.d4ObservedIntercept(p,sense):null]));
-        const fits=(p,h)=>!!h&&h.y+h.radius>=p.minY&&h.y-h.radius<=p.maxY;
+        const fits=(p,h)=>{const b=this.d4PadBounds(p);return !!h&&h.y+h.radius>=b.lo&&h.y-h.radius<=b.hi;};
         if(incoming){
           if(depth){
             const rear=mates.find(p=>p.id.endsWith('1')),front=mates.find(p=>p.id.endsWith('2'));
@@ -586,7 +607,7 @@
               const stretching=Math.abs(fh.y-front.y-front.height/2)>front.height*.85;
               if(fp&&rp&&(rp.score>fp.score+48||(stretching&&rp.score>fp.score-18))){
                 const range=this.d4BotReach(front,fh.time*.82),gap=front.height/2+fh.radius+18;
-                const options=[fh.y-gap,fh.y+gap].filter(y=>y>=front.minY+front.height/2&&y<=front.maxY-front.height/2&&y-front.height/2>=range[0]&&y-front.height/2<=range[1]);
+                const fb=this.d4PadBounds(front),options=[fh.y-gap,fh.y+gap].filter(y=>y>=fb.lo+front.height/2&&y<=fb.hi-front.height/2&&y-front.height/2>=range[0]&&y-front.height/2<=range[1]);
                 if(options.length){options.sort((a,b)=>Math.abs(a-front.y-front.height/2)-Math.abs(b-front.y-front.height/2));yieldTarget=options[0];primary=rear.id;}
               }
             }
@@ -609,11 +630,18 @@
             });
             // In a noisy seam disagreement still assign ONE receiver, rather than
             // letting both partners assume the other half owns the ball.
-            if(!eligible.length){for(const p of mates){const h=hits.get(p.id);if(h&&h.y>=p.minY-32&&h.y<=p.maxY+32)eligible.push(p);}}
+            if(!eligible.length){for(const p of mates){const h=hits.get(p.id),b=this.d4PadBounds(p);if(h&&h.y>=b.lo-32&&h.y<=b.hi+32)eligible.push(p);}}
             primary=eligible[0]?.id||null;
+            const anchor=hits.get(primary)?.y??270;
             for(const p of mates){const h=hits.get(p.id);
               if(p.id===primary)assign(p,'attack',h.y);
-              else assign(p,'support',centre(p)+(this.ensureD4Tactics().teams[side].lastY-270)*.12);
+              else {
+                // Keep the support bot on the opposite side of the primary in
+                // split formation. A shared centre target makes both bots push
+                // into the teammate blocker and repeatedly zero their velocity.
+                const sideOffset=p.id.endsWith('1')?-96:96;
+                assign(p,'support',anchor+sideOffset);
+              }
             }
           }
         }else{
@@ -623,7 +651,7 @@
           const sign=memory.lastY<270?-1:1;
           for(const p of mates){
             const lastPlan=Object.values(this.botPlans||{}).find(plan=>plan.supportSeat===p.id&&plan.round===this.roundId);
-            const target=lastPlan?lastPlan.supportY:depth?270+(p===front?sign*78:-sign*92):this.guardD4Observed(p);
+            const target=lastPlan?lastPlan.supportY:depth?270+(p===front?sign*78:-sign*92):270+(p.id.endsWith('1')?-96:96);
             assign(p,this.serveSlot===p.id?'serve':'support',target);
           }
         }
@@ -637,7 +665,7 @@
         if(!brain.wait){
           const sense=this.readD4Sense();this.botSense=sense;
           const hit=!this.serveSlot&&this.respawnRemaining<=0?this.d4ObservedIntercept(p,sense):null;
-          const canCover=hit&&hit.y+hit.radius>=p.minY&&hit.y-hit.radius<=p.maxY;
+          const bounds=this.d4PadBounds(p),canCover=hit&&hit.y+hit.radius>=bounds.lo&&hit.y-hit.radius<=bounds.hi;
           const team=this.botTeam[p.side],task=team?.roles?.[p.id];
           let target=this.guardD4Observed(p),role='guard';
           if(task){target=task.target;role=task.role;}
@@ -648,7 +676,7 @@
           }else if(this.serveSlot===p.id){
             const plan=this.planD4Serve(p);if(plan)target=plan.target;role='serve';
           }else if(task?.role!=='cover')delete this.botPlans[p.id];
-          brain.target=clamp(target,p.minY+p.height/2,p.maxY-p.height/2);brain.role=role;
+          brain.target=clamp(target,bounds.lo+p.height/2,bounds.hi-p.height/2);brain.role=role;
           // No urgent 25 ms rescue path. Seat offsets stagger CPU planning work.
           brain.wait=D4_AI.reaction+(p.id.charCodeAt(0)+p.id.charCodeAt(1))%4*.009;
           this.botSense=null;
@@ -657,9 +685,9 @@
         const desired=Math.abs(delta)<D4_AI.deadZone?0:clamp(delta*12,-cap,cap);
         const acceleration=brain.velocity*desired<0||Math.abs(desired)<Math.abs(brain.velocity)?D4_AI.braking:D4_AI.acceleration;
         brain.velocity=clamp(brain.velocity+clamp(desired-brain.velocity,-acceleration*dt,acceleration*dt),-cap,cap);
-        const next=p.y+brain.velocity*dt;
-        p.y=clamp(next,p.minY,p.maxY-p.height);
-        if(next!==p.y)brain.velocity=0; // physical boundary, not a teleport
+        const next=p.y+brain.velocity*dt,previous=p.y;
+        this.constrainD4Pad(p,next,previous);
+        if(Math.abs(p.y-next)>1e-7)brain.velocity=0; // physical boundary or teammate block, not a teleport
       }
       moveD4(dt){
         this.observeD4Motion(dt);this.observeD4Scene();
@@ -802,7 +830,7 @@
         for(const item of s.paddles){const p=this.padFor(item.id);p.height=item.h;
           if(force||!own.has(item.id))p.y=item.y;
           else{const predicted={...p,y:item.y};for(const input of this.pendingInputs)if(input.id===own.get(item.id))this.moveD4Pad(predicted,input.dir,input.target,input.dt);const error=predicted.y-p.y;p.y=Math.abs(error)>80?predicted.y:p.y+error*.20;}
-          p.y=clamp(p.y,p.minY,p.maxY-p.height);}
+          const split=this.room.formation==='split';p.y=clamp(p.y,split?0:p.minY,(split?WORLD.height:p.maxY)-p.height);}
         const now=performance.now(),interval=this.lastD4SnapshotAt?now-this.lastD4SnapshotAt:0;this.netMetrics.stateInterval=interval?this.netMetrics.stateInterval*.8+interval*.2:0;this.netMetrics.jitter=interval?this.netMetrics.jitter*.8+Math.abs(interval-this.netMetrics.stateInterval)*.2:this.netMetrics.jitter;this.lastD4SnapshotAt=now;this.samples.push({at:now,s});if(this.samples.length>12)this.samples.shift();
         if(force||this.samples.length===1||this.phase!==Phase.PLAYING)Object.assign(this.ball,{...s.ball,radius:s.ball.r});
         if(this.phase!==Phase.COUNTDOWN)this.onCountdownVisual?.('',false);if(changed)this.emitUi();else this.requestDraw();return true;

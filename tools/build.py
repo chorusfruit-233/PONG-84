@@ -46,6 +46,7 @@ replace("if(g.effect)label=POWERUPS[g.effect.type].label", "if(g.isDoubles()&&g.
 replace("        if(g.respawnRemaining<=0)this.drawBall(g,p);this.drawParticles(g);", "        if(g.respawnRemaining<=0){this.drawBall(g,p);for(const ball of (g.extraBalls||[]))this.drawBall(g,p,ball);}this.drawParticles(g);")
 replace("      drawBall(g,p){", "      drawBall(g,p,ball=g.ball){")
 replace("const c=this.ctx,b=g.ball,color=this.ballColor(g,p),ultra=g.settings.graphicsQuality!=='balanced';", "const c=this.ctx,b=ball,color=this.ballColor(g,p),ultra=g.settings.graphicsQuality!=='balanced';", 1)
+replace("        if(!this.reducedMotion&&g.trail.length>1&&!g.serveSide){", "        if(b===g.ball&&!this.reducedMotion&&g.trail.length>1&&!g.serveSide){", 1)
 replace("        if(g.respawnRemaining<=0)for(const b of (g.extraBalls||[]))this.put(this.wx(b.x),this.wy(b.y),'@');", "        if(g.respawnRemaining<=0)for(const b of (g.extraBalls||[]))this.put(this.wx(b.x),this.wy(b.y),'@');")
 # Inject new module code immediately before boot declarations, after original classes.
 insert='\n'.join(W.joinpath(f).read_text(encoding='utf-8') for f in ['room.js','game_d4.js','ui_d4.js'])
