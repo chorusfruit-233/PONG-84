@@ -143,7 +143,7 @@ class Harness:
   await self.check('Reconnected human waits for next rally boundary',await h.evaluate("doubles.playerAt('B1').pendingReturn&&doubles.isBot(doubles.playerAt('B1'))"))
   await h.evaluate("game.prepareServe('left')");await self.pump();await self.check('New serve returns both paddles to original people',await h.evaluate("!doubles.isBot(doubles.playerAt('B1'))&&!doubles.isBot(doubles.playerAt('B2'))"))
   # A committed paused test snapshot survives a sudden host failure.
-  await h.evaluate("game.match.leftScore=4;game.match.rightScore=2;game.effectCooldown=2.25;game.effect={type:'long',target:'A1',remaining:3.25,applied:true};game.syncD4Benefits();game.match.leftShield=true;game.lastHitSeat='A1';game.ball.spin=.3;game.curveRemaining=2;doubles.freeze('迁移前');doubles.setVoters(['H','G1','G2']);doubles.pendingCheckpoint=null");await self.sync_checkpoint()
+  await h.evaluate("game.match.leftScore=4;game.match.rightScore=2;game.learnD4Tactic('left',5,1);game.ensureD4Tactics().teams.left.lastLane=0;game.botTactics.teams.left.lastY=70;game.effectCooldown=2.25;game.effect={type:'long',target:'A1',remaining:3.25,applied:true};game.syncD4Benefits();game.match.leftShield=true;game.lastHitSeat='A1';game.ball.spin=.3;game.curveRemaining=2;doubles.freeze('迁移前');doubles.setVoters(['H','G1','G2']);doubles.pendingCheckpoint=null");await self.sync_checkpoint()
   committed=await h.evaluate('doubles.committed.id');await self.check('Same committed checkpoint reaches all members',all(await asyncio.gather(*[p.evaluate('id=>doubles.committed?.id===id',committed) for p in self.pages.values()])))
   # Drop every link to old host; all remaining links retain the actual production receive path.
   for id,p in self.pages.items():
@@ -158,6 +158,8 @@ class Harness:
   await self.check('Old host two-seat team is replaced by AI after election',await c.evaluate("doubles.isBot(doubles.playerAt('A1'))&&doubles.isBot(doubles.playerAt('A2'))"))
   await self.check('Migration preserves powered old-host seat when AI takes over',await c.evaluate("game.effect?.target==='A1'&&game.effect.remaining===3.25&&game.padFor('A1').height===120&&game.match.leftShield"))
   await self.check('Migrated AI attack retains spin and curve',await c.evaluate("game.ball.spin===.3&&game.curveRemaining===2"))
+  await self.check('Committed tactical reward memory follows the elected host',await c.evaluate("game.botTactics.teams.left.n[5]>=1&&game.botTactics.teams.left.q[5]>0&&game.botTactics.teams.left.lastLane===0&&game.botTactics.teams.left.lastY===70"))
+  await self.check('Old v3 state cannot overwrite v4 attack policy',await c.evaluate("()=>{const before=game.match.leftScore,l=doubles.links.get('G2'),s=game.snapshotD4();s.match.leftScore=99;doubles.receive(l,{v:3,t:'d4_state',rid:doubles.id,term:doubles.term,s},'rt');return game.match.leftScore===before;}"))
   await self.sync_checkpoint()
   await c.evaluate('doubles.autoResumeAt=performance.now()-1;doubles.tick()');await self.pump(.3)
   await self.check('New host automatically issues synchronized resume barrier',await c.evaluate("game.phase==='countdown'"))

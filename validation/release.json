@@ -1,50 +1,58 @@
 {
   "checks": [
     {
-      "name": "Solo-mode source remains unchanged from 6.0.0",
+      "name": "Solo-mode source byte-identical to 6.1/6.0",
       "passed": true
     },
     {
-      "name": "ASCII is a complete independent copy with only its boot override",
+      "name": "Independent ASCII differs only by its cold-start preference",
       "passed": true
     },
     {
-      "name": "Built header and diagnostics are 6.1",
+      "name": "Visible version and diagnostics are 6.2",
       "passed": true
     },
     {
-      "name": "Removed team-only buff revocation and obsolete UI speed label",
+      "name": "Team protocol gated at v4",
       "passed": true
     },
     {
-      "name": "HTML uses embedded source with no mandatory module imports",
+      "name": "Tactical state validated, snapshotted and restored",
       "passed": true
     },
     {
-      "name": "team_ai saved checks pass without page errors",
+      "name": "Self-contained HTML without mandatory imported scripts",
       "passed": true
     },
     {
-      "name": "team_ui saved checks pass without page errors",
+      "name": "attack final saved checks pass",
       "passed": true
     },
     {
-      "name": "team_protocol saved checks pass without page errors",
+      "name": "team_ai final saved checks pass",
       "passed": true
     },
     {
-      "name": "regression saved checks pass without page errors",
+      "name": "team_protocol final saved checks pass",
       "passed": true
     },
     {
-      "name": "All 246 functional assertions are present",
+      "name": "team_ui final saved checks pass",
       "passed": true
     },
     {
-      "name": "Entrypoints reproduce byte for byte",
+      "name": "regression final saved checks pass",
+      "passed": true
+    },
+    {
+      "name": "285 functional assertions counted once",
+      "passed": true
+    },
+    {
+      "name": "Included source rebuilds identical entrypoints",
       "passed": true
     }
   ],
-  "functionalAssertions": 246,
+  "functionalAssertions": 285,
   "networkAcceptance": false
 }

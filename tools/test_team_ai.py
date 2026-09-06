@@ -34,8 +34,8 @@ with sync_playwright() as pw:
           window.withRandom=(value,fn)=>{const old=Math.random;try{Math.random=()=>value;return fn();}finally{Math.random=old;}};
           resetFixture();
         }''')
-        check('Team-only protocol revision is 3',page.evaluate('D4.version===3'))
-        check('Team UI announces equal AI benefits',page.evaluate("document.body.textContent.includes('AI 补位 · 对等增益') && document.body.textContent.includes('1100 移速上限 · 反弹 / 旋转预判') && !document.body.textContent.includes('375 移速上限')"))
+        check('Team-only protocol revision is 4',page.evaluate('D4.version===4'))
+        check('Team UI announces equal AI benefits',page.evaluate("document.body.textContent.includes('AI 补位 · 主动进攻 / 对等增益') && document.body.textContent.includes('1100 移速上限 · 反弹 / 旋转预判') && !document.body.textContent.includes('375 移速上限')"))
         # Equivalence uses the SAME seat and shot, changing controller identity only.
         parity=page.evaluate('''()=>{
           const out=[];resetFixture();const isBot=game.isBotSeat;
@@ -99,11 +99,11 @@ with sync_playwright() as pw:
         check('Prediction error lower than old partial-lead formula on identical fixtures',measurements['meanInterceptError']<measurements['oldPartialLeadMeanError']*.01,measurements)
         tactics=page.evaluate('''()=>{
           resetFixture('depth');setBall({x:400,y:100,vx:1200,vy:650});const a=game.padFor('B2'),b=game.padFor('B1');game.moveBot(a,FIXED_DT);game.moveBot(b,FIXED_DT);
-          const separate=Math.abs(game.botBrains.B1.target-game.botBrains.B2.target)>90;
-          const fullLead=Math.abs(game.botBrains.B1.target-(100+650*(913-400)/1200))<.001;
+          const separate=Math.abs(game.predictD4Intercept(b).y-game.predictD4Intercept(a).y)>90;
+          const fullLead=Math.abs(game.predictD4Intercept(b).y-(100+650*(913-400)/1200))<.001;
           setBall({x:800,y:120,vx:1200,vy:300});const frontPassed=game.predictD4Intercept(a)===null,rearCovers=!!game.predictD4Intercept(b);
           resetFixture('split');setBall({x:400,y:100,vx:1200,vy:0});game.moveBot(game.padFor('B2'),FIXED_DT);const partnerHolds=game.botBrains.B2.target===405;
-          setBall({x:400,y:410,vx:1200,vy:0});game.botBrains={};game.moveBot(game.padFor('B2'),FIXED_DT);const ownHalf=game.botBrains.B2.target===410;
+          setBall({x:400,y:410,vx:1200,vy:0});game.botBrains={};game.moveBot(game.padFor('B2'),FIXED_DT);const ownHalf=game.botBrains.B2.target>=310&&game.botBrains.B2.target<=500;
           resetFixture('depth');setBall({x:500,y:170,vx:1200,vy:0});game.moveBot(game.padFor('A2'),FIXED_DT);const preposition=game.botBrains.A2.target<270&&game.botBrains.A2.target>170;
           const p=game.padFor('B1');p.y=0;game.botBrains.B1={wait:.2,target:500};game.moveBot(p,.1);const speedCap=Math.abs(p.y-p.speed*.1)<1e-8;
           p.y=100;game.botBrains.B1={wait:.2,target:141};game.moveBot(p,FIXED_DT);const noJitter=p.y===100;

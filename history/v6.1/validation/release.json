@@ -1,0 +1,50 @@
+{
+  "checks": [
+    {
+      "name": "Solo-mode source remains unchanged from 6.0.0",
+      "passed": true
+    },
+    {
+      "name": "ASCII is a complete independent copy with only its boot override",
+      "passed": true
+    },
+    {
+      "name": "Built header and diagnostics are 6.1",
+      "passed": true
+    },
+    {
+      "name": "Removed team-only buff revocation and obsolete UI speed label",
+      "passed": true
+    },
+    {
+      "name": "HTML uses embedded source with no mandatory module imports",
+      "passed": true
+    },
+    {
+      "name": "team_ai saved checks pass without page errors",
+      "passed": true
+    },
+    {
+      "name": "team_ui saved checks pass without page errors",
+      "passed": true
+    },
+    {
+      "name": "team_protocol saved checks pass without page errors",
+      "passed": true
+    },
+    {
+      "name": "regression saved checks pass without page errors",
+      "passed": true
+    },
+    {
+      "name": "All 246 functional assertions are present",
+      "passed": true
+    },
+    {
+      "name": "Entrypoints reproduce byte for byte",
+      "passed": true
+    }
+  ],
+  "functionalAssertions": 246,
+  "networkAcceptance": false
+}

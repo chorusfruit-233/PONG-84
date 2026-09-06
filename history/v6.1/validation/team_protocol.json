@@ -105,7 +105,7 @@
               "seq": 1,
               "dir": 1,
               "target": null,
-              "at": 6429.79999999993,
+              "at": 4469.699999999953,
               "ack": 1
             }
           ],
@@ -115,7 +115,7 @@
               "seq": 2,
               "dir": -1,
               "target": null,
-              "at": 6429.79999999993,
+              "at": 4469.79999999993,
               "ack": 2
             }
           ]
@@ -446,12 +446,12 @@
       "name": "Remaining player becomes host with spectator witness vote",
       "passed": true,
       "detail": {
-        "version": 4,
+        "version": 3,
         "role": "host",
         "localDevice": "G1",
         "host": "G1",
         "term": 2,
-        "room": "f9058600",
+        "room": "c5b802ef",
         "status": "paused",
         "formation": "depth",
         "aiFill": true,
@@ -517,7 +517,7 @@
             "ready": false,
             "rtt": 0,
             "route": "unknown",
-            "lostAt": 7509.300000000047
+            "lostAt": 6584.900000000023
           },
           {
             "id": "G1",
@@ -528,9 +528,9 @@
             "visible": true,
             "synced": true,
             "ready": false,
-            "rtt": 150,
+            "rtt": 189,
             "route": "unknown",
-            "lostAt": 7506.699999999953
+            "lostAt": 6582.400000000023
           },
           {
             "id": "G2",
@@ -541,7 +541,7 @@
             "visible": true,
             "synced": true,
             "ready": false,
-            "rtt": 162,
+            "rtt": 79,
             "route": "unknown",
             "lostAt": 0
           },
@@ -586,7 +586,7 @@
             "connected": true,
             "authenticated": true,
             "kind": "mesh",
-            "rtt": 41,
+            "rtt": 79,
             "route": "unknown",
             "sent": 0,
             "dropped": 0,
@@ -598,7 +598,7 @@
             "connected": true,
             "authenticated": true,
             "kind": "mesh",
-            "rtt": 14,
+            "rtt": 13,
             "route": "unknown",
             "sent": 0,
             "dropped": 0,
@@ -630,16 +630,6 @@
     },
     {
       "name": "Migrated AI attack retains spin and curve",
-      "passed": true,
-      "detail": null
-    },
-    {
-      "name": "Committed tactical reward memory follows the elected host",
-      "passed": true,
-      "detail": null
-    },
-    {
-      "name": "Old v3 state cannot overwrite v4 attack policy",
       "passed": true,
       "detail": null
     },

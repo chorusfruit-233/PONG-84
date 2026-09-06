@@ -1,0 +1,475 @@
+{
+  "source": "index.html",
+  "test_method": "Chromium real DOM + native Fullscreen API with page.set_content; no URL navigation; deterministic in-memory gameplay fixtures used",
+  "tests": [
+    {
+      "name": "Fresh default is high-quality graphics",
+      "pass": true
+    },
+    {
+      "name": "Canvas backing uses high DPI with exact 16:9 pixel grid",
+      "pass": true
+    },
+    {
+      "name": "Graphical renderer created lazily in graphic mode",
+      "pass": true
+    },
+    {
+      "name": "Menu has no continuous game frame loop",
+      "pass": true
+    },
+    {
+      "name": "ASCII energy profile cannot cap graphical FPS",
+      "pass": true
+    },
+    {
+      "name": "Graphical quality changes actual resolution",
+      "pass": true
+    },
+    {
+      "name": "Display changes preserve entire paused gameplay state",
+      "pass": true
+    },
+    {
+      "name": "Space serves without replacing match ID",
+      "pass": true
+    },
+    {
+      "name": "Held/repeated Space does not serve the next rally",
+      "pass": true
+    },
+    {
+      "name": "Released and pressed Space serves again",
+      "pass": true
+    },
+    {
+      "name": "Uses native Fullscreen API",
+      "pass": true
+    },
+    {
+      "name": "Graphics native fullscreen contained 16:9 1920x1080",
+      "pass": true,
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "iw": 1920,
+        "ih": 1080,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 1920
+      }
+    },
+    {
+      "name": "ASCII native fullscreen contained 16:9 1920x1080",
+      "pass": true,
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "iw": 1920,
+        "ih": 1080,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 1920
+      }
+    },
+    {
+      "name": "ASCII context/cache released 1920x1080",
+      "pass": true
+    },
+    {
+      "name": "Graphics native fullscreen contained 16:9 1440x900",
+      "pass": true,
+      "detail": {
+        "x": 0,
+        "y": 45,
+        "w": 1440,
+        "h": 810,
+        "iw": 1440,
+        "ih": 900,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 1440
+      }
+    },
+    {
+      "name": "ASCII native fullscreen contained 16:9 1440x900",
+      "pass": true,
+      "detail": {
+        "x": 0,
+        "y": 45,
+        "w": 1440,
+        "h": 810,
+        "iw": 1440,
+        "ih": 900,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 1440
+      }
+    },
+    {
+      "name": "ASCII context/cache released 1440x900",
+      "pass": true
+    },
+    {
+      "name": "Graphics native fullscreen contained 16:9 2560x1080",
+      "pass": true,
+      "detail": {
+        "x": 320,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "iw": 2560,
+        "ih": 1080,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 2560
+      }
+    },
+    {
+      "name": "ASCII native fullscreen contained 16:9 2560x1080",
+      "pass": true,
+      "detail": {
+        "x": 320,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "iw": 2560,
+        "ih": 1080,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 2560
+      }
+    },
+    {
+      "name": "ASCII context/cache released 2560x1080",
+      "pass": true
+    },
+    {
+      "name": "Graphics native fullscreen contained 16:9 1024x768",
+      "pass": true,
+      "detail": {
+        "x": 0,
+        "y": 96,
+        "w": 1024,
+        "h": 576,
+        "iw": 1024,
+        "ih": 768,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 1024
+      }
+    },
+    {
+      "name": "ASCII native fullscreen contained 16:9 1024x768",
+      "pass": true,
+      "detail": {
+        "x": 0,
+        "y": 96,
+        "w": 1024,
+        "h": 576,
+        "iw": 1024,
+        "ih": 768,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 1024
+      }
+    },
+    {
+      "name": "ASCII context/cache released 1024x768",
+      "pass": true
+    },
+    {
+      "name": "Graphics native fullscreen contained 16:9 390x844",
+      "pass": true,
+      "detail": {
+        "x": 0,
+        "y": 312.3125,
+        "w": 390,
+        "h": 219.375,
+        "iw": 390,
+        "ih": 844,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 390
+      }
+    },
+    {
+      "name": "ASCII native fullscreen contained 16:9 390x844",
+      "pass": true,
+      "detail": {
+        "x": 0,
+        "y": 312.3125,
+        "w": 390,
+        "h": 219.375,
+        "iw": 390,
+        "ih": 844,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 390
+      }
+    },
+    {
+      "name": "ASCII context/cache released 390x844",
+      "pass": true
+    },
+    {
+      "name": "Graphics native fullscreen contained 16:9 844x390",
+      "pass": true,
+      "detail": {
+        "x": 75.328125,
+        "y": 0,
+        "w": 693.328125,
+        "h": 390,
+        "iw": 844,
+        "ih": 390,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 844
+      }
+    },
+    {
+      "name": "ASCII native fullscreen contained 16:9 844x390",
+      "pass": true,
+      "detail": {
+        "x": 75.328125,
+        "y": 0,
+        "w": 693.328125,
+        "h": 390,
+        "iw": 844,
+        "ih": 390,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 844
+      }
+    },
+    {
+      "name": "ASCII context/cache released 844x390",
+      "pass": true
+    },
+    {
+      "name": "Wide desktop without touch does not show mobile portrait hint",
+      "pass": true
+    },
+    {
+      "name": "Fullscreen resize does not reset paused score, effects or serve",
+      "pass": true
+    },
+    {
+      "name": "Fullscreen controls automatically hide and become inert",
+      "pass": true
+    },
+    {
+      "name": "Reveal button reopens controls",
+      "pass": true
+    },
+    {
+      "name": "Fullscreen pause shows temporary menu overlay",
+      "pass": true
+    },
+    {
+      "name": "Pause overlay bounded within screen",
+      "pass": true
+    },
+    {
+      "name": "Paused frame loop stops",
+      "pass": true
+    },
+    {
+      "name": "Resume removes sidebar again",
+      "pass": true
+    },
+    {
+      "name": "F exits native fullscreen and restores normal layout",
+      "pass": true
+    },
+    {
+      "name": "Human paddle speed remains 1100",
+      "pass": true,
+      "detail": {
+        "human": 1100,
+        "computer": 270,
+        "shield": false,
+        "height": 104,
+        "baseHeight": 104
+      }
+    },
+    {
+      "name": "Computer speed and shield remain unboosted",
+      "pass": true
+    },
+    {
+      "name": "Random effect generation never enlarges AI paddle or grants shield",
+      "pass": true
+    },
+    {
+      "name": "Graphical redraws and particles do not consume gameplay PRNG",
+      "pass": true,
+      "detail": {
+        "calls": 0,
+        "reused": true,
+        "particles": 55,
+        "rings": 2
+      }
+    },
+    {
+      "name": "Static optical court cache is reused",
+      "pass": true
+    },
+    {
+      "name": "Burst particles and shockwaves have hard object bounds",
+      "pass": true
+    },
+    {
+      "name": "ASCII cold boot requests zero canvas contexts",
+      "pass": true
+    },
+    {
+      "name": "ASCII cold boot allocates no graphical renderer",
+      "pass": true
+    },
+    {
+      "name": "ASCII uses persistent Text nodes only",
+      "pass": true
+    },
+    {
+      "name": "ASCII menu stops scheduling animation frames",
+      "pass": true
+    },
+    {
+      "name": "ASCII visible UI has no filters/shadows/animations/compositing hints",
+      "pass": true
+    },
+    {
+      "name": "ASCII energy mode targets 30 Hz",
+      "pass": true
+    },
+    {
+      "name": "ASCII gameplay still makes zero Canvas requests",
+      "pass": true
+    },
+    {
+      "name": "Identical ASCII frames cause no row writes",
+      "pass": true
+    },
+    {
+      "name": "Denied fullscreen keeps normal layout and informs user",
+      "pass": true
+    },
+    {
+      "name": "Mobile portrait hint visible even below 500 px",
+      "pass": true
+    },
+    {
+      "name": "Orientation tip can be dismissed",
+      "pass": true
+    },
+    {
+      "name": "Dismissal persists across same-orientation resize",
+      "pass": true
+    },
+    {
+      "name": "Landscape automatically hides orientation hint",
+      "pass": true
+    },
+    {
+      "name": "Hint returns on next portrait orientation",
+      "pass": true
+    },
+    {
+      "name": "Hint fullscreen button uses native API",
+      "pass": true
+    },
+    {
+      "name": "Portrait fullscreen menu does not cover orientation hint",
+      "pass": true
+    },
+    {
+      "name": "Portrait normal page has no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "Touch layer covers full graphical court",
+      "pass": true,
+      "detail": {
+        "active": true,
+        "matches": true
+      }
+    },
+    {
+      "name": "Touch layer remains aligned in fullscreen ASCII",
+      "pass": true
+    },
+    {
+      "name": "Mobile full portrait keeps black bars and a 16:9 court",
+      "pass": true,
+      "detail": {
+        "x": 0,
+        "y": 312.3125,
+        "w": 390,
+        "h": 219.375,
+        "iw": 390,
+        "ih": 844,
+        "side": "none",
+        "native": "gameShell",
+        "rootScroll": 390
+      }
+    },
+    {
+      "name": "Dismissing hint neither pauses nor restarts the match",
+      "pass": true
+    },
+    {
+      "name": "Graphical touch coordinates exclude letterbox bars",
+      "pass": true,
+      "detail": {
+        "value": 405,
+        "serve": "left",
+        "cleared": true
+      }
+    },
+    {
+      "name": "Pointer cancellation releases control without serving",
+      "pass": true
+    },
+    {
+      "name": "ASCII touch center maps to world center",
+      "pass": true
+    },
+    {
+      "name": "Landscape normal page has no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "ASCII mobile orientation tip uses text symbol instead of SVG",
+      "pass": true
+    },
+    {
+      "name": "Cold ASCII orientation/fullscreen path requests zero Canvas contexts",
+      "pass": true
+    },
+    {
+      "name": "Reduced-motion preference disables burst particles and shockwaves",
+      "pass": true
+    },
+    {
+      "name": "No uncaught browser JavaScript errors",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "OnlinePeer source unchanged by UI rewrite",
+      "pass": true
+    },
+    {
+      "name": "InputManager source unchanged by UI rewrite",
+      "pass": true
+    }
+  ],
+  "passed": 75,
+  "total": 75,
+  "errors": []
+}

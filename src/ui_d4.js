@@ -113,7 +113,7 @@
         for(const seat of D4.seats){const p=r.playerAt(seat),n=p?r.nodes.get(p.device):null,el=by('d4Seat'+seat),mine=g.isLocalSeat(seat),ai=r.isBot(p);
           el.disabled=!joined||r.active||r.isSpectator||p?.id===r.mine?.id||!!r.swap;el.classList.toggle('is-mine',mine);el.classList.toggle('is-bot',ai);el.classList.toggle('is-ready',!!n?.ready||p?.kind==='bot');
           this.setText('d4SeatLabel'+seat,seat+' / '+seatLabel(seat,r.formation));this.setText('d4SeatName'+seat,p?p.name+(mine?' · 你':''):'空位');
-          this.setText('d4SeatState'+seat,!p?'等待玩家':p.pendingReturn?'AI 代打 · 下次发球归还':ai?'AI · 对等增益 / 预判':!n?.connected?'掉线保留':!n.visible?'后台':!n.synced?'正在同步':n.ready?'已准备':r.active?'比赛中':'未准备');
+          this.setText('d4SeatState'+seat,!p?'等待玩家':p.pendingReturn?'AI 代打 · 下次发球归还':ai?'AI · 主动进攻 / 预判':!n?.connected?'掉线保留':!n.visible?'后台':!n.synced?'正在同步':n.ready?'已准备':r.active?'比赛中':'未准备');
           this.setText('d4SeatMeta'+seat,r.isBot(p)?`${PC_PADDLE_SPEED} 移速上限 · 反弹 / 旋转预判`:n?(n.id===r.hostId?'房主 · ':'')+n.id+(n.count===2?' · 同机玩家 '+(p.index+1):''):'点击选择');}
         const specs=[...r.nodes.values()].filter(n=>n.count===0);by('d4Spectators').hidden=!r.role;this.setText('d4SpectatorNames',specs.length?specs.map(n=>n.name+(n.id===r.localId?'（你）':'')+(n.connected?'':' · 离线')).join(' / '):'0 / 4 · 可将房间码或独立邀请发给观众');
         const swap=r.swap,toMe=swap&&r.players.get(swap.to)?.device===r.localId;by('d4Swap').hidden=!swap;if(swap)this.setText('d4SwapText',`${r.players.get(swap.from)?.name||'玩家'} 申请与 ${r.players.get(swap.to)?.name||'玩家'} 交换位置。`);by('d4SwapYes').hidden=!toMe;by('d4SwapNo').hidden=!toMe;

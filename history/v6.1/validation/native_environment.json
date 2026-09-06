@@ -1,7 +1,7 @@
 {
   "fileNavigation": {
     "ok": false,
-    "error": "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at file:///mnt/data/PONG84_Attacking_AI_Release/index.html"
+    "error": "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at file:///mnt/data/PONG84_Team_AI_Release/index.html"
   },
   "productionManualInvite": {
     "ok": false,

@@ -1,8 +1,8 @@
     // ============================================================
-    // 8) Team protocol v3. A device owns 0, 1 or 2 players and standby links.
+    // 8) Team protocol v4. A device owns 0, 1 or 2 players and standby links.
     //    Identity, connection port and playing seat are deliberately separate.
     // ============================================================
-    const D4 = Object.freeze({version:3, seats:['A1','A2','B1','B2'], ports:['G1','G2','G3','G4','G5','G6','G7'],
+    const D4 = Object.freeze({version:4, seats:['A1','A2','B1','B2'], ports:['G1','G2','G3','G4','G5','G6','G7'],
       height:80, inputTimeout:350, silentTimeout:4500, reconnectWindow:30000, maxSignal:131072});
     const seatSide = seat => String(seat).startsWith('B') ? 'right' : 'left';
     const seatZone = (seat,formation='split') => formation==='depth'?[0,540]:String(seat).endsWith('2')?[270,540]:[0,270];
@@ -199,7 +199,7 @@
       rejectConnection(c,reason){const reject=()=>{try{c.send({v:D4.version,t:'d4_reject',reason});}catch{}setTimeout(()=>{try{c.close();}catch{}},300);};if(c.open)reject();else c.on('open',reject);}
       acceptCloud(c){
         if(this.role!=='host'){this.rejectConnection(c,'主持权已迁移，请使用当前房主显示的新房间码。');return;}
-        const m=c.metadata;if(m?.game!=='pong84-doubles'||m.v!==D4.version||c.label!=='pong84-ctrl'){this.rejectConnection(c,'协议版本不兼容，请所有设备更新到 6.1 AI 对等增强版。');return;}
+        const m=c.metadata;if(m?.game!=='pong84-doubles'||m.v!==D4.version||c.label!=='pong84-ctrl'){this.rejectConnection(c,'协议版本不兼容，请所有设备更新到 6.2 主动进攻版。');return;}
         let id;if(m.resume){const n=this.nodes.get(m.resume.pid);if(!n||m.resume.rid!==this.id||!isId(m.resume.token)||m.resume.token!==n.token){this.rejectConnection(c,'原设备身份无法恢复，请清除重连记录后以观众或新玩家加入。');return;}id=n.id;
           if(this.links.get(id)?.authed&&this.links.get(id)?.connected&&performance.now()-this.links.get(id).lastReceiveAt<4500){this.rejectConnection(c,'原设备仍在线，不允许重复登录。');return;}}
         else {id=ROOM_NODES.find(x=>x!==this.localId&&!this.nodes.has(x)&&!this.links.has(x));if(!id){this.rejectConnection(c,'房间设备数已达上限。');return;}}
