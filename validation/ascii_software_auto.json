@@ -32,23 +32,23 @@
     "--disable-webgl",
     "--disable-software-rasterizer"
   ],
-  "cpu_throttle": 1.0,
-  "seconds": 6.0,
-  "submissions": 360,
-  "submission_hz": 60.0,
-  "render_js_mean_ms": 0.0561,
-  "render_js_p95_ms": 0.2,
-  "submit_interval_p95_ms": 17.0,
-  "submit_interval_max_ms": 18.7,
+  "cpu_throttle": 1,
+  "seconds": 10.001,
+  "submissions": 600,
+  "submission_hz": 59.99,
+  "render_js_mean_ms": 0.0535,
+  "render_js_p95_ms": 0.1,
+  "submit_interval_p95_ms": 16.9,
+  "submit_interval_max_ms": 21.7,
   "renderer_metrics_delta_s": {
-    "TaskDuration": 0.3193,
-    "ScriptDuration": 0.0581,
-    "LayoutDuration": 0.0725,
-    "RecalcStyleDuration": 0.0024
+    "TaskDuration": 0.4963,
+    "ScriptDuration": 0.0843,
+    "LayoutDuration": 0.1108,
+    "RecalcStyleDuration": 0.004
   },
   "canvasCalls": 0,
   "diagnostics": {
-    "version": "4.0.0",
+    "version": "4.1.0",
     "phase": "playing",
     "renderer": "DOM ASCII",
     "profile": "auto",
@@ -69,16 +69,24 @@
       1366,
       768
     ],
+    "court": {
+      "x": 193,
+      "y": 245.890625,
+      "width": 608,
+      "height": 342,
+      "aspect": 1.7777777777777777
+    },
+    "orientationHint": false,
     "activeFrameLoop": true,
     "stats": {
-      "frames": 429,
-      "draws": 429,
-      "steps": 1707,
-      "skippedTime": 0,
-      "fps": 60,
-      "rafFps": 60,
-      "jsMs": 0.1099999999976717,
-      "rowWrites": 1171
+      "frames": 667,
+      "draws": 667,
+      "steps": 2667,
+      "skippedTime": 0.0033000000000000113,
+      "fps": 59.998032851381986,
+      "rafFps": 59.998032851381986,
+      "jsMs": 0.07540983606137519,
+      "rowWrites": 1943
     },
     "network": {
       "transport": "manual",

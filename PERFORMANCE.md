@@ -1,45 +1,42 @@
-# v4 渲染设计与性能记录
+# 渲染与性能说明 — 4.1.0
 
-## 两条路径各自负责什么
+## 渲染边界
 
-图形路径追求清晰度与光效：按实际显示尺寸创建高清 Canvas 2D，缓存球场背景和光晕，独立粒子与拖尾，提供精致/均衡画质。ASCII 路径为有上限的字节缓冲区和持久 Text 节点，不创建图形上下文，只更新变化行。切回 ASCII 释放图形缓存，取消粒子与拖尾生成，主画布缩为 1×1。
+图形模式使用 Canvas 2D，可由浏览器进行硬件加速；本项目没有用 WebGL/WebGPU 实现 3D 或真实物理光线追踪。玻璃、金属、反射与光晕都是为二维球场设计的绘制效果。
 
-没有为了 ASCII 性能关闭图形模式特效。ASCII 的节能、自适应降档只影响 ASCII 绘制，不会把图形模式固定在低分辨率或 30 次/秒。
+ASCII 使用独立 DOM 文本路径，不依赖图形渲染器。冷启动 ASCII 时不请求 Canvas 上下文、不构建图形背景缓存，不运行图形模式的粒子、尾迹、阴影和模糊。字体测量不使用 Canvas。浏览器仍须排版和绘制文字；这不等于浏览器完全不使用硬件，也不是对任意旧设备的固定帧率保证。
 
-## 实测口径
+`ascii_start.html` 可用于每次冷启动直接进入字符模式。普通入口也支持保存偏好与 `?render=ascii` 参数。
 
-测试日期：2026-09-05。浏览器：144.0.7559.96。1366×768 CSS 像素，设备像素比 1。每组预热约 1.1 秒、采样约 6 秒。
+## 本次软件路径采样
 
-通过 Chromium 启动参数禁用 GPU 合成、加速 Canvas、WebGL 和软件 3D 光栅器；CDP 返回 `gpu_compositing=disabled_software`、`rasterization=disabled_software`、`webgl=disabled_off`、`webgpu=disabled_off`。实际参数及状态写在 `validation/ascii_software_*.json`。
+方法：读取未改动的发布 HTML，通过 `page.set_content` 注入真实 Chromium 页面；注入本地存储设置以实现 ASCII 冷启动，用内存中的自动接球测试逻辑维持连续对打。采样前预热约 1.1 秒，三种工况分别记录约 10 秒。
 
-在执行未改动 HTML 前，以内存本地存储测试桩指定 ASCII，因而零 Canvas 统计包含冷启动；不是先初始化图形再切换 ASCII。为持续对打，测试桩让双方自动跟随球，关闭音频，不修改发布 HTML。CPU 6× 是 DevTools 节流，不对应某一型号旧 CPU。
+启动参数关闭 GPU 合成、加速 Canvas、WebGL；CDP `SystemInfo.getInfo` 返回合成和光栅化为 `disabled_software`，WebGL/WebGPU 为 `disabled_off`。完整参数、浏览器版本与原始数据在 `validation/ascii_software_*.json`。
 
-| 工况 | 画面提交 / 秒 | 提交间隔 P95 / ms | 渲染脚本 P95 / ms | Canvas 上下文请求 |
-| --- | ---: | ---: | ---: | ---: |
-| 自适应 / CPU 1× | 60.0 | 17.0 | 0.2 | 0 |
-| 自适应 / CPU 6× 节流 | 60.15 | 18.2 | 1.2 | 0 |
-| 节能 / CPU 6× 节流 | 30.16 | 35.1 | 1.1 | 0 |
+| 工况 | 采样秒数 | 画面提交次数/秒 | 提交间隔 P95（毫秒） | 绘制脚本耗时 P95（毫秒） | Canvas 上下文请求 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 自适应 / 常规 CPU | 10.001 | 59.99 | 16.9 | 0.1 | 0 |
+| 自适应 / 6 倍 CPU 节流 | 10.002 | 60.09 | 18.2 | 1.1 | 0 |
+| 30 帧节能 / 6 倍 CPU 节流 | 10.003 | 29.99 | 34.5 | 1 | 0 |
 
-以上三组均无未捕获 JavaScript 异常。短时间采样、端点计数和调度误差可使提交次数略高于设定目标，并不表示突破屏幕刷新率。
+**测量口径：**提交次数不是显示器最终呈现帧率；脚本耗时不含全部布局、栅格化、合成和显示延迟。CPU 节流不等同于真实低端 CPU。以上是本执行环境中短时测试的结果，不宜外推为所有设备的长期表现。本次没有独立显卡硬件上的图形模式帧率数据。
 
-**提交频率不是显示器实际呈现帧率。** `render_js_p95_ms` 只计算应用提交文本更新的脚本耗时，不包括随后发生的排版、绘制与显示延迟。本记录不保证任意无独显设备恒定 60 FPS，也不替代实体设备测试。
+## 控制开销的实现
 
-图形模式没有进行实体 GPU 的性能基准；不把其 60 次/秒目标写成实测保证。浏览器是否硬件加速由运行环境决定。
+图形背景按尺寸、主题和画质缓存；光晕贴图按有限颜色复用。粒子最多保留 128 个，扩散波纹最多 10 个；均衡画质进一步减少绘制粒子和光照。光效采用独立伪随机数，减少动态效果偏好会停用相关装饰。
 
-## 全屏与逻辑几何
-
-图形与字符球场均覆盖原生全屏视口；不留固定 16:9 容器、页面外边距、边框或固定侧栏。保留 960×540 逻辑世界，非 16:9 视口采用独立横纵缩放，所以图形比例会随显示比例改变。该做法保留原有碰撞和网络物理规则，触控使用相同归一化映射。
+ASCII 使用固定上限的网格、复用缓冲区和文本节点，只写入变化行。菜单和暂停状态不维持持续游戏帧循环；切回 ASCII 后释放图形背景和贴图缓存。三档性能设置仅影响绘制目标，物理使用原有固定步长。
 
 ## 复现
 
-安装 Python 与 Playwright，并准备 Chromium 浏览器后，在发布目录运行：
+依赖 Python 3.10+、Playwright 和可执行 Chromium/Chrome；无需修改游戏源码。
 
 ```bash
 python -m pip install playwright
-python tools/benchmark.py index.html --seconds 10 --cpu-rate 6 --profile auto --out validation/local-benchmark.json
-python tools/regression.py index.html
+python tools/benchmark.py index.html --seconds 10 --profile auto --out validation/ascii_software_auto.json
+python tools/benchmark.py index.html --seconds 10 --cpu-rate 6 --profile auto --out validation/ascii_software_cpu6.json
+python tools/benchmark.py index.html --seconds 10 --cpu-rate 6 --profile eco --out validation/ascii_software_eco.json
 ```
 
-需要自定义浏览器路径时，采样脚本支持 `--browser`。回归脚本默认查找 PATH 中的 `chromium`；也可在脚本中将 `executable_path` 指向本机 Chromium。游戏运行本身不依赖 Python、Playwright 或这些测试工具。
-
-测试使用 `page.set_content` 注入原始 HTML，并非 file:// 或 HTTP 页面导航。测试环境的导航策略限制没有被绕过；这些结果不应描述成双击 HTML、线上 Pages 或系统级浏览器窗口全屏的端到端测试。
+可用 `--browser` 指定浏览器路径。测试脚本不验证文件 URL、公开站点导航或网络联机。

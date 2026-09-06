@@ -1,69 +1,40 @@
-# v4 回归测试记录
+# 测试报告 — PONG-84 4.1.0
 
-日期：2026-09-05。**55 / 55 项通过，无未捕获 JavaScript 异常。** 原始结果为 `validation/regression.json`。
+测试日期：2026-09-06。执行环境：无头 Chromium、Playwright、真实 DOM / Canvas / Fullscreen API。源码通过 `page.set_content` 注入浏览器，模拟本地存储以选择冷启动画面；没有将网页源码改成测试专用版本。部分检查使用内存中的游戏状态与输入事件测试夹具。
 
-采用真实 Chromium 的 DOM、Canvas 与原生 Fullscreen API，注入发布 HTML；测试使用内存偏好、可复现对局状态与模拟键盘/指针。全屏断言同时检查 `document.fullscreenElement`、球场边界、临时菜单和可操作按钮，不是仅检查 CSS 类。视口覆盖 1920×1080、1440×900、2560×1080、1024×768、390×844 和 844×390；两种画面逐项验证。
+## 回归结果
 
-未完成：file:// 双击导航、HTTP/Pages 实际部署、实体操作系统的地址栏/任务栏显示验证、实体手机手势与刘海区域、公网 PeerJS/TURN 和两台设备联机。未将上述项目计入通过项。
+**75 / 75 项通过，无未捕获 JavaScript 异常。** 逐项结果见 `validation/regression.json`，可复现工具见 `tools/regression.py`。
 
-另完成两个定向检验：`ascii_start.html` 在已有图形偏好时仍以零 Canvas 请求启动；主入口在 Canvas 2D 不可用时正确回退 ASCII。详见 `validation/targeted_checks.json`，不并入上述 55 项回归计数。
+| 范围 | 核查内容 |
+| --- | --- |
+| 全屏适配 | 图形与 ASCII 分别检查 1920×1080、1440×900、2560×1080、1024×768、390×844、844×390，验证最大容纳的 16:9 大小、居中偏移、原生状态和隐藏侧栏 |
+| 移动端提示 | 低于 500 像素时可见、可关闭、同方向窗口变化不重复提示、横屏隐藏、转回竖屏恢复、提示按钮进入原生全屏 |
+| 触控 | 实际球场矩形与触控层对齐；图形四分之三高度映射、ASCII 中心映射正确；取消触控不发球 |
+| 对局连续性 | 全屏缩放和画面切换不重置暂停中的完整游戏状态；关闭提示不暂停、不重开 |
+| 输入与规则 | 空格发球不重开、长按不跨回合重复发球、真人移速 1100、电脑没有护盾/额外移速/长拍 |
+| ASCII | 冷启动及游戏 Canvas 请求为零；横屏提示与全屏操作仍为零；持久文本节点、变化行更新、静止时停止循环、无视觉滤镜与阴影 |
+| 图形 | 高 DPI 且画布像素比例为 16:9、画质切换、背景缓存复用、粒子/波纹上限、减少动态效果偏好、光效不消耗游戏规则随机数 |
+| UI | 全屏控制栏自动隐藏与唤出、暂停面板、退出恢复、失败提示、横向溢出检查 |
+| 传输代码 | 输入类与联机传输类源代码指纹保持不变；不等同于完成真实联机测试 |
 
-软件渲染性能另见 [PERFORMANCE.md](PERFORMANCE.md)。本报告只对应此发布版本，未沿用上一版本的测试计数。
+## 软件路径性能
 
-| 编号 | 检查项 | 结果 |
-| --- | --- | --- |
-| 1 | Fresh default is high-quality graphics | 通过 |
-| 2 | Canvas backing follows displayed size and high DPI | 通过 |
-| 3 | Graphical renderer created lazily in graphic mode | 通过 |
-| 4 | Menu has no continuous game frame loop | 通过 |
-| 5 | ASCII energy profile cannot cap graphical FPS | 通过 |
-| 6 | Graphical quality changes actual resolution | 通过 |
-| 7 | Display changes preserve entire paused gameplay state | 通过 |
-| 8 | Space serves without replacing match ID | 通过 |
-| 9 | Held/repeated Space does not serve the next rally | 通过 |
-| 10 | Released and pressed Space serves again | 通过 |
-| 11 | Uses native Fullscreen API | 通过 |
-| 12 | Graphics full viewport 1920x1080 | 通过 |
-| 13 | ASCII full viewport 1920x1080 | 通过 |
-| 14 | ASCII context/cache released 1920x1080 | 通过 |
-| 15 | Graphics full viewport 1440x900 | 通过 |
-| 16 | ASCII full viewport 1440x900 | 通过 |
-| 17 | ASCII context/cache released 1440x900 | 通过 |
-| 18 | Graphics full viewport 2560x1080 | 通过 |
-| 19 | ASCII full viewport 2560x1080 | 通过 |
-| 20 | ASCII context/cache released 2560x1080 | 通过 |
-| 21 | Graphics full viewport 1024x768 | 通过 |
-| 22 | ASCII full viewport 1024x768 | 通过 |
-| 23 | ASCII context/cache released 1024x768 | 通过 |
-| 24 | Graphics full viewport 390x844 | 通过 |
-| 25 | ASCII full viewport 390x844 | 通过 |
-| 26 | ASCII context/cache released 390x844 | 通过 |
-| 27 | Graphics full viewport 844x390 | 通过 |
-| 28 | ASCII full viewport 844x390 | 通过 |
-| 29 | ASCII context/cache released 844x390 | 通过 |
-| 30 | Fullscreen controls automatically hide and become inert | 通过 |
-| 31 | Reveal button reopens controls | 通过 |
-| 32 | Fullscreen pause shows temporary menu overlay | 通过 |
-| 33 | Pause overlay bounded within screen | 通过 |
-| 34 | Paused frame loop stops | 通过 |
-| 35 | Resume removes sidebar again | 通过 |
-| 36 | F exits native fullscreen and restores normal layout | 通过 |
-| 37 | Human paddle speed remains 1100 | 通过 |
-| 38 | Computer speed and shield remain unboosted | 通过 |
-| 39 | Random effect generation never enlarges AI paddle or grants shield | 通过 |
-| 40 | ASCII cold boot requests zero canvas contexts | 通过 |
-| 41 | ASCII cold boot allocates no graphical renderer | 通过 |
-| 42 | ASCII uses persistent Text nodes only | 通过 |
-| 43 | ASCII menu stops scheduling animation frames | 通过 |
-| 44 | ASCII visible UI has no filters/shadows/animations/compositing hints | 通过 |
-| 45 | ASCII energy mode targets 30 Hz | 通过 |
-| 46 | ASCII gameplay still makes zero Canvas requests | 通过 |
-| 47 | Identical ASCII frames cause no row writes | 通过 |
-| 48 | Denied fullscreen keeps normal layout and informs user | 通过 |
-| 49 | Portrait normal page has no horizontal overflow | 通过 |
-| 50 | Touch layer covers full graphical court | 通过 |
-| 51 | Touch layer remains aligned in fullscreen ASCII | 通过 |
-| 52 | Landscape normal page has no horizontal overflow | 通过 |
-| 53 | No uncaught browser JavaScript errors | 通过 |
-| 54 | OnlinePeer source unchanged by UI rewrite | 通过 |
-| 55 | InputManager source unchanged by UI rewrite | 通过 |
+另做三组各约 10 秒的禁用 GPU 加速 ASCII 采样；参数、数据和限制见 `PERFORMANCE.md`。本报告不将提交次数作为实体显示器 FPS。
+
+## 截图说明
+
+桌面菜单与移动端提示图截取实际页面。对局截图使用脚本构造、冻结的比分与球位置来检查构图，未修改发布版游戏；不是随机实战记录，也不是网络或性能证据。
+
+## 未验证范围
+
+本环境没有完成 `file://` 双击导航、实体 Android/iOS 方向传感器和系统全屏、实际异形屏安全区、线上 GitHub Pages、公共 PeerJS、TURN 或公网双设备联机的端到端测试。移动端使用浏览器的视口与触控仿真；关闭 GPU 和 CPU 节流不代表实体无独显设备实测。网络传输逻辑沿用上一版，不对任意网络间直连作保证。
+
+## 复现
+
+```bash
+python -m pip install playwright
+python tools/regression.py index.html
+```
+
+安装系统 Chromium 并确保在 PATH 中可找到 `chromium`。脚本以非零退出码报告失败，并生成 `validation/regression.json`。

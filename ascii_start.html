@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070b13">
-<meta name="description" content="PONG-84：精致光影球场与独立低开销 ASCII 双渲染，原生全屏、本地双人、手动 WebRTC P2P 与云房间联机。">
+<meta name="description" content="PONG-84：精致光影球场与独立低开销 ASCII 双渲染，16:9 自适应原生全屏、移动端横屏提示、本地双人、手动 WebRTC P2P 与云房间联机。">
 <title>PONG-84 · ASCII 优先入口</title>
 <style>:root{color-scheme:dark;--bg:#111713;--surface:#19201b;--card:#1d251f;--border:#333e35;--text:#ecf0e8;--muted:#a0aea0;--faint:#6f826f;--accent:#c6f18d;--accent-ink:#1b2812;--crt-color:#33ff33;--crt-bg:#051005;--crt-dim:rgba(51,255,51,.24);--crt-glow:transparent;--crt-soft:rgba(51,255,51,.08);--danger:#ffaaa0;--court-reserve:400px;font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}body{font-size:14px;line-height:1.5;overscroll-behavior-x:none}button,input,textarea,select{font:inherit}button{cursor:pointer;touch-action:manipulation}button,a{-webkit-tap-highlight-color:transparent}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}button:focus:not(:focus-visible){outline:none}[hidden],.hidden-section{display:none!important}h1,h2,h3,p{margin:0}h2{font-size:23px;font-weight:650;letter-spacing:-.5px}kbd{font:11px ui-monospace,Consolas,monospace;border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:var(--muted);white-space:nowrap}a{color:inherit;text-decoration:none}input,textarea,select{min-width:0;color:var(--text);background:#111713;border:1px solid var(--border);border-radius:7px;padding:8px}textarea{resize:vertical;user-select:text}summary{cursor:pointer;list-style:none;user-select:none}summary::-webkit-details-marker{display:none}summary:before{content:'+';font:17px ui-monospace,monospace;color:var(--accent);margin-right:8px}details[open]>summary:before{content:'−'}
@@ -18,7 +18,7 @@
 @media(min-width:1100px){.console-column{max-height:calc(100dvh - 145px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) var(--bg);padding-right:4px}}
 @media(max-width:1100px){#app{padding:0 20px}.game-shell{gap:18px;grid-template-columns:minmax(0,1fr) 305px}.console-column{padding-left:18px}.header-caption{display:none}.match-strip{padding:10px 16px}.player-score{gap:10px;min-width:80px}.player-score>span{font-size:10px}.court-toolbar{padding:8px}.tool-btn{padding:6px}.renderer-badge{font-size:9px}}
 @media(max-width:800px) and (min-height:501px){#app{padding:0 14px}.app-header{min-height:74px}.wordmark strong{font-size:26px}.wordmark small{display:none}.game-shell{grid-template-columns:1fr;padding:20px 0;gap:22px;--court-reserve:270px}.console-column{border-left:0;border-top:1px solid var(--border);padding:20px 0 0}.arena-heading{margin-bottom:14px}.match-strip{height:74px}.player-score strong{font-size:36px}.performance-strip{padding:9px 0}.court-wrap{padding:8px}.console-top{padding-bottom:10px}.mode-card{min-height:79px;padding:12px 14px}.mode-card small{font-size:11px}.select-row.compact .choice{flex:1}.console-bottom{margin-top:16px}.app-footer{flex-direction:column;gap:3px}.arena-footer{padding:10px 0}.arena-footer p{font-size:10px}.settings-details{margin-top:16px}.game-shell:fullscreen{padding:12px}}
-@media(max-width:500px){.version-tag{font-size:10px}.wordmark{gap:8px}.arena-heading h1{font-size:19px}.session-phase{font-size:10px;padding:4px 6px}.match-strip{gap:8px;padding:8px 12px}.match-meta{font-size:10px}.player-score{min-width:76px}.court-status{padding:5px 10px;gap:5px;font-size:10px}.renderer-badge{display:none}.toolbar-group{gap:3px}.tool-btn{font-size:10px;padding:5px 6px}.tool-btn kbd{display:none}.btn.small{font-size:10px;padding:6px 8px}.performance-strip{gap:8px;font-size:10px}.performance-strip .perf-label{font-size:10px}.rotate-hint{display:none!important}.console-column{padding-top:16px}}
+@media(max-width:500px){.version-tag{font-size:10px}.wordmark{gap:8px}.arena-heading h1{font-size:19px}.session-phase{font-size:10px;padding:4px 6px}.match-strip{gap:8px;padding:8px 12px}.match-meta{font-size:10px}.player-score{min-width:76px}.court-status{padding:5px 10px;gap:5px;font-size:10px}.renderer-badge{display:none}.toolbar-group{gap:3px}.tool-btn{font-size:10px;padding:5px 6px}.tool-btn kbd{display:none}.btn.small{font-size:10px;padding:6px 8px}.performance-strip{gap:8px;font-size:10px}.performance-strip .perf-label{font-size:10px}.console-column{padding-top:16px}}
 @media(max-height:500px) and (orientation:landscape){:root{--court-reserve:165px}#app{padding:0 10px}.app-header{min-height:43px}.wordmark strong{font-size:21px}.mark{font-size:20px}.wordmark small,.header-caption,.app-footer,.arena-heading,.arena-footer,.console-bottom{display:none}.version-tag{font-size:9px;padding:3px 6px}.game-shell{padding:8px 0;gap:14px;grid-template-columns:minmax(0,1fr) 284px}.console-column{padding-left:13px;max-height:calc(100dvh - 60px);overflow-y:auto}.console-top{padding:0 0 9px}.match-strip{height:46px;padding:5px 14px}.player-score strong{font-size:28px}.match-meta{font-size:9px;gap:0}.court-wrap{padding:5px}.court-status{min-height:24px;font-size:10px;padding:3px 10px}.court-toolbar{padding:4px 7px}.tool-btn,.btn.small{min-height:28px;font-size:10px;padding:4px 7px}.tool-btn kbd{display:none}.performance-strip{padding:5px 1px;border:0;font-size:9px}.renderer-badge{font-size:9px}.console-top .eyebrow{font-size:9px}h2{font-size:20px}.section{margin-top:12px}.mode-card{min-height:68px;padding:8px}.mode-card strong{font-size:12px}.mode-card small{font-size:9px}.mode-no{top:5px;font-size:9px}.start-action{margin-top:15px}.settings-details{margin-top:12px;padding-top:10px}.app-header .wordmark{gap:6px}html[data-phase="playing"] .game-shell,html[data-phase="countdown"] .game-shell{grid-template-columns:1fr}html[data-phase="playing"] .console-column,html[data-phase="countdown"] .console-column{display:none}.countdown span{font-size:40px}.shield-row{gap:4px}.shield{font-size:9px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 
@@ -79,7 +79,7 @@
 /* Fullscreen is the native Fullscreen API, never a CSS-only imitation. */
 #gameShell.immersive{position:fixed!important;inset:0!important;display:block!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;overflow:hidden!important;background:#050a12!important;gap:0!important;border:0!important;border-radius:0!important}
 #gameShell::backdrop{background:#050a12}
-#gameShell.immersive .arena-column,#gameShell.immersive .arena-card,#gameShell.immersive .court-wrap,#gameShell.immersive .game-container{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;min-width:0!important;max-width:none!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+#gameShell.immersive .arena-column,#gameShell.immersive .arena-card,#gameShell.immersive .court-wrap{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;min-width:0!important;max-width:none!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important}
 #gameShell.immersive .arena-heading,#gameShell.immersive .match-strip,#gameShell.immersive .court-status,#gameShell.immersive .court-toolbar,#gameShell.immersive .arena-footer,#gameShell.immersive .performance-strip{display:none!important}
 #gameShell.immersive .console-column{display:none!important}
 #gameShell.immersive.immersive-menu .console-column{display:block!important;position:absolute;z-index:22;left:50%;top:50%;transform:translate(-50%,-50%);width:min(480px,calc(100% - 40px));max-height:calc(100% - 66px)!important;margin:0;overflow:auto;border:1px solid var(--border);border-radius:16px;padding:22px 25px;background:var(--surface);scrollbar-width:thin;overscroll-behavior:contain;box-shadow:0 20px 90px #000b}
@@ -117,6 +117,130 @@
 @media(max-height:500px) and (orientation:landscape){:root:not(.ascii-mode) .app-header{min-height:43px}:root:not(.ascii-mode) .wordmark strong{font-size:21px}:root:not(.ascii-mode) .console-column{padding:12px}:root:not(.ascii-mode) .console-top{padding:0 0 8px;margin-bottom:10px}:root:not(.ascii-mode) .match-strip{height:45px}:root:not(.ascii-mode) .player-score strong{font-size:29px}:root:not(.ascii-mode) .court-wrap{padding:0 5px 5px}:root:not(.ascii-mode) .court-toolbar{padding:4px 7px}:root:not(.ascii-mode) .mode-card{min-height:68px;padding:10px}:root:not(.ascii-mode) .arena-card{border-radius:10px}.immersive-score{font-size:31px}.immersive-score small{font-size:10px}#gameShell.immersive .immersive-hud{top:10px;gap:20px}#gameShell.immersive .immersive-reveal{top:9px;right:10px}#gameShell.immersive .immersive-hint{font-size:10px;bottom:7px}#gameShell.immersive .immersive-controls{bottom:24px}}
 @media(prefers-reduced-motion:reduce){:root:not(.ascii-mode) *,:root:not(.ascii-mode) *::before,:root:not(.ascii-mode) *::after{animation:none!important;transition:none!important}}
 
+/* 4.1 / contained 16:9 native fullscreen + optical glass skin. */
+/* Parent fills the monitor. Only the 16:9 court is contained; unused pixels stay black. */
+#gameShell.immersive{background:#020409!important}
+#gameShell::backdrop{background:#020409}
+#gameShell.immersive .court-wrap{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)!important;
+  background:#020409!important;
+}
+#gameShell.immersive .game-container{
+  position:relative!important;inset:auto!important;flex:0 0 auto;
+  width:var(--full-court-width,min(100vw,calc(100vh * 16 / 9)))!important;
+  height:var(--full-court-height,min(100vh,calc(100vw * 9 / 16)))!important;
+  min-width:0!important;max-width:none!important;min-height:0!important;max-height:none!important;
+  margin:0!important;padding:0!important;aspect-ratio:16/9!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;
+}
+.game-container{container-type:size}
+/* The canvas and pointer zones share one content rectangle, including after rotation. */
+:root:not(.ascii-mode) .game-container{border:0;outline:1px solid #40637570;outline-offset:-1px}
+:root.ascii-mode .game-container{border:0;outline:1px solid var(--border);outline-offset:-1px}
+#gameShell.immersive .game-container{outline:none!important}
+:root:not(.ascii-mode) body{
+  background:radial-gradient(ellipse at 16% -20%,#173849 0%,transparent 46%),radial-gradient(ellipse at 110% 70%,#241f30 0%,transparent 48%),#070c14;
+}
+:root:not(.ascii-mode) .arena-card{
+  background:linear-gradient(135deg,#223744 0%,#142433 30%,#0b1420 65%,#26242c);
+  border-color:#5e80944d;border-radius:17px;
+  box-shadow:0 28px 85px #0008,0 0 1px 1px #c2edff0c,inset 0 1px 0 #d7eeff2b,inset 0 -1px 0 #0008;
+}
+:root:not(.ascii-mode) .match-strip{
+  position:relative;background:radial-gradient(ellipse at 0% 50%,#4be0ff0a,transparent 60%),linear-gradient(90deg,#14334080,#13213020 50%,#372a2045);
+}
+:root:not(.ascii-mode) .match-strip::after{
+  content:'';position:absolute;left:22px;right:22px;bottom:2px;height:1px;
+  background:linear-gradient(90deg,var(--accent),#91c6da16 38%,#91c6da16 62%,var(--opponent));opacity:.4;
+}
+:root:not(.ascii-mode) .player-score strong{font-weight:650;font-variant-numeric:tabular-nums;letter-spacing:-2px}
+:root:not(.ascii-mode) .player-score>span{font-size:10px;color:#b3c5d3}
+:root:not(.ascii-mode) .match-meta>span:first-child{font-size:12px;letter-spacing:1px}
+:root:not(.ascii-mode) .court-wrap{padding:6px 11px 11px}
+:root:not(.ascii-mode) .court-status{background:linear-gradient(90deg,#111d29,#101925);border-top-color:#89b5cd1f}
+:root:not(.ascii-mode) .court-toolbar{background:linear-gradient(180deg,#142332,#0f1b28);border-color:#4c728828}
+:root:not(.ascii-mode) .console-column{
+  background:linear-gradient(145deg,#1a2b3acc,#0f1927ee 45%,#0d1621f2);border-color:#68849a35;
+  box-shadow:inset 0 1px 0 #d0eeff10,0 16px 48px #0004;
+}
+:root:not(.ascii-mode) .mode-card{overflow:hidden;background:linear-gradient(140deg,#213140,#152130 70%);box-shadow:inset 0 1px 0 #e0f8ff08}
+:root:not(.ascii-mode) .mode-card.selected{background:radial-gradient(ellipse at 0 0,#55dffa16,transparent 80%),linear-gradient(130deg,#1b404f,#172b3a);border-color:#77c7db}
+:root:not(.ascii-mode) .mode-card .mode-no{font-size:23px;top:4px;right:10px;opacity:.17;letter-spacing:-1px;font-weight:700}
+:root:not(.ascii-mode) .btn.primary{
+  background:linear-gradient(105deg,#b0f6ff 0%,#7ee4f6 30%,#4ebbd7 100%);border-color:#bef7ffb5;
+  box-shadow:0 6px 24px #42cfee1a,inset 0 1px 0 #ffffffad,inset 0 -2px 0 #20718a42;
+}
+:root:not(.ascii-mode) .btn.primary:hover{background:linear-gradient(105deg,#d3faff,#90eafa 65%,#6ad1e8);box-shadow:0 7px 30px #42cfee33,inset 0 1px 0 #fff}
+#gameShell.immersive .immersive-hud{
+  top:3.4%;gap:23px;padding:10px 22px;border:1px solid #99c6dc28;border-radius:16px;
+  background:linear-gradient(135deg,#153041b8,#0a1727cc 55%,#2c2928a6);
+  box-shadow:0 6px 26px #0003,inset 0 1px 0 #e0f5ff0e;
+  width:max-content;max-width:86%;
+}
+.immersive-score{gap:12px;font-size:clamp(20px,4vh,44px);font-variant-numeric:tabular-nums}
+.immersive-score strong{letter-spacing:-1px;font-weight:650}
+.immersive-score small{font-size:10px}
+.immersive-center b{font-size:9px;letter-spacing:2px;color:#a5c2d1}
+.immersive-center span{font-size:10px;color:#708ea3}
+#gameShell.immersive .immersive-reveal{top:3.4%;right:2%;min-height:32px;min-width:38px}
+#gameShell.immersive .immersive-hint{bottom:3.2%;font-size:10px}
+#gameShell.immersive .immersive-controls{bottom:10%;backdrop-filter:blur(12px);background:#0d1c2bee}
+/* Scale HUD by court size rather than monitor size when there are letterbox bars. */
+@supports(font-size:1cqh){
+  #gameShell.immersive .immersive-hud{gap:clamp(8px,3.5cqh,25px);padding:clamp(5px,1.5cqh,11px) clamp(10px,3.4cqh,24px)}
+  .immersive-score{font-size:clamp(17px,6.4cqh,48px);gap:clamp(7px,1.8cqh,14px)}
+  .immersive-score small{font-size:clamp(8px,1.5cqh,11px)}
+  .immersive-center b{font-size:clamp(7px,1.45cqh,11px)}
+  .immersive-center span{font-size:clamp(8px,1.55cqh,11px)}
+  #gameShell.immersive .immersive-hint{font-size:clamp(8px,1.5cqh,11px)}
+}
+/* A dismissible mobile hint, in-flow normally and inside the native full-screen subtree. */
+.orientation-tip{
+  display:flex;align-items:center;gap:12px;padding:13px 15px;margin:0 0 16px;
+  border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--text);
+  font-size:12px;line-height:1.5;position:relative;
+}
+.orientation-copy{flex:1;min-width:0}
+.orientation-copy strong{display:block;font-size:13px;font-weight:600}
+.orientation-copy p{color:var(--muted);font-size:11px;margin-top:3px}
+.orientation-symbol{width:35px;height:40px;flex:0 0 auto;color:var(--accent);display:grid;place-items:center}
+.orientation-symbol svg{width:34px;height:34px}
+.orientation-ascii{display:none;font:12px monospace;white-space:nowrap}
+.orientation-action{border:1px solid var(--border);background:var(--card);color:var(--accent);border-radius:6px;padding:6px 9px;font-size:11px;min-height:34px;white-space:nowrap}
+.orientation-close{border:0;background:none;color:var(--muted);min-width:28px;min-height:32px;font-size:18px;padding:2px;align-self:flex-start}
+.orientation-close:hover{color:var(--text)}
+:root:not(.ascii-mode) .orientation-tip{
+  background:linear-gradient(115deg,#173644ed,#112535ed);border-color:#508ca16b;box-shadow:inset 0 1px 0 #c1efff0c;
+}
+:root:not(.ascii-mode) .orientation-copy strong{color:#c4f6ff}
+:root:not(.ascii-mode) .orientation-action{background:#1c4152;border-color:#406d7f;color:#c0f4ff}
+:root.ascii-mode .orientation-symbol svg{display:none}
+:root.ascii-mode .orientation-ascii{display:inline}
+:root.ascii-mode .orientation-tip{border-radius:4px}
+#gameShell.immersive .orientation-tip{
+  position:absolute;z-index:40;top:max(12px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);
+  width:min(540px,calc(100% - 24px));margin:0;box-shadow:none;
+}
+#gameShell.immersive.portrait-hint-visible.immersive-menu .console-column{
+  top:126px;transform:translateX(-50%);max-height:calc(100% - 146px)!important;
+}
+@media(max-width:500px){
+  .orientation-tip{padding:11px 10px;gap:8px}.orientation-copy p{font-size:10px}.orientation-copy strong{font-size:12px}
+  .orientation-symbol{width:28px}.orientation-symbol svg{width:27px}.orientation-action{padding:5px 7px;font-size:10px}
+  .orientation-close{min-width:22px}
+  #gameShell.immersive .immersive-hud{width:max-content;max-width:80%;gap:9px;top:4%;border-radius:9px}
+  .immersive-score small{display:none}
+  #gameShell.immersive .immersive-reveal{top:4%;right:2%;min-width:28px;min-height:28px;font-size:14px;padding:2px 7px}
+  #gameShell.immersive .immersive-controls{gap:4px;padding:5px;max-width:96%;bottom:10%}
+  .immersive-controls button{font-size:10px;padding:5px 7px;min-height:30px}
+}
+@media(max-height:500px) and (orientation:landscape){
+  :root:not(.ascii-mode) .court-wrap{padding:3px 6px 6px}
+  #gameShell.immersive .immersive-hud{top:3%;border-radius:9px}
+}
+@media(prefers-reduced-motion:reduce){:root:not(.ascii-mode) .countdown span{animation:none}}
+
 </style>
 </head>
 <body>
@@ -125,10 +249,17 @@
   <header class="app-header">
     <a class="wordmark" href="#app" aria-label="PONG-84 首页"><span class="mark">|•|</span><strong>PONG<span>—84</span></strong><small>双人街机</small></a>
     <div class="header-caption">一个文件。一张球场。<span>下一球见。</span></div>
-    <span class="version-tag">双渲染 <b>v4.0</b></span>
+    <span class="version-tag">双渲染 <b>v4.1</b></span>
   </header>
   <section id="gameShell" class="game-shell" tabindex="-1" aria-label="PONG-84 游戏与控制台">
     <div class="arena-column">
+      <aside id="rotateHint" class="orientation-tip" role="status" aria-live="polite" aria-hidden="true" hidden>
+        <span class="orientation-symbol" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="13" y="5" width="14" height="24" rx="3" transform="rotate(65 20 20)"/><path d="M7 15A14 14 0 0 1 31 9m0-5v5h-5M33 25A14 14 0 0 1 9 31m0 5v-5h5"/><path d="M18 25h4" transform="rotate(65 20 20)"/></svg><span class="orientation-ascii">[ &gt; ]</span></span>
+        <div class="orientation-copy"><strong>建议横屏游玩</strong><p>将设备横放，获得更大的 16:9 球场。也可继续竖屏；提示不暂停对局。</p></div>
+        <button id="rotateFullscreenBtn" class="orientation-action" type="button">全屏游玩</button>
+        <button id="rotateDismissBtn" class="orientation-close" type="button" aria-label="暂时收起横屏提示" title="暂时收起">×</button>
+      </aside>
+
       <div class="arena-heading"><div><span class="eyebrow">球场 / 01</span><h1>下一球，主场见。</h1></div><span id="sessionPhase" class="session-phase" role="status">准备就绪</span></div>
       <div class="arena-card">
         <div class="match-strip">
@@ -171,7 +302,7 @@
           <div class="toolbar-group"><button id="renderModeBtn" class="tool-btn" type="button" aria-pressed="true" title="切换渲染模式 (R)">图形 <kbd>R</kbd></button><button id="soundBtn" class="tool-btn" type="button" aria-pressed="true" title="音效开关">声音开</button><button id="fullscreenBtn" class="tool-btn" type="button" title="全屏 (F)">全屏</button></div>
         </div>
       </div>
-      <div class="arena-footer"><p id="controlsHint">W / S 或 ↑ / ↓ 控制球拍</p><span id="rotateHint" class="rotate-hint" aria-hidden="true">横屏可获得更大的球场</span></div>
+      <div class="arena-footer"><p id="controlsHint">W / S 或 ↑ / ↓ 控制球拍</p></div>
       <div class="performance-strip"><span class="perf-label"><span class="steady-dot"></span>渲染状态</span><output id="perfText">待机 · 无持续重绘</output><button id="perfProfileBtn" type="button" class="text-btn" title="切换性能档位">自适应</button></div>
       <div id="inlineNotice" class="inline-notice" role="status" hidden></div>
     </div>
@@ -299,11 +430,11 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       <details id="displaySettings" class="settings-details"><summary>画面与性能<span>本机独立设置</span></summary><div class="details-body">
         <div id="renderSection" class="section"><div class="section-title">渲染方式</div><div class="select-row"><button class="choice selected" data-setting="renderMode" data-value="ascii" type="button">ASCII 纯字符</button><button class="choice" data-setting="renderMode" data-value="crt" type="button">精致图形</button></div><p class="small-note">ASCII 是独立文本路径，不创建 Canvas / WebGL / WebGPU；图形模式独立使用高清画布与光影效果。</p></div>
         <div id="asciiPerfSection" class="section"><div class="section-title">ASCII 性能档位</div><div class="select-row"><button class="choice selected" data-setting="renderProfile" data-value="auto" type="button">自适应</button><button class="choice" data-setting="renderProfile" data-value="smooth" type="button">60 帧</button><button class="choice" data-setting="renderProfile" data-value="eco" type="button">30 帧节能</button></div><p class="small-note">自适应优先 60 帧，持续负载高时降低字符密度与刷新率；不改球速、判定或键盘移速。再次选择“自适应”可重试高档。</p></div>
-        <div id="graphicsQualitySection" class="section"><div class="section-title">图形画质</div><div class="select-row"><button class="choice selected" data-setting="graphicsQuality" data-value="ultra" type="button">精致光影</button><button class="choice" data-setting="graphicsQuality" data-value="balanced" type="button">均衡画质</button></div><p class="small-note">精致光影：高分辨率画布、发光球拍、能量拖尾、碰撞粒子与得分光效。均衡档减少像素与粒子数量；不受 ASCII 节能设置限制。</p></div>
+        <div id="graphicsQualitySection" class="section"><div class="section-title">图形画质</div><div class="select-row"><button class="choice selected" data-setting="graphicsQuality" data-value="ultra" type="button">精致光影</button><button class="choice" data-setting="graphicsQuality" data-value="balanced" type="button">均衡画质</button></div><p class="small-note">精致光影：光学玻璃球场、金属导光球拍、动态光照反射、连续能量尾迹与分层碰撞光效。均衡档减少像素与粒子数量；不受 ASCII 节能设置限制。</p></div>
         <div id="themeSection" class="section"><div class="section-title">球场颜色</div><div class="select-row"><button class="choice selected" data-setting="theme" data-value="green" type="button">绿色</button><button class="choice" data-setting="theme" data-value="amber" type="button">琥珀</button><button class="choice" data-setting="theme" data-value="white" type="button">白色</button><button class="choice" data-setting="theme" data-value="blue" type="button">冰蓝</button></div></div>
         <pre id="renderStats" class="stats-report">开始对局后显示本机数据。</pre><p class="small-note">“脚本耗时”不含浏览器排版与绘制耗时；刷新率为脚本提交次数，不是显示器实测帧率。</p>
       </div></details>
-      <details class="settings-details" id="helpPanel"><summary>操作与功能球<span>首次游玩</span></summary><div class="details-body"><dl class="key-guide"><div><dt><kbd>W</kbd> <kbd>S</kbd></dt><dd>左拍 / 联机时自己的球拍</dd></div><div><dt><kbd>↑</kbd> <kbd>↓</kbd></dt><dd>右拍 / 人机时也控制左拍</dd></div><div><dt><kbd>空格</kbd> <kbd>回车</kbd></dt><dd>人机 / 联机：自己发球；同屏：分别对应左 / 右</dd></div><div><dt><kbd>P</kbd> <kbd>R</kbd> <kbd>F</kbd></dt><dd>暂停 / 切换渲染 / 原生全屏</dd></div></dl><p class="small-note">全屏时球场铺满屏幕、不留固定比例黑边；鼠标移动或轻触右上角“⋯”显示控制栏，F 或 Esc 退出。ASCII 的控制入口在右下角。</p><p class="small-note">触屏上下拖动，松手发球。同屏双人各用半边球场；触控中断不会自动发球。</p><div class="legend"><span><b>@</b> 常规</span><span><b>*</b> 加速</span><span><b>o</b> 减速</span><span><b>O</b> 大球</span><span><b>.</b> 小球</span><span><b>#</b> 球拍 / 长拍</span><span><b>~</b> 变轨</span><span><b>%</b> 旋转</span></div><p class="small-note">连得 3 分可获得一次护盾。人机模式仅玩家可获增益，电脑不能获得长拍、护盾或强化回球。</p></div></details>
+      <details class="settings-details" id="helpPanel"><summary>操作与功能球<span>首次游玩</span></summary><div class="details-body"><dl class="key-guide"><div><dt><kbd>W</kbd> <kbd>S</kbd></dt><dd>左拍 / 联机时自己的球拍</dd></div><div><dt><kbd>↑</kbd> <kbd>↓</kbd></dt><dd>右拍 / 人机时也控制左拍</dd></div><div><dt><kbd>空格</kbd> <kbd>回车</kbd></dt><dd>人机 / 联机：自己发球；同屏：分别对应左 / 右</dd></div><div><dt><kbd>P</kbd> <kbd>R</kbd> <kbd>F</kbd></dt><dd>暂停 / 切换渲染 / 原生全屏</dd></div></dl><p class="small-note">原生全屏时球场以 16:9 等比放大并居中，空余区域留黑边；画面不拉伸、不裁切。鼠标移动或轻触右上角“⋯”显示控制栏，F 或 Esc 退出。ASCII 的控制入口在右下角。</p><p class="small-note">触屏上下拖动，松手发球。同屏双人各用半边球场；触控中断不会自动发球。</p><div class="legend"><span><b>@</b> 常规</span><span><b>*</b> 加速</span><span><b>o</b> 减速</span><span><b>O</b> 大球</span><span><b>.</b> 小球</span><span><b>#</b> 球拍 / 长拍</span><span><b>~</b> 变轨</span><span><b>%</b> 旋转</span></div><p class="small-note">连得 3 分可获得一次护盾。人机模式仅玩家可获增益，电脑不能获得长拍、护盾或强化回球。</p></div></details>
       <div class="console-bottom">无内置统计 · 无账号 · 单文件运行<br><span>公网联机可能需要 STUN / TURN；请保持页面在前台。</span></div>
     </aside>
   </section>
@@ -1214,228 +1345,322 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
     }
 
 
-    // Graphical renderer. Allocated lazily; ASCII never creates this class or its canvases.
-    // Cosmetic randomness is independent of Math.random(), so effects cannot alter game outcomes.
+    // Optical court: all allocations and compositing are confined to the graphical path.
+    // Cosmetic PRNG, simulation clock and bounded caches never change gameplay/network state.
     class ArenaRenderer {
       constructor(canvas,ctx) {
         this.canvas=canvas;this.ctx=ctx;this.background=null;this.backgroundKey='';
         this.sprites=new Map();this.particles=[];this.rings=[];this.previous=null;
         this.scoreFlash=null;this.seed=0x84a19ce3;
         this.reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true;
+        this.palettes={
+          blue:{left:'#67e8ff',right:'#ffb184',leftRGB:[103,232,255],rightRGB:[255,177,132]},
+          green:{left:'#85ffc4',right:'#c4b0ff',leftRGB:[133,255,196],rightRGB:[196,176,255]},
+          amber:{left:'#ffd68b',right:'#98d7ff',leftRGB:[255,214,139],rightRGB:[152,215,255]},
+          white:{left:'#e3f5ff',right:'#a3baff',leftRGB:[227,245,255],rightRGB:[163,186,255]}
+        };
       }
-      random() {let x=this.seed;x^=x<<13;x^=x>>>17;x^=x<<5;this.seed=x>>>0;return this.seed/4294967296;}
-      palette(g) {
-        return ({
-          blue:{left:'#61e6ff',right:'#ffac7d',leftRGB:[97,230,255],rightRGB:[255,172,125]},
-          green:{left:'#7fffb2',right:'#bdabff',leftRGB:[127,255,178],rightRGB:[189,171,255]},
-          amber:{left:'#ffd07a',right:'#87cfff',leftRGB:[255,208,122],rightRGB:[135,207,255]},
-          white:{left:'#e1f2ff',right:'#91adff',leftRGB:[225,242,255],rightRGB:[145,173,255]}
-        })[g.settings.theme] || {left:'#61e6ff',right:'#ffac7d',leftRGB:[97,230,255],rightRGB:[255,172,125]};
-      }
-      dispose() {
+      random(){let x=this.seed;x^=x<<13;x^=x>>>17;x^=x<<5;this.seed=x>>>0;return this.seed/4294967296;}
+      palette(g){return this.palettes[g.settings.theme]||this.palettes.blue;}
+      dispose(){
         if(this.background){this.background.width=1;this.background.height=1;}
-        for(const canvas of this.sprites.values()){canvas.width=1;canvas.height=1;}
-        this.background=null;this.sprites.clear();this.particles.length=0;this.rings.length=0;
+        for(const c of this.sprites.values()){c.width=1;c.height=1;}
+        this.background=null;this.backgroundKey='';this.sprites.clear();
+        this.particles.length=0;this.rings.length=0;this.previous=null;this.scoreFlash=null;
       }
-      rounded(ctx,x,y,w,h,r) {
-        r=Math.min(r,w/2,h/2);ctx.beginPath();
-        ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
-        ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+      rounded(c,x,y,w,h,r){
+        r=Math.min(r,w/2,h/2);c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);
+        c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();
       }
-      halo(color) {
+      halo(color){
         if(this.sprites.has(color))return this.sprites.get(color);
-        const c=document.createElement('canvas');c.width=c.height=128;
-        const ctx=c.getContext('2d');
-        if(!ctx)return null;
-        const gradient=ctx.createRadialGradient(64,64,0,64,64,64);
-        gradient.addColorStop(0,color);gradient.addColorStop(.10,color+'d0');
-        gradient.addColorStop(.28,color+'65');gradient.addColorStop(.62,color+'17');gradient.addColorStop(1,color+'00');
-        ctx.fillStyle=gradient;ctx.fillRect(0,0,128,128);this.sprites.set(color,c);return c;
+        const s=document.createElement('canvas');s.width=s.height=160;
+        const c=s.getContext('2d');if(!c)return null;
+        const a=c.createRadialGradient(80,80,0,80,80,80);
+        a.addColorStop(0,color+'e6');a.addColorStop(.08,color+'b3');a.addColorStop(.24,color+'52');
+        a.addColorStop(.5,color+'16');a.addColorStop(.8,color+'04');a.addColorStop(1,color+'00');
+        c.fillStyle=a;c.fillRect(0,0,160,160);this.sprites.set(color,s);return s;
       }
-      glow(ctx,color,x,y,w,h,alpha=1) {
-        const image=this.halo(color);if(!image)return;
-        ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=alpha;
-        ctx.drawImage(image,x-w/2,y-h/2,w,h);ctx.restore();
+      glow(c,color,x,y,w,h,alpha=1){
+        const s=this.halo(color);if(!s||w<=0||h<=0)return;
+        c.save();c.globalCompositeOperation='lighter';c.globalAlpha=alpha;c.drawImage(s,x-w/2,y-h/2,w,h);c.restore();
       }
-      ensureBackground(g,p) {
+      ensureBackground(g,p){
         const key=[this.canvas.width,this.canvas.height,g.settings.theme,g.settings.graphicsQuality].join('/');
-        if(key===this.backgroundKey&&this.background)return;
+        if(this.background&&key===this.backgroundKey)return;
         if(!this.background)this.background=document.createElement('canvas');
-        const c=this.background;c.width=this.canvas.width;c.height=this.canvas.height;
-        const ctx=c.getContext('2d',{alpha:false});if(!ctx){this.background=null;return;}
-        const W=WORLD.width,H=WORLD.height;
-        ctx.setTransform(c.width/W,0,0,c.height/H,0,0);
-        ctx.fillStyle='#050c16';ctx.fillRect(0,0,W,H);
-        let gradient=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,550);
-        gradient.addColorStop(0,'#101f30');gradient.addColorStop(.62,'#0a1423');gradient.addColorStop(1,'#030810');
-        ctx.fillStyle=gradient;ctx.fillRect(0,0,W,H);
+        const s=this.background;s.width=this.canvas.width;s.height=this.canvas.height;
+        const c=s.getContext('2d',{alpha:false});if(!c){this.background=null;return;}
+        const W=WORLD.width,H=WORLD.height,ultra=g.settings.graphicsQuality!=='balanced';
+        c.setTransform(s.width/W,0,0,s.height/H,0,0);
+        let a=c.createLinearGradient(0,0,0,H);
+        a.addColorStop(0,'#060e19');a.addColorStop(.46,'#101c2a');a.addColorStop(1,'#070e18');
+        c.fillStyle=a;c.fillRect(0,0,W,H);
+        // Layered optical glass: broad lights, anisotropic sheen, quiet etched markings.
         for(const side of [0,1]){
           const rgb=side?p.rightRGB:p.leftRGB;
-          gradient=ctx.createRadialGradient(side?W:0,H*.5,0,side?W:0,H*.5,460);
-          gradient.addColorStop(0,rgba(rgb,.13));gradient.addColorStop(.5,rgba(rgb,.027));gradient.addColorStop(1,rgba(rgb,0));
-          ctx.fillStyle=gradient;ctx.fillRect(0,0,W,H);
+          a=c.createRadialGradient(side?W:0,H*.48,4,side?W:0,H*.48,505);
+          a.addColorStop(0,rgba(rgb,.16));a.addColorStop(.38,rgba(rgb,.045));a.addColorStop(1,rgba(rgb,0));
+          c.fillStyle=a;c.fillRect(0,0,W,H);
         }
-        // A restrained static coordinate grid; no full-screen noise or flicker.
-        ctx.fillStyle='#b3d7ff18';
-        for(let x=24;x<W;x+=24)for(let y=18;y<H;y+=24)ctx.fillRect(x,y,1,1);
-        ctx.strokeStyle='#92b7d70a';ctx.lineWidth=.6;ctx.beginPath();
-        for(let y=90;y<H;y+=90){ctx.moveTo(0,y);ctx.lineTo(W,y);}
-        for(let x=120;x<W;x+=120){ctx.moveTo(x,0);ctx.lineTo(x,H);}ctx.stroke();
-        // Lines touch the actual top/bottom bounds. Decorative corner brackets are not collision walls.
-        gradient=ctx.createLinearGradient(0,0,W,0);
-        gradient.addColorStop(0,rgba(p.leftRGB,.8));gradient.addColorStop(.45,'#8dc3d525');gradient.addColorStop(.55,'#8dc3d525');gradient.addColorStop(1,rgba(p.rightRGB,.8));
-        ctx.fillStyle=gradient;ctx.fillRect(0,0,W,1.8);ctx.fillRect(0,H-1.8,W,1.8);
-        ctx.strokeStyle='#9ad5ea35';ctx.lineWidth=1;ctx.setLineDash([4,12]);
-        ctx.beginPath();ctx.moveTo(W/2,24);ctx.lineTo(W/2,H-24);ctx.stroke();ctx.setLineDash([]);
-        ctx.strokeStyle='#aacdeb12';ctx.lineWidth=1;ctx.beginPath();ctx.arc(W/2,H/2,70,0,Math.PI*2);ctx.stroke();
-        ctx.strokeStyle='#b6d7eb08';ctx.beginPath();ctx.arc(W/2,H/2,91,0,Math.PI*2);ctx.stroke();
-        ctx.strokeStyle='#9dbed633';ctx.beginPath();ctx.moveTo(W/2-7,H/2);ctx.lineTo(W/2+7,H/2);ctx.moveTo(W/2,H/2-7);ctx.lineTo(W/2,H/2+7);ctx.stroke();
+        if(ultra){
+          a=c.createLinearGradient(150,0,700,H);
+          a.addColorStop(0,'#9ac9e600');a.addColorStop(.29,'#9ac9e602');a.addColorStop(.31,'#c6eaff08');
+          a.addColorStop(.50,'#a7d7fa03');a.addColorStop(.52,'#a7d7fa00');a.addColorStop(1,'#a7d7fa00');
+          c.fillStyle=a;c.fillRect(0,0,W,H);
+          c.strokeStyle='#c8def603';c.lineWidth=.5;c.beginPath();
+          for(let y=5;y<H;y+=6){c.moveTo(9,y);c.lineTo(W-9,y);}c.stroke();
+          // Fixed sub-pixel microtexture, deterministic and cached; never animated noise.
+          c.fillStyle='#d0eaff10';for(let x=60;x<W-40;x+=30)for(let y=50;y<H-30;y+=30)c.fillRect(x,y,.65,.65);
+        }
+        // Discrete side bays; these are visual markings, not extra collision surfaces.
         for(const side of [0,1]){
-          const rgb=side?p.rightRGB:p.leftRGB,x=side?W-9:9,dx=side?-1:1;
-          ctx.strokeStyle=rgba(rgb,.45);ctx.lineWidth=1.4;ctx.beginPath();
-          ctx.moveTo(x+dx*34,9);ctx.lineTo(x,9);ctx.lineTo(x,35);
-          ctx.moveTo(x+dx*34,H-9);ctx.lineTo(x,H-9);ctx.lineTo(x,H-35);ctx.stroke();
-          ctx.fillStyle=rgba(rgb,.22);for(let y=70;y<H-40;y+=40)ctx.fillRect(side?W-7:5,y,2,y===270?12:4);
+          const rgb=side?p.rightRGB:p.leftRGB,col=side?p.right:p.left;
+          c.fillStyle=rgba(rgb,.022);this.rounded(c,side?W-205:53,73,152,H-146,22);c.fill();
+          c.strokeStyle=rgba(rgb,.085);c.lineWidth=.7;c.stroke();
+          c.strokeStyle=rgba(rgb,.07);c.setLineDash([3,8]);c.beginPath();
+          c.moveTo(side?W-198:198,82);c.lineTo(side?W-198:198,H-82);c.stroke();c.setLineDash([]);
+          const x=side?W-7:7;
+          c.fillStyle='#030912';this.rounded(c,x-3,18,6,H-36,3);c.fill();
+          c.fillStyle=rgba(rgb,.22);for(let y=28;y<H-24;y+=12)c.fillRect(x-1,y,2,y%60===28?5:2);
+          this.glow(c,col,x,H/2,52,H*.95,.13);
+          c.save();c.translate(side?W-19:19,H/2);c.rotate(side?Math.PI/2:-Math.PI/2);
+          c.fillStyle=rgba(rgb,.3);c.font='500 7px ui-monospace,Consolas,monospace';c.textAlign='center';
+          c.fillText(side?'02  /  AWAY':'01  /  HOME',0,0);c.restore();
         }
-        ctx.textAlign='center';ctx.fillStyle='#aecde72e';ctx.font='600 9px ui-monospace,Consolas,monospace';
-        ctx.fillText('P O N G  —  8 4',W/2,H-18);
-        ctx.textAlign='left';ctx.fillStyle=rgba(p.leftRGB,.28);ctx.font='600 8px ui-monospace,Consolas,monospace';ctx.fillText('01 / HOME',56,H-18);
-        ctx.textAlign='right';ctx.fillStyle=rgba(p.rightRGB,.28);ctx.fillText('02 / AWAY',W-56,H-18);
+        // Symmetric precision center disk, not a perspective camera: physics remain 2-D.
+        const cx=W/2,cy=H/2;
+        a=c.createRadialGradient(cx,cy,10,cx,cy,148);a.addColorStop(0,'#15283960');a.addColorStop(1,'#15283900');
+        c.fillStyle=a;c.fillRect(cx-150,cy-150,300,300);
+        c.strokeStyle='#afdae515';c.lineWidth=.65;c.beginPath();c.arc(cx,cy,88,0,Math.PI*2);c.stroke();
+        c.strokeStyle='#afdae50c';c.beginPath();c.arc(cx,cy,116,0,Math.PI*2);c.stroke();
+        c.strokeStyle='#afddec16';c.beginPath();
+        for(let i=0;i<64;i++){
+          const a=i*Math.PI/32,r=i%4===0?105:109;
+          c.moveTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);c.lineTo(cx+Math.cos(a)*113,cy+Math.sin(a)*113);
+        }c.stroke();
+        c.strokeStyle='#90b3c62a';c.lineWidth=.8;c.setLineDash([3,13]);c.beginPath();
+        c.moveTo(cx,30);c.lineTo(cx,cy-124);c.moveTo(cx,cy+124);c.lineTo(cx,H-30);c.stroke();c.setLineDash([]);
+        for(const side of [0,1]){
+          c.strokeStyle=rgba(side?p.rightRGB:p.leftRGB,.14);c.lineWidth=1.1;
+          c.beginPath();c.arc(cx,cy,92,side?-.48:Math.PI-.48,side?.48:Math.PI+.48);c.stroke();
+        }
+        c.fillStyle='#b1d7e70c';c.font='600 52px ui-monospace,Consolas,monospace';c.textAlign='center';c.fillText('84',cx,cy+18);
+        c.fillStyle='#a7d6e136';c.font='500 7px ui-monospace,Consolas,monospace';c.fillText('O P T I C A L   A R E N A',cx,cy+43);
+        // Inset light rails sit at the true physical top/bottom edges.
+        for(const bottom of [false,true]){
+          const y=bottom?H-1:1;
+          a=c.createLinearGradient(0,0,W,0);
+          a.addColorStop(0,rgba(p.leftRGB,.85));a.addColorStop(.34,rgba(p.leftRGB,.22));
+          a.addColorStop(.5,'#bdd3e126');a.addColorStop(.66,rgba(p.rightRGB,.22));a.addColorStop(1,rgba(p.rightRGB,.85));
+          c.fillStyle='#00070c';c.fillRect(0,bottom?H-6:0,W,6);
+          c.fillStyle=a;c.fillRect(0,y-.6,W,1.2);
+          c.fillStyle='#e7faff14';c.fillRect(25,bottom?H-6:5,W-50,.6);
+          for(const side of [0,1]){
+            const rgb=side?p.rightRGB:p.leftRGB,col=side?p.right:p.left,dx=side?-1:1,x=side?W-28:28;
+            c.strokeStyle=rgba(rgb,.55);c.lineWidth=1.2;c.beginPath();
+            c.moveTo(x+dx*48,bottom?H-12:12);c.lineTo(x,bottom?H-12:12);c.lineTo(x-dx*8,bottom?H-21:21);c.stroke();
+            if(ultra)this.glow(c,col,side?W*.79:W*.21,y,230,32,.23);
+          }
+        }
+        // Thin chamfer highlights; avoid mistaking decoration for a second playing boundary.
+        c.strokeStyle='#def6ff10';c.lineWidth=.65;this.rounded(c,.5,.5,W-1,H-1,8);c.stroke();
         this.backgroundKey=key;
       }
-      burst(x,y,color,now,strong=false) {
-        const count=this.reducedMotion?0:strong?28:13;
+      burst(x,y,color,now,strong=false){
+        const count=this.reducedMotion?0:strong?36:19;
         for(let i=0;i<count;i++){
-          const angle=this.random()*Math.PI*2,speed=40+this.random()*(strong?245:170);
-          this.particles.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,born:now,life:.25+this.random()*.45,color});
+          const a=this.random()*Math.PI*2,v=35+this.random()*(strong?250:165);
+          this.particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,born:now,life:.23+this.random()*.38,color,core:i%4===0});
         }
-        this.rings.push({x,y,born:now,life:strong ? .65 : .40,color,strong});
-        if(this.particles.length>100)this.particles.splice(0,this.particles.length-100);
-        if(this.rings.length>8)this.rings.shift();
+        if(!this.reducedMotion)this.rings.push({x,y,born:now,life:strong?.7:.42,color,strong});
+        if(this.particles.length>128)this.particles.splice(0,this.particles.length-128);
+        if(this.rings.length>10)this.rings.shift();
       }
-      observe(g,p) {
-        const b=g.ball,old=this.previous,now=g.elapsed;
-        if(old&&old.matchId===g.matchId&&g.phase===Phase.PLAYING){
-          if(old.leftScore!==g.match.leftScore||old.rightScore!==g.match.rightScore){
-            const side=old.leftScore!==g.match.leftScore?'left':'right';
-            this.scoreFlash={side,born:now};this.burst(side==='left'?WORLD.width-8:8,clamp(old.y,20,WORLD.height-20),p[side],now,true);
-          }else if(!g.serveSide&&g.respawnRemaining<=0&&!old.serve){
-            if(b.vx*old.vx<0){const side=b.x<WORLD.width/2?'left':'right';this.burst(b.x,b.y,p[side],now);}
-            else if(b.vy*old.vy<0&&(b.y<45||b.y>WORLD.height-45))this.burst(b.x,b.y,'#a9d7ed',now);
+      observe(g,p){
+        const b=g.ball,o=this.previous,t=g.elapsed;
+        if(o&&o.matchId!==g.matchId){this.particles.length=0;this.rings.length=0;this.scoreFlash=null;}
+        if(o&&o.matchId===g.matchId&&g.phase===Phase.PLAYING){
+          if(o.leftScore!==g.match.leftScore||o.rightScore!==g.match.rightScore){
+            const side=o.leftScore!==g.match.leftScore?'left':'right';
+            this.scoreFlash={side,born:t};this.burst(side==='left'?WORLD.width-5:5,clamp(o.y,15,WORLD.height-15),p[side],t,true);
+          }else if(!g.serveSide&&g.respawnRemaining<=0&&!o.serve){
+            if(b.vx*o.vx<0){const side=b.x<WORLD.width/2?'left':'right';this.burst(b.x,b.y,p[side],t);}
+            else if(b.vy*o.vy<0&&(b.y<50||b.y>WORLD.height-50))this.burst(b.x,b.y,'#bedfff',t);
           }
-          if(g.effect&&g.effect.applied!==false&&old.effect!==g.effect.type)this.burst(b.x,b.y,POWERUPS[g.effect.type].color,now,true);
+          if(g.effect&&g.effect.applied!==false&&o.effect!==g.effect.type)this.burst(b.x,b.y,POWERUPS[g.effect.type].color,t,true);
         }
         this.previous={x:b.x,y:b.y,vx:b.vx,vy:b.vy,serve:g.serveSide,leftScore:g.match.leftScore,rightScore:g.match.rightScore,effect:g.effect&&g.effect.applied!==false?g.effect.type:null,matchId:g.matchId};
       }
-      drawPaddle(g,p,paddle,side) {
-        const ctx=this.ctx,color=p[side],rgb=side==='left'?p.leftRGB:p.rightRGB;
-        const x=paddle.x,y=paddle.y,w=paddle.width,h=paddle.height;
-        this.glow(ctx,color,x+w/2,y+h/2,80,h+68,.31);
-        ctx.save();
-        const gradient=ctx.createLinearGradient(x,0,x+w,0);
-        gradient.addColorStop(0,rgba(rgb,.34));gradient.addColorStop(.38,color);gradient.addColorStop(.63,'#f1fcff');gradient.addColorStop(1,rgba(rgb,.64));
-        ctx.fillStyle=gradient;this.rounded(ctx,x,y,w,h,Math.min(4,w/2));ctx.fill();
-        ctx.strokeStyle='#e0faff8c';ctx.lineWidth=.8;ctx.stroke();
-        ctx.fillStyle='#ffffffb0';ctx.fillRect(x+(side==='left'?w-3:1),y+5,1.5,Math.max(0,h-10));
-        ctx.fillStyle=rgba(rgb,.5);ctx.fillRect(x-3,y+h/2-9,1,18);ctx.fillRect(x+w+2,y+h/2-9,1,18);
-        if(paddle.height>paddle.baseHeight*1.1){
-          ctx.strokeStyle=color;ctx.lineWidth=1;ctx.globalAlpha=.6;ctx.setLineDash([4,4]);
-          this.rounded(ctx,x-5,y-5,w+10,h+10,5);ctx.stroke();ctx.setLineDash([]);
+      ballColor(g,p){
+        if(g.curveRemaining>0)return '#ffbf76';
+        if(g.effect&&g.effect.applied!==false)return POWERUPS[g.effect.type].color;
+        return Math.abs(g.ball.spin)>.15?'#b5ecff':g.ball.vx<0?p.right:p.left;
+      }
+      drawLighting(g,p){
+        if(g.settings.graphicsQuality==='balanced')return;
+        const c=this.ctx,b=g.ball,H=WORLD.height;
+        // Pools of reflected light follow the two paddles, below the sharply drawn bodies.
+        for(const side of ['left','right']){
+          const d=g[side],x=d.x+d.width/2,y=d.y+d.height/2,dir=side==='left'?1:-1;
+          this.glow(c,p[side],x+dir*20,y,260,d.height*2.4,.19);
+          this.glow(c,p[side],x+dir*48,y+7,128,12,.20);
+          c.save();c.fillStyle='#00081268';this.rounded(c,d.x+dir*6,d.y+6,d.width+4,d.height,5);c.fill();c.restore();
+        }
+        if(g.respawnRemaining>0)return;
+        const color=this.ballColor(g,p);
+        this.glow(c,color,b.x,b.y,180,150,.21);this.glow(c,color,b.x+4,b.y+9,55,13,.32);
+        for(const y of [0,H]){
+          const weight=Math.max(0,1-Math.abs(b.y-y)/150);
+          if(weight>0){this.glow(c,color,b.x,y,125+110*weight,34+18*weight,.36*weight);}
+        }
+      }
+      drawPaddle(g,p,d,side){
+        const c=this.ctx,rgb=side==='left'?p.leftRGB:p.rightRGB,color=p[side];
+        const x=d.x,y=d.y,w=d.width,h=d.height,ultra=g.settings.graphicsQuality!=='balanced';
+        this.glow(c,color,x+w/2,y+h/2,56,h+62,.46);
+        c.save();
+        let a=c.createLinearGradient(x,0,x+w,0);
+        a.addColorStop(0,'#0c1c2b');a.addColorStop(.12,'#67828f');a.addColorStop(.26,'#152f41');
+        a.addColorStop(.57,'#21485a');a.addColorStop(.85,'#71939e');a.addColorStop(1,'#0b1e2c');
+        c.fillStyle=a;this.rounded(c,x,y,w,h,4);c.fill();c.strokeStyle=rgba(rgb,.78);c.lineWidth=.65;c.stroke();
+        // Glass emitter set into a bevelled alloy shell.
+        a=c.createLinearGradient(x+2,0,x+w-2,0);a.addColorStop(0,rgba(rgb,.62));a.addColorStop(.43,'#edfeff');a.addColorStop(.65,color);a.addColorStop(1,rgba(rgb,.58));
+        c.fillStyle=a;this.rounded(c,x+2,y+5,w-4,Math.max(2,h-10),2);c.fill();
+        const fade=c.createLinearGradient(0,y,0,y+h);fade.addColorStop(0,'#f6ffff8a');fade.addColorStop(.25,'#f6ffff1a');fade.addColorStop(.55,'#f6ffff00');fade.addColorStop(1,'#020d223c');
+        c.fillStyle=fade;this.rounded(c,x+2,y+5,w-4,Math.max(2,h-10),2);c.fill();
+        c.fillStyle='#f8ffffb0';c.fillRect(side==='left'?x+w-2.2:x+1.2,y+8,.7,Math.max(1,h-16));
+        for(const cap of [y+2,y+h-3]){
+          c.fillStyle='#d6eef67a';c.fillRect(x+3,cap,w-6,1);c.fillStyle='#091522';c.fillRect(x+4,cap+.2,1,.6);
+        }
+        if(ultra){
+          c.strokeStyle=rgba(rgb,.35);c.lineWidth=.5;c.beginPath();
+          for(let cy=y+18;cy<y+h-14;cy+=11){c.moveTo(x+3,cy);c.lineTo(x+w-3,cy);}c.stroke();
+          const out=side==='left'?x-3:x+w+3;c.fillStyle=rgba(rgb,.70);
+          for(let i=-2;i<=2;i++)c.fillRect(out,y+h/2+i*4,1.3,2);
+          this.glow(c,color,x+w/2,y+4,26,17,.52);this.glow(c,color,x+w/2,y+h-4,26,17,.36);
+        }
+        if(h>d.baseHeight*1.1){
+          c.strokeStyle=color;c.globalAlpha=.5;c.lineWidth=.65;c.setLineDash([3,5]);
+          this.rounded(c,x-4,y-5,w+8,h+10,5);c.stroke();c.setLineDash([]);
         }
         const shield=side==='left'?g.match.leftShield:g.match.rightShield;
         if(shield&&(side!=='right'||g.settings.mode!=='ai')){
-          const sx=side==='left'?16:WORLD.width-16;
-          this.glow(ctx,color,sx,WORLD.height/2,32,WORLD.height*1.4,.24);
-          ctx.strokeStyle=color;ctx.lineWidth=2;ctx.globalAlpha=.42;ctx.setLineDash([8,5]);
-          ctx.beginPath();ctx.moveTo(sx,8);ctx.lineTo(sx,WORLD.height-8);ctx.stroke();ctx.setLineDash([]);
+          const sx=side==='left'?15:WORLD.width-15;
+          this.glow(c,color,sx,WORLD.height/2,36,WORLD.height*1.4,.23);
+          c.strokeStyle=color;c.lineWidth=1.1;c.globalAlpha=.5;c.setLineDash([8,5]);c.beginPath();
+          c.moveTo(sx,12);c.lineTo(sx,WORLD.height-12);c.stroke();c.setLineDash([]);
         }
-        ctx.restore();
+        c.restore();
       }
-      drawBall(g,p) {
-        const ctx=this.ctx,b=g.ball;
-        let color=b.vx<0?p.right:p.left;
-        if(g.curveRemaining>0)color='#ffbc69';
-        else if(g.effect&&g.effect.applied!==false)color=POWERUPS[g.effect.type].color;
-        else if(Math.abs(b.spin)>.15)color='#9ceaff';
-        const trail=g.trail;
-        if(!this.reducedMotion&&trail.length>1&&!g.serveSide){
-          ctx.save();ctx.lineCap='round';ctx.globalCompositeOperation='lighter';
-          for(let i=1;i<trail.length;i++){
-            const a=i/trail.length;ctx.strokeStyle=color;ctx.globalAlpha=a*a*.42;ctx.lineWidth=Math.max(1,b.radius*1.6*a);
-            ctx.beginPath();ctx.moveTo(trail[i-1].x,trail[i-1].y);ctx.lineTo(trail[i].x,trail[i].y);ctx.stroke();
-          }
-          ctx.restore();
+      ribbon(c,points,color,scale,opacity){
+        // A single closed tapered mesh avoids bright round caps/beads between samples.
+        if(points.length<2)return;
+        c.beginPath();
+        for(let edge=0;edge<2;edge++)for(let k=0;k<points.length;k++){
+          const i=edge?points.length-1-k:k,d=points[i],prev=points[Math.max(0,i-1)],next=points[Math.min(points.length-1,i+1)];
+          const dx=next.x-prev.x,dy=next.y-prev.y,len=Math.hypot(dx,dy)||1;
+          const t=i/(points.length-1),r=Math.max(.025,d.r)*scale*Math.pow(t,.8)*(edge?-1:1);
+          const x=d.x-dy/len*r,y=d.y+dx/len*r;
+          if(edge===0&&k===0)c.moveTo(x,y);else c.lineTo(x,y);
         }
-        this.glow(ctx,color,b.x,b.y,68,68,.84);
-        ctx.save();
-        const core=ctx.createRadialGradient(b.x-b.radius*.3,b.y-b.radius*.3,0,b.x,b.y,b.radius*1.1);
-        core.addColorStop(0,'#ffffff');core.addColorStop(.4,'#edfcff');core.addColorStop(1,color);
-        ctx.fillStyle=core;ctx.beginPath();ctx.arc(b.x,b.y,b.radius,0,Math.PI*2);ctx.fill();
+        c.closePath();
+        const a=points[0],b=points[points.length-1];
+        if(Math.hypot(b.x-a.x,b.y-a.y)<.1){c.fillStyle=color;c.globalAlpha=opacity*.4;}
+        else {const grad=c.createLinearGradient(a.x,a.y,b.x,b.y);grad.addColorStop(0,color+'00');grad.addColorStop(.45,color+'38');grad.addColorStop(1,color);c.fillStyle=grad;c.globalAlpha=opacity;}
+        c.fill();
+      }
+      drawBall(g,p){
+        const c=this.ctx,b=g.ball,color=this.ballColor(g,p),ultra=g.settings.graphicsQuality!=='balanced';
+        if(!this.reducedMotion&&g.trail.length>1&&!g.serveSide){
+          // Cut at long corrections; a network teleport is not a real ball trail.
+          let start=0;for(let i=1;i<g.trail.length;i++)if(Math.hypot(g.trail[i].x-g.trail[i-1].x,g.trail[i].y-g.trail[i-1].y)>100)start=i;
+          const pts=g.trail.slice(start);pts.push({x:b.x,y:b.y,r:b.radius});
+          c.save();c.globalCompositeOperation='lighter';
+          if(ultra){this.ribbon(c,pts,color,2.3,.075);this.ribbon(c,pts,color,1.4,.15);}
+          this.ribbon(c,pts,color,.63,.73);this.ribbon(c,pts,'#e7faff',.18,.62);c.restore();
+        }
+        this.glow(c,color,b.x,b.y,68,68,.76);
+        if(ultra){this.glow(c,color,b.x,b.y,116,7,.28);this.glow(c,color,b.x,b.y,7,40,.18);}
+        c.save();
+        const a=c.createRadialGradient(b.x-b.radius*.38,b.y-b.radius*.42,.05,b.x,b.y,b.radius*1.15);
+        a.addColorStop(0,'#ffffff');a.addColorStop(.29,'#f4ffff');a.addColorStop(.64,color);a.addColorStop(1,'#42708a');
+        c.fillStyle=a;c.beginPath();c.arc(b.x,b.y,b.radius,0,Math.PI*2);c.fill();
+        c.strokeStyle='#eeffffa8';c.lineWidth=.5;c.stroke();
+        c.fillStyle='#ffffffb0';c.beginPath();c.ellipse(b.x-b.radius*.23,b.y-b.radius*.30,b.radius*.38,b.radius*.18,-.6,0,Math.PI*2);c.fill();
         if(Math.abs(b.spin)>.1||g.curveRemaining>0){
-          const a=this.reducedMotion?0:g.elapsed*6;
-          ctx.strokeStyle=color;ctx.globalAlpha=.65;ctx.lineWidth=1;
-          ctx.beginPath();ctx.arc(b.x,b.y,b.radius+6,a,a+Math.PI*1.25);ctx.stroke();
-          ctx.globalAlpha=.24;ctx.beginPath();ctx.arc(b.x,b.y,b.radius+10,-a,-a+Math.PI);ctx.stroke();
+          const t=this.reducedMotion?0:g.elapsed*5;
+          c.strokeStyle=color;c.lineWidth=.75;c.globalAlpha=.62;c.beginPath();c.arc(b.x,b.y,b.radius+6,t,t+Math.PI*.9);c.stroke();
+          if(ultra){c.globalAlpha=.25;c.beginPath();c.arc(b.x,b.y,b.radius+10,-t,-t+Math.PI*.72);c.stroke();}
         }
         if(g.serveSide){
-          const alpha=this.reducedMotion ? .7 : .5+Math.sin(g.elapsed*4)*.18;
-          ctx.strokeStyle=color;ctx.globalAlpha=alpha;ctx.lineWidth=1;
-          ctx.beginPath();ctx.arc(b.x,b.y,b.radius+13,0,Math.PI*2);ctx.stroke();
-          const dir=g.serveSide==='left'?1:-1,tx=b.x+dir*27;
-          ctx.beginPath();ctx.moveTo(tx-dir*4,b.y-5);ctx.lineTo(tx+dir*1,b.y);ctx.lineTo(tx-dir*4,b.y+5);ctx.stroke();
+          const t=this.reducedMotion?0:g.elapsed*1.8;
+          c.strokeStyle=color;c.lineWidth=.85;c.globalAlpha=.65;
+          for(let i=0;i<3;i++){c.beginPath();c.arc(b.x,b.y,b.radius+14,t+i*Math.PI*2/3,t+i*Math.PI*2/3+Math.PI*.44);c.stroke();}
+          const dir=g.serveSide==='left'?1:-1;
+          for(let i=0;i<3;i++){const x=b.x+dir*(30+i*8);c.globalAlpha=.6-i*.17;c.beginPath();c.moveTo(x-dir*3,b.y-3.5);c.lineTo(x,b.y);c.lineTo(x-dir*3,b.y+3.5);c.stroke();}
         }
-        ctx.restore();
+        c.restore();
       }
-      drawParticles(g) {
-        const ctx=this.ctx,now=g.elapsed;
-        ctx.save();ctx.globalCompositeOperation='lighter';ctx.lineCap='round';
-        this.particles=this.particles.filter(p=>now-p.born<p.life&&now>=p.born);
-        const budget=g.settings.graphicsQuality==='balanced'?36:100;
-        for(const p of this.particles.slice(-budget)){
-          const age=now-p.born,t=age/p.life;
-          const x=p.x+p.vx*age,y=p.y+p.vy*age;
-          ctx.strokeStyle=p.color;ctx.globalAlpha=(1-t)*(1-t)*.8;ctx.lineWidth=1.4;
-          ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-p.vx*.017,y-p.vy*.017);ctx.stroke();
+      drawParticles(g){
+        const c=this.ctx,t=g.elapsed,ultra=g.settings.graphicsQuality!=='balanced';
+        this.particles=this.particles.filter(p=>t>=p.born&&t-p.born<p.life);
+        this.rings=this.rings.filter(p=>t>=p.born&&t-p.born<p.life);
+        c.save();c.globalCompositeOperation='lighter';c.lineCap='round';
+        const cap=ultra?128:32;
+        for(let i=Math.max(0,this.particles.length-cap);i<this.particles.length;i++){
+          const p=this.particles[i],age=t-p.born,k=age/p.life,ease=(1-Math.exp(-3*age))/3;
+          const x=p.x+p.vx*ease,y=p.y+p.vy*ease;
+          c.strokeStyle=p.core?'#edfbff':p.color;c.globalAlpha=(1-k)*(1-k)*.85;c.lineWidth=p.core?1.4:.75;
+          c.beginPath();c.moveTo(x,y);c.lineTo(x-p.vx*.015*(1-k),y-p.vy*.015*(1-k));c.stroke();
         }
-        this.rings=this.rings.filter(p=>now-p.born<p.life&&now>=p.born);
-        for(const ring of this.rings){
-          const t=(now-ring.born)/ring.life,r=4+(ring.strong?70:32)*t;
-          ctx.strokeStyle=ring.color;ctx.globalAlpha=(1-t)*.4;ctx.lineWidth=1.5*(1-t)+.4;
-          ctx.beginPath();ctx.arc(ring.x,ring.y,r,0,Math.PI*2);ctx.stroke();
+        for(const r of this.rings){
+          const k=(t-r.born)/r.life;
+          c.strokeStyle=r.color;c.globalAlpha=(1-k)**2*.5;c.lineWidth=.6+1.1*(1-k);c.beginPath();
+          c.arc(r.x,r.y,4+(r.strong?92:40)*(1-(1-k)**2),0,Math.PI*2);c.stroke();
+          if(ultra){this.glow(c,r.color,r.x,r.y,130,130,(1-k)**3*.36);}
         }
-        ctx.restore();
+        c.restore();
       }
-      render(g) {
-        const ctx=this.ctx,W=WORLD.width,H=WORLD.height,p=this.palette(g);
-        this.ensureBackground(g,p);this.observe(g,p);
-        ctx.save();ctx.setTransform(1,0,0,1,0,0);
-        if(this.background)ctx.drawImage(this.background,0,0);else{ctx.fillStyle='#060e1a';ctx.fillRect(0,0,this.canvas.width,this.canvas.height);}
-        ctx.setTransform(this.canvas.width/W,0,0,this.canvas.height/H,0,0);
-        // The viewport projection fills every pixel without changing the shared simulation space.
-        ctx.textAlign='center';ctx.font='600 122px ui-monospace,Consolas,monospace';
-        ctx.fillStyle=rgba(p.leftRGB,.045);ctx.fillText(String(g.match.leftScore).padStart(2,'0'),W*.31,155);
-        ctx.fillStyle=rgba(p.rightRGB,.045);ctx.fillText(String(g.match.rightScore).padStart(2,'0'),W*.69,155);
+      drawScore(g,p){
+        const c=this.ctx,W=WORLD.width,H=WORLD.height;
+        // Quiet watermark scores; the readable HUD remains above the field in fullscreen.
+        c.save();c.textAlign='center';c.font='600 100px ui-monospace,Consolas,monospace';
+        for(const side of ['left','right']){
+          const rgb=side==='left'?p.leftRGB:p.rightRGB,x=W*(side==='left'?.28:.72);
+          c.fillStyle=rgba(rgb,.035);c.fillText(String(g.match[side+'Score']).padStart(2,'0'),x,147);
+          c.strokeStyle=rgba(rgb,.07);c.lineWidth=.55;c.strokeText(String(g.match[side+'Score']).padStart(2,'0'),x,147);
+        }
         if(this.scoreFlash){
-          const t=(g.elapsed-this.scoreFlash.born)/.65;
-          if(t>=0&&t<1){
-            const rgb=this.scoreFlash.side==='left'?p.leftRGB:p.rightRGB;
-            const at=this.scoreFlash.side==='left'?W:0;
-            const gradient=ctx.createLinearGradient(at,0,at===0?260:W-260,0);
-            gradient.addColorStop(0,rgba(rgb,(1-t)*.26));gradient.addColorStop(1,rgba(rgb,0));
-            ctx.fillStyle=gradient;ctx.fillRect(at===0?0:W-260,0,260,H);
+          const t=(g.elapsed-this.scoreFlash.born)/.8;
+          if(t>=0&&t<1&&!this.reducedMotion){
+            const side=this.scoreFlash.side,rgb=side==='left'?p.leftRGB:p.rightRGB,x=side==='left'?W:0;
+            let a=c.createLinearGradient(x,0,x===0?320:W-320,0);
+            a.addColorStop(0,rgba(rgb,(1-t)**2*.26));a.addColorStop(1,rgba(rgb,0));c.fillStyle=a;c.fillRect(x===0?0:W-320,0,320,H);
+            c.strokeStyle=rgba(rgb,(1-t)**2*.35);c.lineWidth=1;c.beginPath();c.moveTo(x+(x===0?1:-1)*t*180,0);c.lineTo(x+(x===0?1:-1)*t*180,H);c.stroke();
           }else this.scoreFlash=null;
         }
-        this.drawPaddle(g,p,g.left,'left');this.drawPaddle(g,p,g.right,'right');
-        if(g.respawnRemaining<=0)this.drawBall(g,p);
-        this.drawParticles(g);
-        const full=document.getElementById('gameShell').classList.contains('immersive');
-        if(!full){
-          ctx.textAlign='center';ctx.font='500 10px system-ui,sans-serif';ctx.fillStyle='#aacbdd80';
-          let label=g.phase===Phase.MENU?'选择玩法 · 开始对决':g.phase===Phase.PAUSED?'对局已暂停':g.serveSide?(g.serveSide==='left'?'左方':'右方')+'准备发球':'';
-          if(g.effect)label=POWERUPS[g.effect.type].label+(g.effect.applied===false?' · 待生效':'')+'  /  '+Math.max(0,g.effect.remaining).toFixed(1)+'s';
-          if(label)ctx.fillText(label,W/2,27);
+        c.restore();
+      }
+      render(g){
+        const c=this.ctx,W=WORLD.width,H=WORLD.height,p=this.palette(g);
+        this.ensureBackground(g,p);this.observe(g,p);
+        c.save();c.setTransform(1,0,0,1,0,0);
+        if(this.background)c.drawImage(this.background,0,0);else{c.fillStyle='#07101a';c.fillRect(0,0,this.canvas.width,this.canvas.height);}
+        // Backing buffer is exactly 16:9, so x/y use the same world-to-pixel scale.
+        const scale=this.canvas.width/W;c.setTransform(scale,0,0,scale,0,0);
+        this.drawScore(g,p);this.drawLighting(g,p);this.drawPaddle(g,p,g.left,'left');this.drawPaddle(g,p,g.right,'right');
+        if(g.respawnRemaining<=0)this.drawBall(g,p);this.drawParticles(g);
+        if(!document.getElementById('gameShell').classList.contains('immersive')){
+          let label=g.phase===Phase.MENU?'准备入场':g.phase===Phase.PAUSED?'已暂停':g.serveSide?(g.serveSide==='left'?'左方':'右方')+'准备发球':'';
+          if(g.effect)label=POWERUPS[g.effect.type].label+(g.effect.applied===false?' · 待生效':'')+' / '+Math.max(0,g.effect.remaining).toFixed(1)+'s';
+          if(label){
+            c.font='500 9px system-ui,sans-serif';c.textAlign='center';const w=c.measureText(label).width+30;
+            c.fillStyle='#0c1d2baa';this.rounded(c,W/2-w/2,13,w,21,10);c.fill();c.strokeStyle='#c1e5f21e';c.lineWidth=.6;c.stroke();
+            c.fillStyle='#b7d8e4bb';c.fillText(label,W/2,27);
+          }
         }
-        ctx.restore();
+        c.restore();
       }
     }
 
@@ -1537,8 +1762,15 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         const field=document.getElementById('gameContainer');
         const shell=document.getElementById('gameShell');
         const full=(document.fullscreenElement||document.webkitFullscreenElement)===shell;
-        if(full) field.style.removeProperty('--court-limit');
-        else if(window.innerWidth>800||window.innerHeight<501) {
+        if(full) {
+          field.style.removeProperty('--court-limit');
+          const wrap=field.parentElement,style=getComputedStyle(wrap);
+          const availableWidth=Math.max(1,wrap.clientWidth-(parseFloat(style.paddingLeft)||0)-(parseFloat(style.paddingRight)||0));
+          const availableHeight=Math.max(1,wrap.clientHeight-(parseFloat(style.paddingTop)||0)-(parseFloat(style.paddingBottom)||0));
+          const width=Math.min(availableWidth,availableHeight*16/9),height=width*9/16;
+          for(const [key,value] of [['--full-court-width',width+'px'],['--full-court-height',height+'px']])
+            if(field.style.getPropertyValue(key)!==value)field.style.setProperty(key,value);
+        } else if(window.innerWidth>800||window.innerHeight<501) {
           const bounds=field.getBoundingClientRect();
           const perf=document.querySelector('.performance-strip').getBoundingClientRect();
           const top=Math.max(0,bounds.top);
@@ -1570,7 +1802,8 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
           const dpr=Math.min(window.devicePixelRatio||1,high?2:1.25);
           const pixelBudget=high?8388608:3000000;
           const density=Math.min(dpr,Math.sqrt(pixelBudget/Math.max(1,rect.width*rect.height)));
-          const width=Math.max(1,Math.round(rect.width*density)),height=Math.max(1,Math.round(rect.height*density));
+          const units=Math.max(1,Math.floor(Math.min(rect.width*density/16,rect.height*density/9)));
+          const width=units*16,height=units*9;
           if(this.canvas.width!==width||this.canvas.height!==height){this.canvas.width=width;this.canvas.height=height;}
           this.ctx.imageSmoothingEnabled=true;
           this.ctx.imageSmoothingQuality='high';
@@ -2831,7 +3064,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         this.renderModeBtn.setAttribute('aria-label',ascii?'切换到精致图形':'切换到 ASCII 纯字符');
         this.game.ascii.element.setAttribute('aria-hidden',String(!ascii));
         this.game.canvas.setAttribute('aria-hidden',String(ascii));
-        document.getElementById('rendererBadge').textContent=ascii?'ASCII / 文本直绘':'LIGHT / 精致图形';
+        document.getElementById('rendererBadge').textContent=ascii?'ASCII / 文本直绘':'OPTICAL / 精致图形';
         document.getElementById('asciiPerfSection').hidden=!ascii;
         document.getElementById('graphicsQualitySection').hidden=ascii;
         document.querySelectorAll('[data-setting="renderMode"]').forEach(b=>{
@@ -3187,22 +3420,47 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         game.lastTs=performance.now();game.accumulator=0;game.resetPerf();game.requestDraw();
       }
     });
-    function updateOrientationHint() {
-      const hint=document.getElementById('rotateHint');
-      const portrait=IS_MOBILE&&window.innerHeight>window.innerWidth;
-      hint.classList.toggle('show',portrait);hint.setAttribute('aria-hidden',String(!portrait));
+    // Only a hint, never an automatic orientation lock or a blocking overlay.
+    // Connection/game state is not changed when rotating, dismissing, or resizing.
+    let previousPortrait=null,orientationDismissed=false,orientationFrame=null;
+    function updateOrientationHint(){
+      const hint=document.getElementById('rotateHint'),shell=document.getElementById('gameShell');
+      let portrait=IS_MOBILE&&window.innerHeight>window.innerWidth;
+      // The soft keyboard should not be mistaken for a physical device rotation.
+      if(ui.isTypingTarget(document.activeElement)&&previousPortrait!==null)portrait=previousPortrait;
+      if(!portrait)orientationDismissed=false;
+      previousPortrait=portrait;
+      const show=portrait&&!orientationDismissed;
+      hint.hidden=!show;hint.setAttribute('aria-hidden',String(!show));
+      shell.classList.toggle('portrait-hint-visible',show);
+      document.getElementById('rotateFullscreenBtn').hidden=ui.getFullscreenElement()===ui.fullscreenTarget;
     }
+    function scheduleOrientationUpdate(){
+      if(orientationFrame!==null)return;
+      orientationFrame=requestAnimationFrame(()=>{orientationFrame=null;updateOrientationHint();game.resizeCanvas();game.requestDraw();});
+    }
+    document.getElementById('rotateDismissBtn').addEventListener('click',()=>{
+      orientationDismissed=true;updateOrientationHint();
+    });
+    document.getElementById('rotateFullscreenBtn').addEventListener('click',()=>ui.toggleFullscreen());
+    window.addEventListener('resize',scheduleOrientationUpdate);
+    window.addEventListener('orientationchange',scheduleOrientationUpdate);
+    screen.orientation?.addEventListener?.('change',scheduleOrientationUpdate);
+    window.visualViewport?.addEventListener('resize',scheduleOrientationUpdate);
+    document.addEventListener('fullscreenchange',scheduleOrientationUpdate);
+    document.addEventListener('webkitfullscreenchange',scheduleOrientationUpdate);
+    document.addEventListener('focusout',scheduleOrientationUpdate);
     updateOrientationHint();
-    window.addEventListener('resize',updateOrientationHint);
-    // Orientation is a hint, never a full-screen blocker or a forced orientation lock.
 
     window.PONG84 = Object.freeze({
-      version:'4.0.0',
-      diagnostics:()=>({ version:'4.0.0', phase:game.phase, renderer:game.settings.renderMode==='ascii'?'DOM ASCII':'Canvas 2D',
+      version:'4.1.0',
+      diagnostics:()=>({ version:'4.1.0', phase:game.phase, renderer:game.settings.renderMode==='ascii'?'DOM ASCII':'Canvas 2D',
         profile:game.settings.renderProfile, targetFps:game.targetRenderFps(), grid:[game.ascii.cols,game.ascii.rows],
         canvasInitialized:!!game.ctx, canvasSize:[game.canvas.width,game.canvas.height],graphicsQuality:game.settings.graphicsQuality,
         graphicalCaches:game.graphics?game.graphics.sprites.size+(game.graphics.background?1:0):0,
         nativeFullscreen:ui.getFullscreenElement()===ui.fullscreenTarget,viewport:[innerWidth,innerHeight],
+         court:(()=>{const r=document.getElementById('gameContainer').getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,aspect:r.width/r.height};})(),
+         orientationHint:!document.getElementById('rotateHint').hidden,
         activeFrameLoop:!!game.raf, stats:{...game.stats},
         network:{transport:ui.transportMode, connected:online.connected, role:online.role, rtt:Math.round(online.rtt||0)} })
     });
