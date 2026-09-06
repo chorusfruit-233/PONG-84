@@ -37,7 +37,9 @@
         const [lo,hi]=seatZone(p.id,s.formation);if(p.y<lo-.01||p.y+p.h>hi+.01)return false;ids.add(p.id);}
       if(s.serve!==null&&!D4.seats.includes(s.serve))return false;
       if(s.effect&&(!Object.hasOwn(POWERUPS,s.effect.type)||!Number.isFinite(s.effect.remaining)||s.effect.remaining<0||s.effect.remaining>10||
-        (s.effect.type==='long'&&!D4.seats.includes(s.effect.target))))return false;
+        (s.effect.type==='long'&&!D4.seats.includes(s.effect.target))||
+        (s.effect.type==='multi'&&(s.effect.target!==null||!s.extraBall))))return false;
+      if(s.extraBall&&(![s.extraBall.x,s.extraBall.y,s.extraBall.vx,s.extraBall.vy,s.extraBall.r].every(Number.isFinite)||s.extraBall.r<1||s.extraBall.r>24))return false;
       if(!a||![a.elapsed,a.effectCooldown,a.curveChange,a.aiServe].every(Number.isFinite)||a.elapsed<0||a.effectCooldown<0||a.effectCooldown>20||
         a.curveChange<-.1||a.curveChange>2||a.aiServe<0||a.aiServe>3||![1,-1].includes(a.nextServeDir)||
         ![0,1].includes(a.serveTurns?.left)||![0,1].includes(a.serveTurns?.right)||a.lastHit!==null&&!D4.seats.includes(a.lastHit))return false;
@@ -57,7 +59,7 @@
       constructor(canvas,ctx,audio,input,online,room){
         super(canvas,ctx,audio,input,online);this.room=room;room.game=this;this.roundId=0;this.eventId=0;this.serveSlot=null;
         this.serveTurns={left:0,right:0};this.pauseReason='';this.samples=[];this.pendingInputs=[];this.clientSafety=false;
-        this.localInputElapsed=0;this.simTime=0;this.lastD4SnapshotAt=0;this.clientBarrier=null;this.lastHitSeat=null;this.botBrains={};this.snapshotTerm=0;this.botPlans={};this.botMotion={};this.botClock=0;this.botTactics=newD4Tactics();this.resetD4Senses();
+        this.localInputElapsed=0;this.simTime=0;this.lastD4SnapshotAt=0;this.clientBarrier=null;this.lastHitSeat=null;this.botBrains={};this.snapshotTerm=0;this.botPlans={};this.botMotion={};this.botClock=0;this.botTactics=newD4Tactics();this.extraBalls=[];this.resetD4Senses();
       }
       isDoubles(){return this.settings?.mode==='doubles';}
       isOnline(){return this.isDoubles()||super.isOnline();}
@@ -88,7 +90,7 @@
       clearD4Preview(){
         if(!this.isDoubles())return;this.phase=Phase.MENU;this.matchId='';this.roundId=0;this.eventId=0;this.serveSlot=this.serveSide=null;
         this.match={leftScore:0,rightScore:0,leftStreak:0,rightStreak:0,leftShield:false,rightShield:false,remaining:0};
-        this.effect=null;this.curveRemaining=0;this.respawnRemaining=0;this.samples=[];this.pendingInputs=[];this.clientSafety=false;this.pauseReason='';this.lastHitSeat=null;
+        this.effect=null;this.extraBalls=[];this.curveRemaining=0;this.respawnRemaining=0;this.samples=[];this.pendingInputs=[];this.clientSafety=false;this.pauseReason='';this.lastHitSeat=null;
         this.trail.length=0;this.ball.x=480;this.ball.y=270;this.ball.vx=this.ball.vy=0;this.ball.radius=this.ball.baseRadius;
         this.applySettingsToEntities();for(const p of this.ensureD4Pads())p.y=(p.minY+p.maxY-p.height)/2;
       }
@@ -96,7 +98,7 @@
         this.matchId=sessionId();this.roundId=0;this.eventId=0;this.simTime=0;this.stateSeq=0;this.inputSeq=0;this.lastSnapshotSeq=-1;this.snapshotTerm=this.room.term;
         this.match={leftScore:0,rightScore:0,leftStreak:0,rightStreak:0,leftShield:false,rightShield:false,remaining:0};
         this.botTactics=newD4Tactics();this.botPlans={};this.botMotion={};this.botClock=0;this.resetD4Senses();
-        this.settings.score=this.room.score;this.cheat=false;this.cheatMul=1;this.effect=null;
+        this.settings.score=this.room.score;this.cheat=false;this.cheatMul=1;this.effect=null;this.extraBalls=[];
         this.effectCooldown=randomRange(EFFECT_TIMING.firstMin,EFFECT_TIMING.firstMax);this.clearCurve();this.trail.length=0;
         this.samples=[];this.pendingInputs=[];this.clientSafety=false;this.pauseReason='';this.respawnRemaining=0;this.serveSide=this.serveSlot=null;
         this.networkAccumulator=0;this.networkInputAccumulator=0;this.localInputElapsed=0;this.elapsed=0;this.countdownMark=null;this.botBrains={};this.lastHitSeat=null;
@@ -106,7 +108,7 @@
       }
       prepareServe(side){
         if(!this.isDoubles())return super.prepareServe(side);
-        this.room?.roundBoundary();this.clearEffect(false);this.clearCurve();this.serveSide=side==='right'?'right':'left';
+        this.room?.roundBoundary();this.clearEffect(false);this.clearCurve();this.extraBalls=[];this.serveSide=side==='right'?'right':'left';
         const n=this.serveTurns[this.serveSide]||0;this.serveSlot=(this.serveSide==='left'?'A':'B')+(n+1);this.serveTurns[this.serveSide]=1-n;
         const tactics=this.ensureD4Tactics();tactics.pending=null;tactics.rallyHits=0;tactics.rallyTime=0;
         for(const side of ['left','right'])tactics.teams[side].chain=[];
@@ -143,8 +145,16 @@
         if(this.isHost()&&!fromNetwork)this.room.finish(text);this.emitUi();this.onEnd?.(text,leftWins);
       }
       quitToMenu(){if(this.isDoubles()&&this.room?.role){this.room.leaveRoom().catch(e=>{this.room.notice=e.message;this.room.emit();});return;}super.quitToMenu();}
-      spawnEffect(type=choice(Object.keys(POWERUPS))){
-        if(!this.isDoubles()||type!=='long')return super.spawnEffect(type);
+      spawnEffect(type=choice(Object.keys(POWERUPS).filter(key=>this.isDoubles()||key!=='multi'))){
+        if(!this.isDoubles()||!['long','multi'].includes(type))return super.spawnEffect(type);
+        if(type==='multi'){
+          if(this.effect)this.clearEffect(false);
+          const dir=this.ball.vx>=0?1:-1, speed=Math.min(this.ball.maxSpeed,Math.max(this.ball.baseSpeed,this.ball.rallySpeed||this.ball.baseSpeed));
+          this.effect={type:'multi',target:null,remaining:POWERUPS.multi.duration,applied:true};
+          this.extraBalls=[{x:WORLD.width/2,y:WORLD.height*.34,radius:this.ball.baseRadius,baseRadius:this.ball.baseRadius,baseSpeed:this.ball.baseSpeed,vx:dir*speed*Math.cos(.35),vy:speed*Math.sin(.35),spin:0,speed,rallySpeed:speed,maxSpeed:this.ball.maxSpeed}];
+          for(const p of this.ensureD4Pads()){p.height=Math.min(p.maxY-p.minY,p.baseHeight*1.5);p.y=clamp(p.y,p.minY,p.maxY-p.height);}
+          this.audio.powerup();this.eventId++;this.emitUi();return true;
+        }
         const eligible=this.ensureD4Pads(); // All four seats have identical long-paddle eligibility.
         if(!eligible.length){this.effectCooldown=randomRange(EFFECT_TIMING.gapMin,EFFECT_TIMING.gapMax);return false;}
         if(this.effect)this.clearEffect(false);const p=choice(eligible);this.effect={type:'long',target:p.id,remaining:POWERUPS.long.duration,applied:true};
@@ -160,16 +170,17 @@
         // A control handoff changes WHO moves a paddle, never its live benefits.
         // Do not normalize ball velocity here: doing so on a roster change would
         // erase the spin-integrated trajectory or a current curve perturbation.
-        const longSeat=this.effect?.type==='long'?this.effect.target:null;
+        const longSeat=this.effect?.type==='long'?this.effect.target:null,allLong=this.effect?.type==='multi';
         for(const p of this.ensureD4Pads()){
-          p.height=Math.min(p.maxY-p.minY,p.baseHeight*(p.id===longSeat?1.5:1));
+          p.height=Math.min(p.maxY-p.minY,p.baseHeight*((allLong||p.id===longSeat)?1.5:1));
           p.y=clamp(p.y,p.minY,p.maxY-p.height);
         }
         for(const brain of Object.values(this.botBrains||{}))brain.wait=Math.max(brain.wait||0,D4_AI.reaction);
       }
       clearEffect(sound=true){
-        if(!this.isDoubles()||this.effect?.type!=='long')return super.clearEffect(sound);
+        if(!this.isDoubles()||!['long','multi'].includes(this.effect?.type))return super.clearEffect(sound);
         this.effect=null;this.effectCooldown=randomRange(EFFECT_TIMING.gapMin,EFFECT_TIMING.gapMax);
+        this.extraBalls=[];
         for(const p of this.ensureD4Pads()){p.height=p.baseHeight;p.y=clamp(p.y,p.minY,p.maxY-p.height);}this.syncBallEffect();if(sound)this.audio.powerupEnd();this.emitUi();
       }
       resolvePaddle(p,isLeft){
@@ -694,7 +705,15 @@
         if(this.respawnRemaining>0){this.respawnRemaining=Math.max(0,this.respawnRemaining-dt);if(!this.respawnRemaining)this.prepareServe(this.nextServeDir>0?'left':'right');this.sendNetworkIfNeeded(dt);return;}
         if(this.serveSlot){this.positionServeBall();if(this.isBotSeat(this.serveSlot)){this.aiServeRemaining=Math.max(0,this.aiServeRemaining-dt);if(!this.aiServeRemaining)this.launchServe(this.serveSlot);}this.sendNetworkIfNeeded(dt);return;}
         const tactics=this.ensureD4Tactics();tactics.rallyTime=Math.min(86400,tactics.rallyTime+dt);
-        this.updateEffect(dt);this.updateCurve(dt);this.sweepD4Ball(dt);this.resolveScore();this.sendNetworkIfNeeded(dt);
+        this.updateEffect(dt);this.updateCurve(dt);this.sweepD4Ball(dt);this.sweepExtraBall(dt);this.resolveScore();this.sendNetworkIfNeeded(dt);
+      }
+      sweepExtraBall(dt){
+        const b=this.extraBalls[0];if(!b)return;
+        // Reuse the swept solver so the second ball cannot tunnel through paddles.
+        const main=this.ball,trail=this.trail,trailAt=this.trailAt;
+        try{this.ball=b;this.trail=[];this.sweepD4Ball(dt);}
+        finally{this.ball=main;this.trail=trail;this.trailAt=trailAt;}
+        if(b.x<-b.radius||b.x>WORLD.width+b.radius){b.x=WORLD.width/2;b.y=randomRange(b.radius,WORLD.height-b.radius);b.vx=(b.vx<0?1:-1)*Math.abs(b.rallySpeed);}
       }
       // Swept point against radius-expanded rectangles, plus chronological wall
       // contacts. Equal-time seam contacts select nearest centre, then fixed seat ID.
@@ -737,7 +756,7 @@
       snapshotD4(){return {matchId:this.matchId,term:this.room.term,formation:this.room.formation,seq:++this.stateSeq,round:this.roundId,event:this.eventId,time:this.simTime,
         phase:this.phase,countdown:clamp(this.countdownRemaining||0,0,5),respawn:Math.max(0,this.respawnRemaining),serve:this.serveSlot,
         pauseReason:this.pauseReason,ball:{x:this.ball.x,y:this.ball.y,vx:this.ball.vx,vy:this.ball.vy,r:this.ball.radius,spin:this.ball.spin,speed:this.ball.speed,rallySpeed:this.ball.rallySpeed||1200},
-        paddles:this.ensureD4Pads().map(p=>({id:p.id,y:p.y,h:p.height})),match:{...this.match},effect:this.effect?{...this.effect}:null,curve:Math.max(0,this.curveRemaining),
+        paddles:this.ensureD4Pads().map(p=>({id:p.id,y:p.y,h:p.height})),match:{...this.match},effect:this.effect?{...this.effect}:null,extraBall:this.extraBalls[0]?{x:this.extraBalls[0].x,y:this.extraBalls[0].y,vx:this.extraBalls[0].vx,vy:this.extraBalls[0].vy,r:this.extraBalls[0].radius}:null,curve:Math.max(0,this.curveRemaining),
         acks:Object.fromEntries([...this.room.inputByPlayer].map(([id,v])=>[id,v.ack??-1])),
         aux:{elapsed:this.elapsed,effectCooldown:Math.max(0,this.effectCooldown),curveChange:Math.max(0,this.curveChangeRemaining),
           aiServe:Math.max(0,this.aiServeRemaining),nextServeDir:this.nextServeDir||1,serveTurns:{...this.serveTurns},lastHit:this.lastHitSeat,brains:cloneJSON(this.botBrains),tactics:cloneJSON(this.ensureD4Tactics()),teamwork:cloneJSON(this.botTeam||{})}};}
@@ -760,7 +779,7 @@
         if(fresh){this.pendingInputs=[];this.inputSeq=0;this.samples=[];this.graphics?.clearMotion?.();this.trail.length=0;}
         this.room.formation=s.formation;this.ensureD4Pads();this.matchId=s.matchId;this.lastSnapshotSeq=s.seq;this.snapshotTerm=s.term;this.roundId=s.round;this.eventId=s.event;
         this.simTime=s.time;this.phase=s.phase;this.countdownRemaining=s.countdown;this.respawnRemaining=s.respawn;this.serveSlot=s.serve;this.serveSide=s.serve?seatSide(s.serve):null;
-        this.pauseReason=String(s.pauseReason||'').slice(0,180);this.match={...s.match};this.effect=s.effect?{...s.effect}:null;this.curveRemaining=s.curve;
+        this.pauseReason=String(s.pauseReason||'').slice(0,180);this.match={...s.match};this.effect=s.effect?{...s.effect}:null;this.extraBalls=s.extraBall?[{x:s.extraBall.x,y:s.extraBall.y,vx:s.extraBall.vx,vy:s.extraBall.vy,radius:s.extraBall.r,baseRadius:s.extraBall.r,rallySpeed:this.ball.baseSpeed,maxSpeed:this.ball.maxSpeed}]:[];this.syncD4Benefits();this.curveRemaining=s.curve;
         const aux=s.aux;this.serveTurns={...aux.serveTurns};this.nextServeDir=aux.nextServeDir;this.lastHitSeat=aux.lastHit;this.botTactics=cloneJSON(aux.tactics);
         if(force){this.clientSafety=false;this.samples=[];this.lastTs=performance.now();this.accumulator=0;this.pendingInputs=[];this.localInputElapsed=0;}
         const own=new Map(this.localPlayers().filter(p=>!this.room.isBot(p)).map(p=>[p.seat,p.id]));

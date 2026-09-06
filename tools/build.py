@@ -12,6 +12,7 @@ replace('双渲染 <b>v4.1</b>','组队 / 双渲染 <b>v6.3</b>')
 replace('<small>双人街机</small>','<small>联机街机</small>')
 replace('移动端横屏提示、本地双人、手动 WebRTC P2P 与云房间联机。','移动端横屏提示、本地双人、四人团队双打、手动 WebRTC P2P 与云房间联机。')
 replace('</style>',W.joinpath('d4.css').read_text(encoding='utf-8')+'\n</style>',1)
+replace("      small: { label:'小球', color:'#cc44ff', duration:5.0 }", "      small: { label:'小球', color:'#cc44ff', duration:5.0 },\n      multi: { label:'双球·全员长拍', color:'#ffe066', duration:6.5 }")
 replace("['ai','pvp','timer','online'].includes(merged.mode)","['ai','pvp','timer','online','doubles'].includes(merged.mode)")
 old='<button class="choice mode-card" data-setting="mode" data-value="online" type="button"><span class="mode-no">04</span><strong>联机对战</strong><small>两台设备 · 同场对决</small></button>'
 replace(old,old+'\n<button class="choice mode-card" data-setting="mode" data-value="doubles" type="button"><span class="mode-no">05 / 2 × 2</span><strong>四人双打</strong><small>前后阵型 · 同机组队 · 观战与 AI</small></button>')
@@ -42,6 +43,10 @@ replace("this.drawScore(g,p);this.drawLighting(g,p);this.drawPaddle(g,p,g.left,'
           }
         }""")
 replace("if(g.effect)label=POWERUPS[g.effect.type].label", "if(g.isDoubles()&&g.serveSlot)label=g.serveSlot+' 准备发球';\n          if(g.effect)label=POWERUPS[g.effect.type].label")
+replace("        if(g.respawnRemaining<=0)this.drawBall(g,p);this.drawParticles(g);", "        if(g.respawnRemaining<=0){this.drawBall(g,p);for(const ball of (g.extraBalls||[]))this.drawBall(g,p,ball);}this.drawParticles(g);")
+replace("      drawBall(g,p){", "      drawBall(g,p,ball=g.ball){")
+replace("const c=this.ctx,b=g.ball,color=this.ballColor(g,p),ultra=g.settings.graphicsQuality!=='balanced';", "const c=this.ctx,b=ball,color=this.ballColor(g,p),ultra=g.settings.graphicsQuality!=='balanced';", 1)
+replace("        if(g.respawnRemaining<=0)for(const b of (g.extraBalls||[]))this.put(this.wx(b.x),this.wy(b.y),'@');", "        if(g.respawnRemaining<=0)for(const b of (g.extraBalls||[]))this.put(this.wx(b.x),this.wy(b.y),'@');")
 # Inject new module code immediately before boot declarations, after original classes.
 insert='\n'.join(W.joinpath(f).read_text(encoding='utf-8') for f in ['room.js','game_d4.js','ui_d4.js'])
 replace("    const canvas=document.getElementById('gameCanvas');",insert+"\n    const canvas=document.getElementById('gameCanvas');",1)

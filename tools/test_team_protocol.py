@@ -98,6 +98,11 @@ class Harness:
   await self.check('Spectator cannot pause or forge player input',await h.evaluate("game.phase==='playing'&&!doubles.inputByPlayer.has('H:0')"))
   await self.check('Spectator cannot request a serve',not await v.evaluate("game.requestServe({type:'key',key:' '})"))
   await v.evaluate("doubles.setReady(true)");await self.pump();await self.check('Spectator readiness does not gate gameplay',await h.evaluate("!doubles.nodes.get('G2').ready"))
+  multi=await h.evaluate('''()=>{game.effect=null;game.extraBalls=[];game.ball.vx=1200;game.ball.vy=80;game.effectCooldown=0;
+    const spawned=game.spawnEffect('multi'),pads=game.getPaddles(),heights=pads.map(p=>p.height),before=game.extraBalls[0]?.x;
+    game.sweepExtraBall(.02);const moved=game.extraBalls[0]?.x!==before,snapshot=game.snapshotD4(),valid=validD4Snapshot(snapshot);game.clearEffect(false);
+    return {spawned,heights,extra:!!snapshot.extraBall,moved,valid,cleared:game.extraBalls.length===0&&game.getPaddles().every(p=>p.height===p.baseHeight)};}''')
+  await self.check('Multi-ball event gives all four paddles the long effect and syncs the extra ball',multi['spawned'] and multi['heights']==[120,120,120,120] and multi['extra'] and multi['moved'] and multi['valid'] and multi['cleared'],multi)
   # Stale packets, wrong player, wrong term and unsafe data.
   guard=await h.evaluate('''()=>{const l=doubles.links.get('G1'),base={v:D4.version,rid:doubles.id,term:doubles.term,t:'d4_input',matchId:game.matchId,round:game.roundId};
    const send=(inputs,x={})=>doubles.receive(l,{...base,...x,inputs},'rt');doubles.inputByPlayer.clear();
