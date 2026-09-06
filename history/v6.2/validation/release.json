@@ -1,0 +1,58 @@
+{
+  "checks": [
+    {
+      "name": "Solo-mode source byte-identical to 6.1/6.0",
+      "passed": true
+    },
+    {
+      "name": "Independent ASCII differs only by its cold-start preference",
+      "passed": true
+    },
+    {
+      "name": "Visible version and diagnostics are 6.2",
+      "passed": true
+    },
+    {
+      "name": "Team protocol gated at v4",
+      "passed": true
+    },
+    {
+      "name": "Tactical state validated, snapshotted and restored",
+      "passed": true
+    },
+    {
+      "name": "Self-contained HTML without mandatory imported scripts",
+      "passed": true
+    },
+    {
+      "name": "attack final saved checks pass",
+      "passed": true
+    },
+    {
+      "name": "team_ai final saved checks pass",
+      "passed": true
+    },
+    {
+      "name": "team_protocol final saved checks pass",
+      "passed": true
+    },
+    {
+      "name": "team_ui final saved checks pass",
+      "passed": true
+    },
+    {
+      "name": "regression final saved checks pass",
+      "passed": true
+    },
+    {
+      "name": "285 functional assertions counted once",
+      "passed": true
+    },
+    {
+      "name": "Included source rebuilds identical entrypoints",
+      "passed": true
+    }
+  ],
+  "functionalAssertions": 285,
+  "networkAcceptance": false
+}

@@ -1,58 +1,83 @@
 {
   "checks": [
     {
-      "name": "Solo-mode source byte-identical to 6.1/6.0",
+      "name": "Solo/base source is byte-identical to prior release",
       "passed": true
     },
     {
-      "name": "Independent ASCII differs only by its cold-start preference",
+      "name": "ASCII entry differs only by its startup preference",
       "passed": true
     },
     {
-      "name": "Visible version and diagnostics are 6.2",
+      "name": "Visible and diagnostic version is 6.3",
       "passed": true
     },
     {
-      "name": "Team protocol gated at v4",
+      "name": "Team protocol is v5",
       "passed": true
     },
     {
-      "name": "Tactical state validated, snapshotted and restored",
+      "name": "Shared perks retained while controller is bounded",
       "passed": true
     },
     {
-      "name": "Self-contained HTML without mandatory imported scripts",
+      "name": "Team motion/tactics included in validated checkpoints",
       "passed": true
     },
     {
-      "name": "attack final saved checks pass",
+      "name": "HTML has no mandatory imported script tags",
       "passed": true
     },
     {
-      "name": "team_ai final saved checks pass",
+      "name": "tactical_ai saved checks pass",
       "passed": true
     },
     {
-      "name": "team_protocol final saved checks pass",
+      "name": "team_ai saved checks pass",
       "passed": true
     },
     {
-      "name": "team_ui final saved checks pass",
+      "name": "team_protocol saved checks pass",
       "passed": true
     },
     {
-      "name": "regression final saved checks pass",
+      "name": "team_ui saved checks pass",
       "passed": true
     },
     {
-      "name": "285 functional assertions counted once",
+      "name": "regression saved checks pass",
       "passed": true
     },
     {
-      "name": "Included source rebuilds identical entrypoints",
+      "name": "balance_benchmark saved checks pass",
+      "passed": true
+    },
+    {
+      "name": "full_matches saved checks pass",
+      "passed": true
+    },
+    {
+      "name": "297 distinct assertions counted once",
+      "passed": true
+    },
+    {
+      "name": "Report discloses censored and extended observations",
+      "passed": true
+    },
+    {
+      "name": "UI describes actual controller speed",
+      "passed": true
+    },
+    {
+      "name": "Bundled sources rebuild identical entrypoints",
+      "passed": true
+    },
+    {
+      "name": "Inline JavaScript passes node syntax check",
       "passed": true
     }
   ],
-  "functionalAssertions": 285,
-  "networkAcceptance": false
+  "functionalAssertions": 297,
+  "networkAcceptance": false,
+  "entrypointSHA256": "8679ab6ed3a2eec2b5c8a1d75261024c3a7d6cd835f94cbadac348f3a07d0a47"
 }

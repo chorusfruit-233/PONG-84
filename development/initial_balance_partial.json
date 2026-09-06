@@ -1,0 +1,1693 @@
+{
+  "rows": [
+    {
+      "formation": "split",
+      "seed": 1168,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 527.4000000000233,
+      "hits": 320,
+      "offsetTotal": 195.40157650951394,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 32,
+        "A2": 128,
+        "B1": 128,
+        "B2": 32
+      },
+      "valid": true,
+      "meanOffset": 0.610629926592231,
+      "unfinishedRally": 178.77916666658624,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 2319,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 449.5999999999767,
+      "hits": 325,
+      "offsetTotal": 194.82061931827928,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 160,
+        "A2": 3,
+        "B1": 3,
+        "B2": 159
+      },
+      "valid": true,
+      "meanOffset": 0.5994480594408593,
+      "unfinishedRally": 178.73333333325294,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 3470,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 529.9000000000233,
+      "hits": 324,
+      "offsetTotal": 193.434250710831,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 34,
+        "A2": 128,
+        "B1": 127,
+        "B2": 35
+      },
+      "valid": true,
+      "meanOffset": 0.5970192923173796,
+      "unfinishedRally": 179.13749999991924,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 4621,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 468.19999999995343,
+      "hits": 325,
+      "offsetTotal": 195.09336808026382,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 157,
+        "A2": 6,
+        "B1": 6,
+        "B2": 156
+      },
+      "valid": true,
+      "meanOffset": 0.6002872864008117,
+      "unfinishedRally": 179.09166666658595,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 5772,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 440.80000000004657,
+      "hits": 324,
+      "offsetTotal": 194.42815000921124,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 138,
+        "A2": 24,
+        "B1": 26,
+        "B2": 136
+      },
+      "valid": true,
+      "meanOffset": 0.6000868827444791,
+      "unfinishedRally": 179.04583333325266,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 6923,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 439.30000000004657,
+      "hits": 324,
+      "offsetTotal": 195.65472726739728,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 12,
+        "A2": 150,
+        "B1": 151,
+        "B2": 11
+      },
+      "valid": true,
+      "meanOffset": 0.6038726150228311,
+      "unfinishedRally": 178.99999999991937,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 8074,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 473.5,
+      "hits": 326,
+      "offsetTotal": 195.33848464649213,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 2,
+        "A2": 161,
+        "B1": 161,
+        "B2": 2
+      },
+      "valid": true,
+      "meanOffset": 0.5991978056640863,
+      "unfinishedRally": 178.95416666658608,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 9225,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 450.29999999993015,
+      "hits": 324,
+      "offsetTotal": 194.5589708818692,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 5,
+        "A2": 157,
+        "B1": 158,
+        "B2": 4
+      },
+      "valid": true,
+      "meanOffset": 0.6004906508699667,
+      "unfinishedRally": 178.90833333325278,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 1168,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 824.8999999999069,
+      "hits": 313,
+      "offsetTotal": 185.0946531139813,
+      "maxStep": 40,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 64,
+        "A2": 93,
+        "B1": 94,
+        "B2": 62
+      },
+      "valid": true,
+      "meanOffset": 0.5913567192139978,
+      "unfinishedRally": 178.77916666658624,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 2319,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 679.0999999999767,
+      "hits": 313,
+      "offsetTotal": 181.65968801615233,
+      "maxStep": 40,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 107,
+        "A2": 50,
+        "B1": 56,
+        "B2": 100
+      },
+      "valid": true,
+      "meanOffset": 0.5803823898279628,
+      "unfinishedRally": 178.73333333325294,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 3470,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 665.7000000000698,
+      "hits": 309,
+      "offsetTotal": 183.75634392522963,
+      "maxStep": 39.934055760584044,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 66,
+        "A2": 88,
+        "B1": 85,
+        "B2": 70
+      },
+      "valid": true,
+      "meanOffset": 0.5946807246771185,
+      "unfinishedRally": 179.13749999991924,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 4621,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 680.4000000000233,
+      "hits": 310,
+      "offsetTotal": 184.99784452735005,
+      "maxStep": 7.464806549330888,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 78,
+        "A2": 77,
+        "B1": 72,
+        "B2": 83
+      },
+      "valid": true,
+      "meanOffset": 0.5967672404108066,
+      "unfinishedRally": 179.09166666658595,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 5772,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 654.5999999999767,
+      "hits": 312,
+      "offsetTotal": 185.43207961550888,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 67,
+        "A2": 89,
+        "B1": 85,
+        "B2": 71
+      },
+      "valid": true,
+      "meanOffset": 0.5943335885112464,
+      "unfinishedRally": 179.04583333325266,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 6923,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 684.6000000000931,
+      "hits": 307,
+      "offsetTotal": 181.99330882601902,
+      "maxStep": 40,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 58,
+        "A2": 96,
+        "B1": 92,
+        "B2": 61
+      },
+      "valid": true,
+      "meanOffset": 0.5928120808665115,
+      "unfinishedRally": 178.99999999991937,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 8074,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 708.1999999999534,
+      "hits": 309,
+      "offsetTotal": 180.28117313808667,
+      "maxStep": 38.79732083054202,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 47,
+        "A2": 108,
+        "B1": 103,
+        "B2": 51
+      },
+      "valid": true,
+      "meanOffset": 0.5834342172753614,
+      "unfinishedRally": 178.95416666658608,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 9225,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 731.5,
+      "hits": 311,
+      "offsetTotal": 186.45221841670158,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 55,
+        "A2": 100,
+        "B1": 101,
+        "B2": 55
+      },
+      "valid": true,
+      "meanOffset": 0.5995248180601337,
+      "unfinishedRally": 178.90833333325278,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 1168,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 876,
+      "hits": 583,
+      "offsetTotal": 349.5929436185004,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 292,
+        "B1": 0,
+        "B2": 291
+      },
+      "valid": true,
+      "meanOffset": 0.5996448432564329,
+      "unfinishedRally": 178.77916666658624,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 2319,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 895.6999999999534,
+      "hits": 583,
+      "offsetTotal": 349.80151750870937,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 292,
+        "B1": 0,
+        "B2": 291
+      },
+      "valid": true,
+      "meanOffset": 0.6000026029308908,
+      "unfinishedRally": 178.73333333325294,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 3470,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 869.0999999999767,
+      "hits": 584,
+      "offsetTotal": 350.10236515929216,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 292,
+        "B1": 0,
+        "B2": 292
+      },
+      "valid": true,
+      "meanOffset": 0.5994903513001578,
+      "unfinishedRally": 179.13749999991924,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 4621,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 955.5,
+      "hits": 584,
+      "offsetTotal": 350.12491787470725,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 292,
+        "B1": 0,
+        "B2": 292
+      },
+      "valid": true,
+      "meanOffset": 0.5995289689635398,
+      "unfinishedRally": 179.09166666658595,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 5772,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 931.5,
+      "hits": 584,
+      "offsetTotal": 349.90024409754477,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 292,
+        "B1": 0,
+        "B2": 292
+      },
+      "valid": true,
+      "meanOffset": 0.5991442535916862,
+      "unfinishedRally": 179.04583333325266,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 6923,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 924.8000000000466,
+      "hits": 583,
+      "offsetTotal": 349.90332299597526,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 292,
+        "B1": 0,
+        "B2": 291
+      },
+      "valid": true,
+      "meanOffset": 0.6001772264081908,
+      "unfinishedRally": 178.99999999991937,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 8074,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 881.1999999999534,
+      "hits": 583,
+      "offsetTotal": 349.65000000000106,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 292,
+        "B1": 0,
+        "B2": 291
+      },
+      "valid": true,
+      "meanOffset": 0.5997427101200704,
+      "unfinishedRally": 178.95416666658608,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 9225,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 866.6000000000931,
+      "hits": 583,
+      "offsetTotal": 349.74003817756625,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 291,
+        "B1": 0,
+        "B2": 292
+      },
+      "valid": true,
+      "meanOffset": 0.5998971495327037,
+      "unfinishedRally": 178.90833333325278,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 1168,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 1039.7999999999302,
+      "hits": 575,
+      "offsetTotal": 342.85714121379954,
+      "maxStep": 25.230193168408675,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 288,
+        "B1": 0,
+        "B2": 287
+      },
+      "valid": true,
+      "meanOffset": 0.5962732890674775,
+      "unfinishedRally": 178.77916666658624,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 2319,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 1137.7999999999302,
+      "hits": 543,
+      "offsetTotal": 323.5511305957746,
+      "maxStep": 16.132920877491358,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 272,
+        "B1": 0,
+        "B2": 271
+      },
+      "valid": true,
+      "meanOffset": 0.5958584357196586,
+      "unfinishedRally": 178.73333333325294,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 3470,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 997.2999999999302,
+      "hits": 581,
+      "offsetTotal": 346.1638654488374,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 290,
+        "B1": 0,
+        "B2": 291
+      },
+      "valid": true,
+      "meanOffset": 0.5958069973301848,
+      "unfinishedRally": 179.13749999991924,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 4621,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 1094.9000000000233,
+      "hits": 548,
+      "offsetTotal": 322.48535338164464,
+      "maxStep": 30.833592480806033,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 274,
+        "B1": 0,
+        "B2": 274
+      },
+      "valid": true,
+      "meanOffset": 0.5884769222292785,
+      "unfinishedRally": 179.09166666658595,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 5772,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 1025.8000000000466,
+      "hits": 558,
+      "offsetTotal": 331.9543950567525,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 279,
+        "B1": 0,
+        "B2": 279
+      },
+      "valid": true,
+      "meanOffset": 0.5949003495640726,
+      "unfinishedRally": 179.04583333325266,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 6923,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 1044.8000000000466,
+      "hits": 557,
+      "offsetTotal": 334.36717023982084,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 279,
+        "B1": 0,
+        "B2": 278
+      },
+      "valid": true,
+      "meanOffset": 0.6003001261038076,
+      "unfinishedRally": 178.99999999991937,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 8074,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 1145.1999999999534,
+      "hits": 542,
+      "offsetTotal": 322.63870902515765,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 271,
+        "B1": 0,
+        "B2": 271
+      },
+      "valid": true,
+      "meanOffset": 0.5952743708951248,
+      "unfinishedRally": 178.95416666658608,
+      "version": "6.2"
+    },
+    {
+      "formation": "depth",
+      "seed": 9225,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        0,
+        0
+      ],
+      "wallMs": 1078.7999999999302,
+      "hits": 567,
+      "offsetTotal": 335.6366959839209,
+      "maxStep": 4.583333333333343,
+      "maxRally": 0,
+      "rallies": [],
+      "roles": {},
+      "touches": {
+        "A1": 0,
+        "A2": 283,
+        "B1": 0,
+        "B2": 284
+      },
+      "valid": true,
+      "meanOffset": 0.5919518447688199,
+      "unfinishedRally": 178.90833333325278,
+      "version": "6.2"
+    },
+    {
+      "formation": "split",
+      "seed": 1168,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 124.19583333333334,
+      "finished": true,
+      "score": [
+        2,
+        7
+      ],
+      "wallMs": 318.5999999999767,
+      "hits": 153,
+      "offsetTotal": 71.80843259755491,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 18.095833333332628,
+      "rallies": [
+        10.98333333333303,
+        5.687499999999997,
+        14.687499999999487,
+        4.258333333333412,
+        11.070833333333026,
+        12.97916666666625,
+        18.095833333332628,
+        14.966666666666137,
+        10.454166666666394,
+        5.704166666666663
+      ],
+      "roles": {
+        "guard": 20,
+        "support": 3954,
+        "serve": 122,
+        "attack": 872
+      },
+      "touches": {
+        "A1": 49,
+        "A2": 26,
+        "B1": 32,
+        "B2": 46
+      },
+      "valid": true,
+      "meanOffset": 0.46933616076833273,
+      "unfinishedRally": 0,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 2319,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 173.92083333333332,
+      "finished": true,
+      "score": [
+        7,
+        0
+      ],
+      "wallMs": 364.29999999993015,
+      "hits": 243,
+      "offsetTotal": 120.91578010799918,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 24.40833333333227,
+      "rallies": [
+        4.966666666666705,
+        22.36666666666572,
+        21.970833333332408,
+        23.616666666665648,
+        22.47083333333238,
+        12.812499999999593,
+        15.762499999999426,
+        24.40833333333227,
+        11.395833333333007
+      ],
+      "roles": {
+        "guard": 20,
+        "support": 5507,
+        "serve": 113,
+        "attack": 1316
+      },
+      "touches": {
+        "A1": 62,
+        "A2": 62,
+        "B1": 60,
+        "B2": 59
+      },
+      "valid": true,
+      "meanOffset": 0.49759580291357686,
+      "unfinishedRally": 0,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 3470,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        4,
+        4
+      ],
+      "wallMs": 376.4000000000233,
+      "hits": 241,
+      "offsetTotal": 134.90400384450567,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 51.0166666666803,
+      "rallies": [
+        10.941666666666366,
+        9.074999999999806,
+        51.0166666666803,
+        18.03333333333263,
+        13.629166666666213,
+        19.008333333332576,
+        12.374999999999618,
+        7.216666666666577,
+        14.458333333332833
+      ],
+      "roles": {
+        "guard": 24,
+        "serve": 108,
+        "support": 5721,
+        "attack": 1343
+      },
+      "touches": {
+        "A1": 52,
+        "A2": 68,
+        "B1": 64,
+        "B2": 57
+      },
+      "valid": true,
+      "meanOffset": 0.5597676508070775,
+      "unfinishedRally": 10.29583333333307,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 4621,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        6,
+        4
+      ],
+      "wallMs": 348.5,
+      "hits": 238,
+      "offsetTotal": 121.84863577527099,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 40.495833333338595,
+      "rallies": [
+        10.82083333333304,
+        8.283333333333184,
+        14.308333333332842,
+        2.933333333333374,
+        8.179166666666523,
+        13.73749999999954,
+        40.495833333338595,
+        12.183333333332962,
+        3.654166666666743,
+        13.358333333332896,
+        23.149999999999007
+      ],
+      "roles": {
+        "guard": 28,
+        "support": 5746,
+        "serve": 132,
+        "attack": 1294
+      },
+      "touches": {
+        "A1": 63,
+        "A2": 57,
+        "B1": 66,
+        "B2": 52
+      },
+      "valid": true,
+      "meanOffset": 0.5119690578792899,
+      "unfinishedRally": 11.891666666666312,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 5772,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 157.90833333333333,
+      "finished": true,
+      "score": [
+        7,
+        2
+      ],
+      "wallMs": 350.0999999999767,
+      "hits": 207,
+      "offsetTotal": 110.9509031480687,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 30.962499999998563,
+      "rallies": [
+        10.683333333333048,
+        13.32916666666623,
+        13.791666666666204,
+        30.962499999998563,
+        5.22916666666669,
+        10.420833333333062,
+        15.954166666666081,
+        17.21666666666601,
+        22.1208333333324,
+        2.895833333333372
+      ],
+      "roles": {
+        "guard": 24,
+        "support": 5003,
+        "serve": 125,
+        "attack": 1160
+      },
+      "touches": {
+        "A1": 54,
+        "A2": 51,
+        "B1": 48,
+        "B2": 54
+      },
+      "valid": true,
+      "meanOffset": 0.5359947011983995,
+      "unfinishedRally": 0,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 6923,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 164.925,
+      "finished": true,
+      "score": [
+        7,
+        0
+      ],
+      "wallMs": 326.0999999999767,
+      "hits": 230,
+      "offsetTotal": 123.76380601037776,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 33.02083333333265,
+      "rallies": [
+        5.2333333333333565,
+        13.38749999999956,
+        25.754166666665526,
+        33.02083333333265,
+        22.76249999999903,
+        17.712499999999316,
+        17.17083333333268,
+        17.79999999999931
+      ],
+      "roles": {
+        "guard": 24,
+        "support": 5248,
+        "serve": 100,
+        "attack": 1228
+      },
+      "touches": {
+        "A1": 63,
+        "A2": 55,
+        "B1": 46,
+        "B2": 66
+      },
+      "valid": true,
+      "meanOffset": 0.5381035043929469,
+      "unfinishedRally": 0,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 8074,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        5,
+        3
+      ],
+      "wallMs": 338.79999999993015,
+      "hits": 251,
+      "offsetTotal": 122.25203040190476,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 50.95000000001358,
+      "rallies": [
+        50.95000000001358,
+        14.05416666666619,
+        0.7583333333333319,
+        17.129166666666016,
+        20.291666666665837,
+        13.720833333332875,
+        13.362499999999562,
+        9.05833333333314,
+        18.54999999999927
+      ],
+      "roles": {
+        "guard": 24,
+        "support": 5737,
+        "serve": 118,
+        "attack": 1321
+      },
+      "touches": {
+        "A1": 65,
+        "A2": 61,
+        "B1": 55,
+        "B2": 70
+      },
+      "valid": true,
+      "meanOffset": 0.48705988207930184,
+      "unfinishedRally": 7.2791666666665735,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 9225,
+      "benefits": false,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        2,
+        5
+      ],
+      "wallMs": 336.29999999993015,
+      "hits": 256,
+      "offsetTotal": 127.7471404538081,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 27.42916666666543,
+      "rallies": [
+        19.55416666666588,
+        11.59166666666633,
+        17.945833333332637,
+        23.179166666665672,
+        20.770833333332476,
+        19.945833333332523,
+        22.116666666665733,
+        27.42916666666543
+      ],
+      "roles": {
+        "guard": 24,
+        "serve": 109,
+        "support": 5715,
+        "attack": 1352
+      },
+      "touches": {
+        "A1": 61,
+        "A2": 66,
+        "B1": 71,
+        "B2": 58
+      },
+      "valid": true,
+      "meanOffset": 0.4990122673976879,
+      "unfinishedRally": 4.066666666666756,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 1168,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 142.4125,
+      "finished": true,
+      "score": [
+        7,
+        1
+      ],
+      "wallMs": 413.5,
+      "hits": 186,
+      "offsetTotal": 96.49777204922978,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 30.52083333333192,
+      "rallies": [
+        14.466666666666166,
+        30.52083333333192,
+        25.358333333332215,
+        11.395833333333007,
+        17.529166666665994,
+        18.24583333333262,
+        3.433333333333399,
+        9.566666666666444
+      ],
+      "roles": {
+        "guard": 24,
+        "support": 4527,
+        "serve": 96,
+        "attack": 1053
+      },
+      "touches": {
+        "A1": 63,
+        "A2": 33,
+        "B1": 45,
+        "B2": 45
+      },
+      "valid": true,
+      "meanOffset": 0.5188052260711279,
+      "unfinishedRally": 0,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 2319,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 159.63333333333333,
+      "finished": true,
+      "score": [
+        4,
+        7
+      ],
+      "wallMs": 356.19999999995343,
+      "hits": 186,
+      "offsetTotal": 94.13761209379089,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 35.858333333334905,
+      "rallies": [
+        1.8166666666666615,
+        15.362499999999448,
+        35.858333333334905,
+        13.187499999999572,
+        21.33749999999911,
+        0.7791666666666651,
+        20.795833333332475,
+        5.495833333333342,
+        5.874999999999987,
+        8.862499999999818,
+        12.595833333332939
+      ],
+      "roles": {
+        "guard": 20,
+        "support": 5060,
+        "serve": 144,
+        "attack": 1156
+      },
+      "touches": {
+        "A1": 46,
+        "A2": 46,
+        "B1": 47,
+        "B2": 47
+      },
+      "valid": true,
+      "meanOffset": 0.5061161940526392,
+      "unfinishedRally": 0,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 3470,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 117.29166666666667,
+      "finished": true,
+      "score": [
+        7,
+        1
+      ],
+      "wallMs": 257.30000000004657,
+      "hits": 147,
+      "offsetTotal": 76.68159391018669,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 28.78333333333202,
+      "rallies": [
+        8.162499999999858,
+        6.404166666666623,
+        18.845833333332585,
+        6.112499999999973,
+        20.849999999999138,
+        13.74999999999954,
+        2.7583333333333653,
+        28.78333333333202
+      ],
+      "roles": {
+        "guard": 20,
+        "serve": 96,
+        "support": 3713,
+        "attack": 859
+      },
+      "touches": {
+        "A1": 44,
+        "A2": 32,
+        "B1": 29,
+        "B2": 42
+      },
+      "valid": true,
+      "meanOffset": 0.5216434959876646,
+      "unfinishedRally": 0,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 4621,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 160.675,
+      "finished": true,
+      "score": [
+        7,
+        3
+      ],
+      "wallMs": 336.4000000000233,
+      "hits": 202,
+      "offsetTotal": 104.28963140551842,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 41.30416666667257,
+      "rallies": [
+        14.533333333332829,
+        6.129166666666639,
+        41.30416666667257,
+        15.854166666666087,
+        12.841666666666258,
+        14.670833333332821,
+        7.63333333333322,
+        8.370833333333179,
+        8.279166666666518,
+        16.06249999999941
+      ],
+      "roles": {
+        "guard": 32,
+        "support": 5082,
+        "serve": 122,
+        "attack": 1192
+      },
+      "touches": {
+        "A1": 54,
+        "A2": 49,
+        "B1": 60,
+        "B2": 39
+      },
+      "valid": true,
+      "meanOffset": 0.516285303987715,
+      "unfinishedRally": 0,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 5772,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        3,
+        3
+      ],
+      "wallMs": 392.69999999995343,
+      "hits": 238,
+      "offsetTotal": 124.0433729442346,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 52.633333333348254,
+      "rallies": [
+        23.716666666665642,
+        2.9416666666667077,
+        23.504166666665654,
+        52.633333333348254,
+        10.699999999999713,
+        13.8791666666662,
+        35.712500000001455
+      ],
+      "roles": {
+        "guard": 24,
+        "support": 5715,
+        "serve": 99,
+        "attack": 1362
+      },
+      "touches": {
+        "A1": 62,
+        "A2": 57,
+        "B1": 58,
+        "B2": 61
+      },
+      "valid": true,
+      "meanOffset": 0.5211906426228344,
+      "unfinishedRally": 4.866666666666711,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 6923,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 159.175,
+      "finished": true,
+      "score": [
+        3,
+        7
+      ],
+      "wallMs": 401.5999999999767,
+      "hits": 208,
+      "offsetTotal": 101.88893205863536,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 30.46249999999859,
+      "rallies": [
+        14.324999999999507,
+        7.28333333333324,
+        30.46249999999859,
+        9.183333333333133,
+        19.51666666666588,
+        7.241666666666576,
+        5.724999999999995,
+        24.29166666666561,
+        4.858333333333378,
+        14.15833333333285,
+        6.7458333333332705
+      ],
+      "roles": {
+        "guard": 32,
+        "support": 5044,
+        "serve": 121,
+        "attack": 1167
+      },
+      "touches": {
+        "A1": 52,
+        "A2": 51,
+        "B1": 56,
+        "B2": 49
+      },
+      "valid": true,
+      "meanOffset": 0.4898506348972854,
+      "unfinishedRally": 0,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 8074,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        6,
+        5
+      ],
+      "wallMs": 397.69999999995343,
+      "hits": 217,
+      "offsetTotal": 117.3379053516376,
+      "maxStep": 7.229672144424796,
+      "maxRally": 25.82916666666552,
+      "rallies": [
+        23.370833333332328,
+        3.329166666666727,
+        20.54583333333249,
+        7.137499999999915,
+        10.379166666666398,
+        15.458333333332776,
+        6.8166666666666,
+        5.516666666666674,
+        5.674999999999998,
+        15.779166666666091,
+        25.82916666666552
+      ],
+      "roles": {
+        "guard": 36,
+        "support": 5704,
+        "serve": 144,
+        "attack": 1316
+      },
+      "touches": {
+        "A1": 52,
+        "A2": 57,
+        "B1": 65,
+        "B2": 43
+      },
+      "valid": true,
+      "meanOffset": 0.5407276744315097,
+      "unfinishedRally": 21.795833333332418,
+      "version": "6.3"
+    },
+    {
+      "formation": "split",
+      "seed": 9225,
+      "benefits": true,
+      "policy": "aggressive",
+      "humanSide": null,
+      "seconds": 180,
+      "finished": false,
+      "score": [
+        5,
+        5
+      ],
+      "wallMs": 399.5,
+      "hits": 222,
+      "offsetTotal": 115.13549733476671,
+      "maxStep": 3.3000000000000114,
+      "maxRally": 27.20833333333211,
+      "rallies": [
+        17.991666666665967,
+        27.20833333333211,
+        11.654166666666326,
+        6.941666666666593,
+        15.96666666666608,
+        1.941666666666661,
+        12.474999999999612,
+        12.595833333332939,
+        23.47499999999899,
+        2.4625000000000172,
+        15.96666666666608
+      ],
+      "roles": {
+        "guard": 32,
+        "serve": 142,
+        "support": 5706,
+        "attack": 1316
+      },
+      "touches": {
+        "A1": 49,
+        "A2": 61,
+        "B1": 68,
+        "B2": 44
+      },
+      "valid": true,
+      "meanOffset": 0.5186283663728231,
+      "unfinishedRally": 13.008333333332915,
+      "version": "6.3"
+    }
+  ],
+  "errors": [],
+  "partial": true
+}

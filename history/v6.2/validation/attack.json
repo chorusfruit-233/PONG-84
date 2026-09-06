@@ -1,0 +1,1243 @@
+{
+  "checks": [
+    {
+      "name": "Built team protocol v4 and game v6.2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Lobby explains offensive play and equal benefits",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Legal and reachable attacking contact: split / left",
+      "passed": true,
+      "detail": {
+        "formation": "split",
+        "side": "left",
+        "offset": 0.45,
+        "score": 78.79508377742397,
+        "neutral": 30.40287726732135,
+        "aim": 534.3482560458183,
+        "target": 122,
+        "valid": true,
+        "pure": true,
+        "budget": true
+      }
+    },
+    {
+      "name": "Does not settle for a neutral centre return: split / left",
+      "passed": true,
+      "detail": {
+        "formation": "split",
+        "side": "left",
+        "offset": 0.45,
+        "score": 78.79508377742397,
+        "neutral": 30.40287726732135,
+        "aim": 534.3482560458183,
+        "target": 122,
+        "valid": true,
+        "pure": true,
+        "budget": true
+      }
+    },
+    {
+      "name": "Legal and reachable attacking contact: split / right",
+      "passed": true,
+      "detail": {
+        "formation": "split",
+        "side": "right",
+        "offset": 0.45,
+        "score": 78.79508377742397,
+        "neutral": 30.40287726732135,
+        "aim": 534.3482560458183,
+        "target": 122,
+        "valid": true,
+        "pure": true,
+        "budget": true
+      }
+    },
+    {
+      "name": "Does not settle for a neutral centre return: split / right",
+      "passed": true,
+      "detail": {
+        "formation": "split",
+        "side": "right",
+        "offset": 0.45,
+        "score": 78.79508377742397,
+        "neutral": 30.40287726732135,
+        "aim": 534.3482560458183,
+        "target": 122,
+        "valid": true,
+        "pure": true,
+        "budget": true
+      }
+    },
+    {
+      "name": "Legal and reachable attacking contact: depth / left",
+      "passed": true,
+      "detail": {
+        "formation": "depth",
+        "side": "left",
+        "offset": 0.6,
+        "score": 162.5457865707067,
+        "neutral": 49.08501631987602,
+        "aim": 489.2828862507106,
+        "target": 116,
+        "valid": true,
+        "pure": true,
+        "budget": true
+      }
+    },
+    {
+      "name": "Does not settle for a neutral centre return: depth / left",
+      "passed": true,
+      "detail": {
+        "formation": "depth",
+        "side": "left",
+        "offset": 0.6,
+        "score": 162.5457865707067,
+        "neutral": 49.08501631987602,
+        "aim": 489.2828862507106,
+        "target": 116,
+        "valid": true,
+        "pure": true,
+        "budget": true
+      }
+    },
+    {
+      "name": "Legal and reachable attacking contact: depth / right",
+      "passed": true,
+      "detail": {
+        "formation": "depth",
+        "side": "right",
+        "offset": 0.6,
+        "score": 162.54578657070732,
+        "neutral": 49.08501631987602,
+        "aim": 489.2828862507117,
+        "target": 116,
+        "valid": true,
+        "pure": true,
+        "budget": true
+      }
+    },
+    {
+      "name": "Does not settle for a neutral centre return: depth / right",
+      "passed": true,
+      "detail": {
+        "formation": "depth",
+        "side": "right",
+        "offset": 0.6,
+        "score": 162.54578657070732,
+        "neutral": 49.08501631987602,
+        "aim": 489.2828862507117,
+        "target": 116,
+        "valid": true,
+        "pure": true,
+        "budget": true
+      }
+    },
+    {
+      "name": "100 attack simulations match the unmodified physical hit law",
+      "passed": true,
+      "detail": {
+        "maximumError": 2.2737367544323206e-13
+      }
+    },
+    {
+      "name": "Offensive safety: impossible",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Offensive safety: rescue",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Offensive safety: expiry",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Offensive safety: half",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Offensive safety: behind",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Offensive safety: noFuture",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Offensive safety: observed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Offensive safety: finalAngle",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Within-match tactic adaptation: learnsWin",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Within-match tactic adaptation: learnsReturn",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Within-match tactic adaptation: valid",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Within-match tactic adaptation: restored",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Within-match tactic adaptation: preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Within-match tactic adaptation: rejects",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Within-match tactic adaptation: persists",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Within-match tactic adaptation: reset",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AI serves use the same sampled angle and speed as human serves",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Paired split simulations stay valid and bounded",
+      "passed": true,
+      "detail": {
+        "attack": 0,
+        "defensive61": 0,
+        "maxMove": 4.583333333333343
+      }
+    },
+    {
+      "name": "Paired depth simulations stay valid and bounded",
+      "passed": true,
+      "detail": {
+        "attack": 0,
+        "defensive61": 0,
+        "maxMove": 4.583333333333343
+      }
+    },
+    {
+      "name": "Controlled split opponent trials have valid state",
+      "passed": true,
+      "detail": {
+        "attack": {
+          "scored": 33,
+          "conceded": 0
+        },
+        "defence61": {
+          "scored": 19,
+          "conceded": 0
+        }
+      }
+    },
+    {
+      "name": "Attack policy scores more than 6.1 against the defined tracking opponent: split",
+      "passed": true,
+      "detail": {
+        "attack": {
+          "scored": 33,
+          "conceded": 0
+        },
+        "defence61": {
+          "scored": 19,
+          "conceded": 0
+        }
+      }
+    },
+    {
+      "name": "Controlled depth opponent trials have valid state",
+      "passed": true,
+      "detail": {
+        "attack": {
+          "scored": 45,
+          "conceded": 0
+        },
+        "defence61": {
+          "scored": 16,
+          "conceded": 0
+        }
+      }
+    },
+    {
+      "name": "Attack policy scores more than 6.1 against the defined tracking opponent: depth",
+      "passed": true,
+      "detail": {
+        "attack": {
+          "scored": 45,
+          "conceded": 0
+        },
+        "defence61": {
+          "scored": 16,
+          "conceded": 0
+        }
+      }
+    },
+    {
+      "name": "Attacking policy produces intentional off-centre returns",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zero Canvas contexts for tactical CPU tests",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "No uncaught browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": [],
+  "failure": null,
+  "measurements": {
+    "tacticalFixtures": [
+      {
+        "formation": "split",
+        "side": "left",
+        "offset": 0.45,
+        "score": 78.79508377742397,
+        "neutral": 30.40287726732135,
+        "aim": 534.3482560458183,
+        "target": 122,
+        "valid": true,
+        "pure": true,
+        "budget": true
+      },
+      {
+        "formation": "split",
+        "side": "right",
+        "offset": 0.45,
+        "score": 78.79508377742397,
+        "neutral": 30.40287726732135,
+        "aim": 534.3482560458183,
+        "target": 122,
+        "valid": true,
+        "pure": true,
+        "budget": true
+      },
+      {
+        "formation": "depth",
+        "side": "left",
+        "offset": 0.6,
+        "score": 162.5457865707067,
+        "neutral": 49.08501631987602,
+        "aim": 489.2828862507106,
+        "target": 116,
+        "valid": true,
+        "pure": true,
+        "budget": true
+      },
+      {
+        "formation": "depth",
+        "side": "right",
+        "offset": 0.6,
+        "score": 162.54578657070732,
+        "neutral": 49.08501631987602,
+        "aim": 489.2828862507117,
+        "target": 116,
+        "valid": true,
+        "pure": true,
+        "budget": true
+      }
+    ],
+    "shotResponseFixtures": 100,
+    "pairedMatches": [
+      {
+        "formation": "split",
+        "benefits": false,
+        "attackSide": "left",
+        "seed": 1,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 42,
+        "attackOffsets": 10.848193341598195,
+        "defenceOffsets": 5.508868907888309,
+        "attackHits": 21,
+        "defenceHits": 21,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 358.5,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": false,
+        "attackSide": "left",
+        "seed": 2,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 42,
+        "attackOffsets": 11.192524091711407,
+        "defenceOffsets": 3.7217004705219043,
+        "attackHits": 21,
+        "defenceHits": 21,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 134.20000000006985,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": false,
+        "attackSide": "left",
+        "seed": 3,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 42,
+        "attackOffsets": 11.693356200125994,
+        "defenceOffsets": 4.532902608690397,
+        "attackHits": 21,
+        "defenceHits": 21,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 162.39999999990687,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": false,
+        "attackSide": "left",
+        "seed": 4,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 42,
+        "attackOffsets": 11.013477436981484,
+        "defenceOffsets": 5.76397853841437,
+        "attackHits": 21,
+        "defenceHits": 21,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 150.69999999995343,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": false,
+        "attackSide": "right",
+        "seed": 1,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 41,
+        "attackOffsets": 10.533184764693837,
+        "defenceOffsets": 7.976071721107396,
+        "attackHits": 21,
+        "defenceHits": 20,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 193.89999999990687,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": false,
+        "attackSide": "right",
+        "seed": 2,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 41,
+        "attackOffsets": 10.729405957681704,
+        "defenceOffsets": 6.752232011497204,
+        "attackHits": 20,
+        "defenceHits": 21,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 102.59999999997672,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": false,
+        "attackSide": "right",
+        "seed": 3,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 41,
+        "attackOffsets": 11.879649402857654,
+        "defenceOffsets": 6.247968674417258,
+        "attackHits": 21,
+        "defenceHits": 20,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 238,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": false,
+        "attackSide": "right",
+        "seed": 4,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 42,
+        "attackOffsets": 11.386003669756759,
+        "defenceOffsets": 5.009920889735721,
+        "attackHits": 21,
+        "defenceHits": 21,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 126.90000000002328,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": true,
+        "attackSide": "left",
+        "seed": 1,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 37,
+        "attackOffsets": 8.994358852271317,
+        "defenceOffsets": 6.714522065179,
+        "attackHits": 18,
+        "defenceHits": 19,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 377.5999999999767,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": true,
+        "attackSide": "left",
+        "seed": 2,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 38,
+        "attackOffsets": 9.352578750298512,
+        "defenceOffsets": 7.380838068481252,
+        "attackHits": 19,
+        "defenceHits": 19,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 229.69999999995343,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": true,
+        "attackSide": "left",
+        "seed": 3,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 44,
+        "attackOffsets": 11.145929138123401,
+        "defenceOffsets": 4.196187246544808,
+        "attackHits": 22,
+        "defenceHits": 22,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 270.5999999999767,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": true,
+        "attackSide": "left",
+        "seed": 4,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 45,
+        "attackOffsets": 11.435709772372851,
+        "defenceOffsets": 5.634095740522722,
+        "attackHits": 23,
+        "defenceHits": 22,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 227.40000000002328,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": true,
+        "attackSide": "right",
+        "seed": 1,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 37,
+        "attackOffsets": 10.195271661426789,
+        "defenceOffsets": 4.940076655619666,
+        "attackHits": 19,
+        "defenceHits": 18,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 147.5,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": true,
+        "attackSide": "right",
+        "seed": 2,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 41,
+        "attackOffsets": 10.46711862542933,
+        "defenceOffsets": 4.509583834192712,
+        "attackHits": 20,
+        "defenceHits": 21,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 138.60000000009313,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": true,
+        "attackSide": "right",
+        "seed": 3,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 42,
+        "attackOffsets": 9.821739651446782,
+        "defenceOffsets": 4.98789234078928,
+        "attackHits": 21,
+        "defenceHits": 21,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 123.09999999997672,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "benefits": true,
+        "attackSide": "right",
+        "seed": 4,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 39,
+        "attackOffsets": 8.879474342417003,
+        "defenceOffsets": 4.269705661212837,
+        "attackHits": 19,
+        "defenceHits": 20,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 124.80000000004657,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": false,
+        "attackSide": "left",
+        "seed": 1,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 80,
+        "attackOffsets": 19.60964648026561,
+        "defenceOffsets": 2.3856909376097204,
+        "attackHits": 40,
+        "defenceHits": 40,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 217,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": false,
+        "attackSide": "left",
+        "seed": 2,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 79,
+        "attackOffsets": 19.880590617759488,
+        "defenceOffsets": 4.719477602973166,
+        "attackHits": 40,
+        "defenceHits": 39,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 268.20000000006985,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": false,
+        "attackSide": "left",
+        "seed": 3,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 80,
+        "attackOffsets": 21.745555923026565,
+        "defenceOffsets": 3.244088493772147,
+        "attackHits": 40,
+        "defenceHits": 40,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 245.70000000006985,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": false,
+        "attackSide": "left",
+        "seed": 4,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 81,
+        "attackOffsets": 22.254096890675303,
+        "defenceOffsets": 1.7947882057102849,
+        "attackHits": 41,
+        "defenceHits": 40,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 173.20000000006985,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": false,
+        "attackSide": "right",
+        "seed": 1,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 79,
+        "attackOffsets": 20.851596020150335,
+        "defenceOffsets": 3.298276826114609,
+        "attackHits": 40,
+        "defenceHits": 39,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 164.30000000004657,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": false,
+        "attackSide": "right",
+        "seed": 2,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 80,
+        "attackOffsets": 17.798518161719347,
+        "defenceOffsets": 5.043518666433951,
+        "attackHits": 40,
+        "defenceHits": 40,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 160.70000000006985,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": false,
+        "attackSide": "right",
+        "seed": 3,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 79,
+        "attackOffsets": 20.142372117341257,
+        "defenceOffsets": 4.562725162469567,
+        "attackHits": 40,
+        "defenceHits": 39,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 162.59999999997672,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": false,
+        "attackSide": "right",
+        "seed": 4,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 80,
+        "attackOffsets": 21.236201256701527,
+        "defenceOffsets": 3.5898044662831743,
+        "attackHits": 40,
+        "defenceHits": 40,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 165.60000000009313,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": true,
+        "attackSide": "left",
+        "seed": 1,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 84,
+        "attackOffsets": 16.578747644606317,
+        "defenceOffsets": 7.622638052679737,
+        "attackHits": 42,
+        "defenceHits": 42,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 189.30000000004657,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": true,
+        "attackSide": "left",
+        "seed": 2,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 79,
+        "attackOffsets": 15.612283996818046,
+        "defenceOffsets": 6.979675607293252,
+        "attackHits": 40,
+        "defenceHits": 39,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 187,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": true,
+        "attackSide": "left",
+        "seed": 3,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 71,
+        "attackOffsets": 15.961485144303847,
+        "defenceOffsets": 1.9813188283357144,
+        "attackHits": 35,
+        "defenceHits": 36,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 189.70000000006985,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": true,
+        "attackSide": "left",
+        "seed": 4,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 85,
+        "attackOffsets": 18.14922039761425,
+        "defenceOffsets": 5.1030232569507135,
+        "attackHits": 43,
+        "defenceHits": 42,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 184.59999999997672,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": true,
+        "attackSide": "right",
+        "seed": 1,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 72,
+        "attackOffsets": 19.496067402874175,
+        "defenceOffsets": 2.732555418384439,
+        "attackHits": 36,
+        "defenceHits": 36,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 216.5,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": true,
+        "attackSide": "right",
+        "seed": 2,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 79,
+        "attackOffsets": 16.8714046644567,
+        "defenceOffsets": 5.105853538294078,
+        "attackHits": 39,
+        "defenceHits": 40,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 159,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": true,
+        "attackSide": "right",
+        "seed": 3,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 81,
+        "attackOffsets": 19.881787653271264,
+        "defenceOffsets": 5.42457646890934,
+        "attackHits": 41,
+        "defenceHits": 40,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 187,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "benefits": true,
+        "attackSide": "right",
+        "seed": 4,
+        "attackScore": 0,
+        "defenceScore": 0,
+        "hits": 74,
+        "attackOffsets": 18.799289130086443,
+        "defenceOffsets": 1.3540153396126142,
+        "attackHits": 37,
+        "defenceHits": 37,
+        "finite": true,
+        "maxMove": 4.583333333333343,
+        "executionMs": 182.79999999993015,
+        "valid": true
+      }
+    ],
+    "splitScore": {
+      "attack": 0,
+      "defensive61": 0
+    },
+    "depthScore": {
+      "attack": 0,
+      "defensive61": 0
+    },
+    "controlledOpponent": [
+      {
+        "formation": "split",
+        "policy": "attack",
+        "side": "left",
+        "seed": 11,
+        "score": 2,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "attack",
+        "side": "left",
+        "seed": 12,
+        "score": 3,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "attack",
+        "side": "left",
+        "seed": 13,
+        "score": 5,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "attack",
+        "side": "left",
+        "seed": 14,
+        "score": 5,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "attack",
+        "side": "right",
+        "seed": 11,
+        "score": 6,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "attack",
+        "side": "right",
+        "seed": 12,
+        "score": 4,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "attack",
+        "side": "right",
+        "seed": 13,
+        "score": 4,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "attack",
+        "side": "right",
+        "seed": 14,
+        "score": 4,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "defence61",
+        "side": "left",
+        "seed": 11,
+        "score": 2,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "defence61",
+        "side": "left",
+        "seed": 12,
+        "score": 2,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "defence61",
+        "side": "left",
+        "seed": 13,
+        "score": 4,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "defence61",
+        "side": "left",
+        "seed": 14,
+        "score": 3,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "defence61",
+        "side": "right",
+        "seed": 11,
+        "score": 1,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "defence61",
+        "side": "right",
+        "seed": 12,
+        "score": 2,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "defence61",
+        "side": "right",
+        "seed": 13,
+        "score": 4,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "split",
+        "policy": "defence61",
+        "side": "right",
+        "seed": 14,
+        "score": 1,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "attack",
+        "side": "left",
+        "seed": 11,
+        "score": 6,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "attack",
+        "side": "left",
+        "seed": 12,
+        "score": 5,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "attack",
+        "side": "left",
+        "seed": 13,
+        "score": 6,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "attack",
+        "side": "left",
+        "seed": 14,
+        "score": 4,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "attack",
+        "side": "right",
+        "seed": 11,
+        "score": 6,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "attack",
+        "side": "right",
+        "seed": 12,
+        "score": 6,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "attack",
+        "side": "right",
+        "seed": 13,
+        "score": 6,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "attack",
+        "side": "right",
+        "seed": 14,
+        "score": 6,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "defence61",
+        "side": "left",
+        "seed": 11,
+        "score": 2,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "defence61",
+        "side": "left",
+        "seed": 12,
+        "score": 1,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "defence61",
+        "side": "left",
+        "seed": 13,
+        "score": 1,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "defence61",
+        "side": "left",
+        "seed": 14,
+        "score": 3,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "defence61",
+        "side": "right",
+        "seed": 11,
+        "score": 1,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "defence61",
+        "side": "right",
+        "seed": 12,
+        "score": 3,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "defence61",
+        "side": "right",
+        "seed": 13,
+        "score": 3,
+        "conceded": 0,
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "policy": "defence61",
+        "side": "right",
+        "seed": 14,
+        "score": 2,
+        "conceded": 0,
+        "valid": true
+      }
+    ],
+    "splitTrackingOpponent": {
+      "attack": {
+        "scored": 33,
+        "conceded": 0
+      },
+      "defence61": {
+        "scored": 19,
+        "conceded": 0
+      }
+    },
+    "depthTrackingOpponent": {
+      "attack": {
+        "scored": 45,
+        "conceded": 0
+      },
+      "defence61": {
+        "scored": 16,
+        "conceded": 0
+      }
+    }
+  },
+  "method": "Chromium production physics; deterministic local fixtures and CPU matches, not live networking"
+}

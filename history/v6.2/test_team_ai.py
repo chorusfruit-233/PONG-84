@@ -34,8 +34,8 @@ with sync_playwright() as pw:
           window.withRandom=(value,fn)=>{const old=Math.random;try{Math.random=()=>value;return fn();}finally{Math.random=old;}};
           resetFixture();
         }''')
-        check('Team-only protocol revision is 5',page.evaluate('D4.version===5'))
-        check('Team UI announces equal AI benefits',page.evaluate("document.body.textContent.includes('AI 补位 · 协同强攻 / 对等增益') && document.body.textContent.includes('726 移速上限 · 延迟反应 / 队内配合') && !document.body.textContent.includes('375 移速上限')"))
+        check('Team-only protocol revision is 4',page.evaluate('D4.version===4'))
+        check('Team UI announces equal AI benefits',page.evaluate("document.body.textContent.includes('AI 补位 · 主动进攻 / 对等增益') && document.body.textContent.includes('1100 移速上限 · 反弹 / 旋转预判') && !document.body.textContent.includes('375 移速上限')"))
         # Equivalence uses the SAME seat and shot, changing controller identity only.
         parity=page.evaluate('''()=>{
           const out=[];resetFixture();const isBot=game.isBotSeat;
@@ -97,7 +97,27 @@ with sync_playwright() as pw:
         check('240 independent production-sweep contact fixtures are reached',len(oracle)==240 and len(good)==240,{'reached':len(good),'missing':[r for r in oracle if not r['found']]})
         check('Radius, wall, spin and known expiry prediction matches production within 0.05 units',measurements['maxInterceptError']<.05,measurements)
         check('Prediction error lower than old partial-lead formula on identical fixtures',measurements['meanInterceptError']<measurements['oldPartialLeadMeanError']*.01,measurements)
-        # Old instant-reflex policy checks retired in 6.3; see test_tactical_ai.py.
+        tactics=page.evaluate('''()=>{
+          resetFixture('depth');setBall({x:400,y:100,vx:1200,vy:650});const a=game.padFor('B2'),b=game.padFor('B1');game.moveBot(a,FIXED_DT);game.moveBot(b,FIXED_DT);
+          const separate=Math.abs(game.predictD4Intercept(b).y-game.predictD4Intercept(a).y)>90;
+          const fullLead=Math.abs(game.predictD4Intercept(b).y-(100+650*(913-400)/1200))<.001;
+          setBall({x:800,y:120,vx:1200,vy:300});const frontPassed=game.predictD4Intercept(a)===null,rearCovers=!!game.predictD4Intercept(b);
+          resetFixture('split');setBall({x:400,y:100,vx:1200,vy:0});game.moveBot(game.padFor('B2'),FIXED_DT);const partnerHolds=game.botBrains.B2.target===405;
+          setBall({x:400,y:410,vx:1200,vy:0});game.botBrains={};game.moveBot(game.padFor('B2'),FIXED_DT);const ownHalf=game.botBrains.B2.target>=310&&game.botBrains.B2.target<=500;
+          resetFixture('depth');setBall({x:500,y:170,vx:1200,vy:0});game.moveBot(game.padFor('A2'),FIXED_DT);const preposition=game.botBrains.A2.target<270&&game.botBrains.A2.target>170;
+          const p=game.padFor('B1');p.y=0;game.botBrains.B1={wait:.2,target:500};game.moveBot(p,.1);const speedCap=Math.abs(p.y-p.speed*.1)<1e-8;
+          p.y=100;game.botBrains.B1={wait:.2,target:141};game.moveBot(p,FIXED_DT);const noJitter=p.y===100;
+          game.botBrains={};setBall({x:890,y:200,vx:1200,vy:0});game.moveBot(p,FIXED_DT);const urgent=game.botBrains.B1.wait===D4_AI.urgentReaction;
+          game.botBrains={};setBall({x:400,y:100,vx:1200,vy:0});game.moveBot(p,FIXED_DT);const reaction=game.botBrains.B1.wait===D4_AI.reaction;
+          game.curveRemaining=2;game.botBrains={};game.moveBot(p,FIXED_DT);const curves=game.botBrains.B1.wait===D4_AI.urgentReaction;
+          const rng=Math.random,before=JSON.stringify({ball:game.ball,effect:game.effect,curve:game.curveRemaining});let noRandom=false;
+          try{Math.random=()=>{throw new Error('AI read future random')};noRandom=!!game.predictD4Intercept(p);game.botBrains={};game.moveBot(p,FIXED_DT);}finally{Math.random=rng;}
+          const pure=JSON.stringify({ball:game.ball,effect:game.effect,curve:game.curveRemaining})===before;
+          setBall({vx:0});const zero=game.predictD4Intercept(p)===null;setBall({vx:NaN});const invalid=game.predictD4Intercept(p)===null;
+          setBall({x:400,vx:.00001});const horizon=game.predictD4Intercept(p)===null;
+          return {separate,fullLead,frontPassed,rearCovers,partnerHolds,ownHalf,preposition,speedCap,noJitter,urgent,reaction,curves,noRandom,pure,zero,invalid,horizon};
+        }''')
+        for k,v in tactics.items():check('Predictive AI tactic / safety: '+k,v)
         checkpoint=page.evaluate('''()=>{
           resetFixture('split');game.effect={type:'long',target:'B2',remaining:3.25,applied:true};game.syncD4Benefits();game.botBrains.B2={target:401,wait:.025};
           game.match.rightShield=true;game.lastHitSeat='B2';setBall({x:600,y:450,vx:-1250,vy:300,spin:.32,rallySpeed:1700});game.curveRemaining=2.2;

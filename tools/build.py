@@ -6,9 +6,9 @@ def replace(old,new,n=None):
  global s
  assert old in s, old[:140]
  s=s.replace(old,new) if n is None else s.replace(old,new,n)
-replace('<title>PONG-84 · 光学球场 · 16:9 自适应全屏</title>','<title>PONG-84 · 团队 AI 主动进攻 · 光学球场</title>')
+replace('<title>PONG-84 · 光学球场 · 16:9 自适应全屏</title>','<title>PONG-84 · 团队 AI 协同强攻 · 光学球场</title>')
 replace('<div class="section"><div class="section-title">游戏模式','<div id="modeSection" class="section"><div class="section-title">游戏模式')
-replace('双渲染 <b>v4.1</b>','组队 / 双渲染 <b>v6.2</b>')
+replace('双渲染 <b>v4.1</b>','组队 / 双渲染 <b>v6.3</b>')
 replace('<small>双人街机</small>','<small>联机街机</small>')
 replace('移动端横屏提示、本地双人、手动 WebRTC P2P 与云房间联机。','移动端横屏提示、本地双人、四人团队双打、手动 WebRTC P2P 与云房间联机。')
 replace('</style>',W.joinpath('d4.css').read_text(encoding='utf-8')+'\n</style>',1)
@@ -48,7 +48,7 @@ replace("    const canvas=document.getElementById('gameCanvas');",insert+"\n    
 replace('const game=new PongGame(canvas,ctx,audio,input,online);\n    const ui=new UIController(game,online,audio);', 'const doubles=new DoublesRoom();\n    const game=new DoublesGame(canvas,ctx,audio,input,online,doubles);\n    const ui=new DoublesUI(game,online,audio);')
 replace("if(game.isClient() && online.connected)online.sendRealtime", "if(game.isDoubles()){game.sendD4Input(true);return;}\n      if(game.isClient() && online.connected)online.sendRealtime")
 replace("window.addEventListener('pagehide',()=>online.cleanup());", "window.addEventListener('pagehide',()=>{online.cleanup();doubles.close(false);});\n    document.addEventListener('visibilitychange',()=>doubles.presence(!document.hidden));")
-replace("version:'4.1.0'", "version:'6.2.0'")
+replace("version:'4.1.0'", "version:'6.3.0'")
 replace("network:{transport:ui.transportMode", "doubles:doubles.diagnostics(),\n        network:{transport:ui.transportMode")
 # use actual header ids in subclass
 s=s.replace("this.setText('leftName','左队 A');this.setText('rightName','右队 B');", "this.setText('playerLeftName','左队 A');this.setText('playerRightName','右队 B');")

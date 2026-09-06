@@ -1,6 +1,6 @@
 __pycache__/
 *.py[cod]
 .venv/
-validation/*.log
-validation/compiled.js
+*.log
+compiled.js
 .DS_Store

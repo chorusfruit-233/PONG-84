@@ -1,0 +1,307 @@
+{
+  "checks": [
+    {
+      "name": "Motor limits: capped",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Motor limits: finiteAcceleration",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Motor limits: reverseNotInstant",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Motor limits: eventuallyReverses",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Motor limits: deadZone",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Motor limits: humanUntouched",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Motor limits: rejectsBadDt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Motor limits: sharedSpeedModifier",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Delayed perception: coldDelay",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Delayed perception: oldDirection",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Delayed perception: noLivePeek",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Delayed perception: eventuallySeesTurn",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Delayed perception: noUrgentRescue",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Delayed perception: coherentError",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Delayed perception: noRng",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Delayed perception: purePlanning",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Team assignments: frontAttacks",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Team assignments: rearCovers",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Team assignments: rearTakesOver",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Team assignments: complementary",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Team assignments: oneReceiver",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Team assignments: legalZones",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Team assignments: noHumanCommands",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Legal teammate yield: chosen",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Legal teammate yield: realMovement",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Legal teammate yield: clearFront",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Legal teammate yield: rearHits",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Legal teammate yield: notWhenRearUnready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Tactical scoring and team credit: intentional",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Tactical scoring and team credit: replyPlan",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Tactical scoring and team credit: unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Tactical scoring and team credit: noFalsePressure",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Tactical scoring and team credit: bothGetCredit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Tactical scoring and team credit: kept",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Tactical scoring and team credit: freshMatch",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Snapshot and migration safety: streakValid",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Snapshot and migration safety: rejectsBadStreak",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Snapshot and migration safety: rejectsVelocity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Snapshot and migration safety: rejectsRole",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Snapshot and migration safety: rejectsForeignCredit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Snapshot and migration safety: restored",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Snapshot and migration safety: motor",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Snapshot and migration safety: roles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Snapshot and migration safety: credit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Snapshot and migration safety: noOracleAfterMigration",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Snapshot and migration safety: rejectsOldTactics",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Cold ASCII and all decision fixtures request zero Canvas contexts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "No browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": [],
+  "failure": null,
+  "details": {
+    "Motor limits": {
+      "capped": true,
+      "finiteAcceleration": true,
+      "reverseNotInstant": true,
+      "eventuallyReverses": true,
+      "deadZone": true,
+      "humanUntouched": true,
+      "rejectsBadDt": true,
+      "sharedSpeedModifier": true
+    },
+    "Delayed perception": {
+      "coldDelay": true,
+      "oldDirection": true,
+      "noLivePeek": true,
+      "eventuallySeesTurn": true,
+      "noUrgentRescue": true,
+      "coherentError": true,
+      "noRng": true,
+      "purePlanning": true
+    },
+    "Team assignments": {
+      "frontAttacks": true,
+      "rearCovers": true,
+      "rearTakesOver": true,
+      "complementary": true,
+      "oneReceiver": true,
+      "legalZones": true,
+      "noHumanCommands": true
+    },
+    "Legal teammate yield": {
+      "chosen": true,
+      "realMovement": true,
+      "clearFront": true,
+      "rearHits": true,
+      "notWhenRearUnready": true
+    },
+    "Tactical scoring and team credit": {
+      "intentional": true,
+      "replyPlan": true,
+      "unchanged": true,
+      "noFalsePressure": true,
+      "bothGetCredit": true,
+      "kept": true,
+      "freshMatch": true
+    },
+    "Snapshot and migration safety": {
+      "streakValid": true,
+      "rejectsBadStreak": true,
+      "rejectsVelocity": true,
+      "rejectsRole": true,
+      "rejectsForeignCredit": true,
+      "restored": true,
+      "motor": true,
+      "roles": true,
+      "credit": true,
+      "noOracleAfterMigration": true,
+      "rejectsOldTactics": true
+    }
+  },
+  "method": "Real Chromium DOM injection, production AI/physics with specified synthetic fixtures. Yield test isolates score comparison using a stub; movement and collisions remain real. Full self-play is measured separately."
+}

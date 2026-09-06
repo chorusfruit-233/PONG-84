@@ -136,7 +136,7 @@ class Harness:
    game.lastHitSeat='A1';game.ball.vx=1200;game.effect={type:'slow',remaining:4};game.syncBallEffect();const slow=Math.abs(game.ball.speed-1044)<.001&&game.effect.applied===true;
    game.effect={type:'big',remaining:4};game.syncBallEffect();const big=game.ball.radius===10;
    game.effect={type:'speed',remaining:4};game.curveRemaining=3;Object.assign(game.ball,{x:p.x-4.99,y:290,vx:1900,vy:0,spin:1,radius:5,rallySpeed:1800});game.resolvePaddle(p,false);const spin=game.ball.spin>0&&game.curveRemaining===3&&game.ball.rallySpeed===1834;
-   p.y=0;game.botBrains.B1={target:540,wait:.2};game.moveBot(p,.1);const speedCap=p.y>0&&p.y<=p.speed*D4_AI.speedRatio*.1+.00001&&game.botBrains.B1.velocity<=D4_AI.acceleration*.1+.00001;
+   p.y=0;game.botBrains.B1={target:540,wait:.2};game.moveBot(p,.1);const speedCap=Math.abs(p.y-p.speed*.1)<.00001;
    game.clearEffect(false);return {long,shield,longTargets:[...targets],speed,small,slow,big,spin,speedCap};}''')
   for k,val in ai.items():await self.check('Team AI equal-benefit: '+k,(len(val)==4 if k=='longTargets' else val),ai)
   await h.evaluate("doubles.nodes.get('G1').connected=true;doubles.nodes.get('G1').synced=true;doubles.restoreDevice('G1')");await self.pump()

@@ -1,7 +1,7 @@
 {
   "checks": [
     {
-      "name": "Team-only protocol revision is 5",
+      "name": "Team-only protocol revision is 4",
       "passed": true,
       "detail": null
     },
@@ -344,26 +344,26 @@
           {
             "formation": "split",
             "simulatedSeconds": 90,
-            "executionMs": 288.79999999981374,
+            "executionMs": 1168.5999999999767,
             "finite": true,
-            "maxStep": 3.0250000000000057,
-            "totalHits": 91,
+            "maxStep": 4.583333333333343,
+            "totalHits": 147,
             "score": [
-              6,
-              1
+              0,
+              0
             ],
             "valid": true
           },
           {
             "formation": "depth",
             "simulatedSeconds": 90,
-            "executionMs": 167.29999999981374,
+            "executionMs": 1323.7999999999302,
             "finite": true,
-            "maxStep": 3.0250000000000057,
-            "totalHits": 95,
+            "maxStep": 4.583333333333343,
+            "totalHits": 276,
             "score": [
-              2,
-              12
+              0,
+              0
             ],
             "valid": true
           }
@@ -382,31 +382,116 @@
           {
             "formation": "split",
             "simulatedSeconds": 90,
-            "executionMs": 288.79999999981374,
+            "executionMs": 1168.5999999999767,
             "finite": true,
-            "maxStep": 3.0250000000000057,
-            "totalHits": 91,
+            "maxStep": 4.583333333333343,
+            "totalHits": 147,
             "score": [
-              6,
-              1
+              0,
+              0
             ],
             "valid": true
           },
           {
             "formation": "depth",
             "simulatedSeconds": 90,
-            "executionMs": 167.29999999981374,
+            "executionMs": 1323.7999999999302,
             "finite": true,
-            "maxStep": 3.0250000000000057,
-            "totalHits": 95,
+            "maxStep": 4.583333333333343,
+            "totalHits": 276,
             "score": [
-              2,
-              12
+              0,
+              0
             ],
             "valid": true
           }
         ]
       }
+    },
+    {
+      "name": "Predictive AI tactic / safety: separate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: fullLead",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: frontPassed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: rearCovers",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: partnerHolds",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: ownHalf",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: preposition",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: speedCap",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: noJitter",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: urgent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: reaction",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: curves",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: noRandom",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: pure",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: zero",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: invalid",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: horizon",
+      "passed": true,
+      "detail": null
     },
     {
       "name": "AI benefit/prediction checkpoint: valid",
@@ -454,13 +539,13 @@
       "detail": {
         "formation": "split",
         "simulatedSeconds": 90,
-        "executionMs": 288.79999999981374,
+        "executionMs": 1168.5999999999767,
         "finite": true,
-        "maxStep": 3.0250000000000057,
-        "totalHits": 91,
+        "maxStep": 4.583333333333343,
+        "totalHits": 147,
         "score": [
-          6,
-          1
+          0,
+          0
         ],
         "valid": true
       }
@@ -471,13 +556,13 @@
       "detail": {
         "formation": "depth",
         "simulatedSeconds": 90,
-        "executionMs": 167.29999999981374,
+        "executionMs": 1323.7999999999302,
         "finite": true,
-        "maxStep": 3.0250000000000057,
-        "totalHits": 95,
+        "maxStep": 4.583333333333343,
+        "totalHits": 276,
         "score": [
-          2,
-          12
+          0,
+          0
         ],
         "valid": true
       }
@@ -504,26 +589,26 @@
       {
         "formation": "split",
         "simulatedSeconds": 90,
-        "executionMs": 288.79999999981374,
+        "executionMs": 1168.5999999999767,
         "finite": true,
-        "maxStep": 3.0250000000000057,
-        "totalHits": 91,
+        "maxStep": 4.583333333333343,
+        "totalHits": 147,
         "score": [
-          6,
-          1
+          0,
+          0
         ],
         "valid": true
       },
       {
         "formation": "depth",
         "simulatedSeconds": 90,
-        "executionMs": 167.29999999981374,
+        "executionMs": 1323.7999999999302,
         "finite": true,
-        "maxStep": 3.0250000000000057,
-        "totalHits": 95,
+        "maxStep": 4.583333333333343,
+        "totalHits": 276,
         "score": [
-          2,
-          12
+          0,
+          0
         ],
         "valid": true
       }

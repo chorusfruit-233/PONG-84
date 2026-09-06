@@ -105,7 +105,7 @@
               "seq": 1,
               "dir": 1,
               "target": null,
-              "at": 2873.899999999907,
+              "at": 6429.79999999993,
               "ack": 1
             }
           ],
@@ -115,7 +115,7 @@
               "seq": 2,
               "dir": -1,
               "target": null,
-              "at": 2873.899999999907,
+              "at": 6429.79999999993,
               "ack": 2
             }
           ]
@@ -446,12 +446,12 @@
       "name": "Remaining player becomes host with spectator witness vote",
       "passed": true,
       "detail": {
-        "version": 5,
+        "version": 4,
         "role": "host",
         "localDevice": "G1",
         "host": "G1",
         "term": 2,
-        "room": "082edafa",
+        "room": "f9058600",
         "status": "paused",
         "formation": "depth",
         "aiFill": true,
@@ -517,7 +517,7 @@
             "ready": false,
             "rtt": 0,
             "route": "unknown",
-            "lostAt": 4484.600000000093
+            "lostAt": 7509.300000000047
           },
           {
             "id": "G1",
@@ -528,9 +528,9 @@
             "visible": true,
             "synced": true,
             "ready": false,
-            "rtt": 46,
+            "rtt": 150,
             "route": "unknown",
-            "lostAt": 4482.600000000093
+            "lostAt": 7506.699999999953
           },
           {
             "id": "G2",
@@ -541,7 +541,7 @@
             "visible": true,
             "synced": true,
             "ready": false,
-            "rtt": 20,
+            "rtt": 162,
             "route": "unknown",
             "lostAt": 0
           },
@@ -554,7 +554,7 @@
             "visible": true,
             "synced": true,
             "ready": false,
-            "rtt": 21,
+            "rtt": 0,
             "route": "unknown",
             "lostAt": 0
           }
@@ -586,7 +586,7 @@
             "connected": true,
             "authenticated": true,
             "kind": "mesh",
-            "rtt": 15,
+            "rtt": 41,
             "route": "unknown",
             "sent": 0,
             "dropped": 0,
@@ -598,7 +598,7 @@
             "connected": true,
             "authenticated": true,
             "kind": "mesh",
-            "rtt": 21,
+            "rtt": 14,
             "route": "unknown",
             "sent": 0,
             "dropped": 0,
