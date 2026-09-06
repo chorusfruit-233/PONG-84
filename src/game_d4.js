@@ -695,7 +695,15 @@
         this.elapsed+=dt;this.stepToasts(dt);
         if(this.phase===Phase.COUNTDOWN){
           if(this.isHost()){this.simTime+=dt;super.stepCountdown(dt);this.sendNetworkIfNeeded(dt);}
-          else if(this.isClient()){this.countdownRemaining=Math.max(.001,this.countdownRemaining-dt);const mark=this.countdownRemaining>.65?String(clamp(Math.ceil(this.countdownRemaining-.55),1,3)):'GO';if(mark!==this.countdownMark){this.countdownMark=mark;this.onCountdownVisual?.(mark,true);this.audio.countdown();}}
+          else if(this.isClient()){
+            this.countdownRemaining=Math.max(0,this.countdownRemaining-dt);
+            if(this.countdownRemaining<=0){
+              this.phase=Phase.PLAYING;this.countdownMark='';this.onCountdownVisual?.('',false);this.emitUi();
+            }else{
+              const mark=this.countdownRemaining>.65?String(clamp(Math.ceil(this.countdownRemaining-.55),1,3)):'GO';
+              if(mark!==this.countdownMark){this.countdownMark=mark;this.onCountdownVisual?.(mark,true);this.audio.countdown();}
+            }
+          }
           return;
         }
         if(this.phase!==Phase.PLAYING)return;
@@ -716,7 +724,10 @@
         try{this.ball=b;this.trail=[];this.sweepD4Ball(dt);}
         finally{this.ball=main;this.trail=trail;this.trailAt=trailAt;}
         this.lastHitSeat=lastHit;
-        if(b.x<-b.radius||b.x>WORLD.width+b.radius){b.x=WORLD.width/2;b.y=randomRange(b.radius,WORLD.height-b.radius);b.vx=(b.vx<0?1:-1)*Math.abs(b.rallySpeed);}
+        // The bonus ball is a closed-loop ball: side boundaries reflect it and
+        // never award points or respawn it in the middle of the court.
+        if(b.x-b.radius<=0){b.x=b.radius;b.vx=Math.abs(b.vx)||Math.abs(b.rallySpeed);}
+        else if(b.x+b.radius>=WORLD.width){b.x=WORLD.width-b.radius;b.vx=-Math.abs(b.vx)||-Math.abs(b.rallySpeed);}
       }
       // Swept point against radius-expanded rectangles, plus chronological wall
       // contacts. Equal-time seam contacts select nearest centre, then fixed seat ID.
