@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Real Chromium DOM-injection regression checks. No network or file navigation claim."""
-import json, re, shutil, sys
+import json, re, shutil, sys, os
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 SOURCE=Path(sys.argv[1]) if len(sys.argv)>1 else Path(__file__).resolve().parents[1]/'index.html'
@@ -13,7 +13,7 @@ def storage(page, settings):
     page.evaluate('''data=>{const m=new Map([['pong84.ui4.settings',JSON.stringify(data)]]);Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>m.get(k)||null,setItem:(k,v)=>m.set(k,String(v)),removeItem:k=>m.delete(k)}});window.__canvasCalls=0;const orig=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(...a){__canvasCalls++;return orig.apply(this,a)}}''',settings)
 def load(context,settings={}):
     page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
-    storage(page,settings);page.set_content(SOURCE.read_text());page.wait_for_timeout(140);return page
+    storage(page,settings);page.set_content(SOURCE.read_text(encoding='utf-8'));page.wait_for_timeout(140);return page
 def fixture(page):
     page.evaluate('''()=>{game.audio.enabled=false;game.setSetting('mode','pvp');game.setSetting('score',99);game.resetMatch();game.phase=Phase.PLAYING;game.prepareServe('left');game.match.leftScore=2;game.match.rightScore=3;game.emitUi();}''')
 def snapshot(page):
@@ -24,7 +24,7 @@ def contained(r):
 def rects(page):
     return page.evaluate('''()=>{let r=document.getElementById('gameContainer').getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,iw:innerWidth,ih:innerHeight,side:getComputedStyle(document.querySelector('.console-column')).display,native:document.fullscreenElement?.id||null,rootScroll:document.documentElement.scrollWidth};}''')
 with sync_playwright() as p:
-    browser=p.chromium.launch(executable_path=shutil.which('chromium'),headless=True,args=['--no-sandbox'])
+    browser=p.chromium.launch(executable_path=os.environ.get('PONG_BROWSER') or shutil.which('chromium') or shutil.which('google-chrome'),headless=True,args=['--no-sandbox'])
     context=browser.new_context(viewport={'width':1440,'height':900},device_scale_factor=2)
     page=load(context)
     check('Fresh default is high-quality graphics',page.evaluate("game.settings.renderMode==='crt'&&game.settings.graphicsQuality==='ultra'"))
@@ -184,7 +184,7 @@ check('No uncaught browser JavaScript errors',not errors,errors)
 import hashlib
 expected={'OnlinePeer': '6ef1b0cee8ffa90e6cf8cb4fdecc786ed3f5582d14f5e6afebf23f5dbc21a127', 'InputManager': '4c6698e0be487dcd964a9091a375624a2d00b4eab6832de52d8d3ba0f54bc3c2'}
 for cls,digest in expected.items():
-    match=re.search(r'    class '+cls+r' \{[\s\S]*?(?=\n    // ={10,})',SOURCE.read_text())
+    match=re.search(r'    class '+cls+r' \{[\s\S]*?(?=\n    // ={10,})',SOURCE.read_text(encoding='utf-8'))
     check(cls+' source unchanged by UI rewrite',bool(match and hashlib.sha256(match.group().encode()).hexdigest()==digest))
 report={'source':SOURCE.name,'test_method':'Chromium real DOM + native Fullscreen API with page.set_content; no URL navigation; deterministic in-memory gameplay fixtures used','tests':results,'passed':sum(r['pass'] for r in results),'total':len(results),'errors':errors}
 (OUT/'regression.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))

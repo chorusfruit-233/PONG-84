@@ -1,0 +1,5 @@
+{
+  "success": false,
+  "error": "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at file:///mnt/data/PONG84_Doubles_Release/index.html\nCall log:\n  - navigating to \"file:///mnt/data/PONG84_Doubles_Release/index.html\", waiting until \"load\"\n",
+  "policyModified": false
+}

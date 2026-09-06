@@ -1,0 +1,119 @@
+{
+  "method": "Real Chromium DOM, native fullscreen & pointer events; deterministic game fixtures, no network",
+  "checks": [
+    {
+      "name": "four graphical paddles without runtime errors",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "lobby visible with four slots and ready controls",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "resume controls precede recovery lobby",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "space from focused gameplay area launches without new match",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "doubles native fullscreen contains 16:9 at 1920x1080",
+      "passed": true,
+      "detail": {
+        "w": 1920,
+        "h": 1080,
+        "x": 0,
+        "y": 0,
+        "native": "gameShell"
+      }
+    },
+    {
+      "name": "doubles native fullscreen contains 16:9 at 1440x900",
+      "passed": true,
+      "detail": {
+        "w": 1440,
+        "h": 810,
+        "x": 0,
+        "y": 45,
+        "native": "gameShell"
+      }
+    },
+    {
+      "name": "doubles native fullscreen contains 16:9 at 2560x1080",
+      "passed": true,
+      "detail": {
+        "w": 1920,
+        "h": 1080,
+        "x": 320,
+        "y": 0,
+        "native": "gameShell"
+      }
+    },
+    {
+      "name": "doubles native fullscreen contains 16:9 at 1024x768",
+      "passed": true,
+      "detail": {
+        "w": 1024,
+        "h": 576,
+        "x": 0,
+        "y": 96,
+        "native": "gameShell"
+      }
+    },
+    {
+      "name": "control backpressure pause notification is non-recursive",
+      "passed": true,
+      "detail": {
+        "calls": 1,
+        "sent": false,
+        "state": "congested"
+      }
+    },
+    {
+      "name": "30-second reconnect expiry aborts and frees seat",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mobile portrait advice remains visible in doubles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mobile ready lobby has no horizontal overflow",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Graphical full touch area controls own upper half, cancel does not serve",
+      "passed": true,
+      "detail": {
+        "target": 0.8,
+        "y": 152,
+        "cleared": true,
+        "serve": true
+      }
+    },
+    {
+      "name": "ASCII full touch area controls own upper half, cancel does not serve",
+      "passed": true,
+      "detail": {
+        "target": 0.8300000000000001,
+        "y": 157.70000000000002,
+        "cleared": true,
+        "serve": true
+      }
+    },
+    {
+      "name": "no browser errors in UI / lifecycle probes",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

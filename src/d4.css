@@ -1,0 +1,20 @@
+/* Four-player lobby. No animated filters, canvases or shadow layers in ASCII. */
+.mode-card[data-value="doubles"]{grid-column:1/-1;min-height:78px!important}.doubles-panel{margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+.d4-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.d4-heading h3{font-size:17px;letter-spacing:-.3px}.d4-count{font:700 14px ui-monospace,monospace;color:var(--accent);white-space:nowrap}
+.d4-name{display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:11px;margin-bottom:10px}.d4-name input{width:100%}
+.d4-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.d4-actions>.btn{flex:1}.d4-roster{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.d4-seat{min-width:0;display:flex;flex-direction:column;gap:4px;position:relative;padding:11px 9px;min-height:110px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;background:var(--surface);text-align:left;color:var(--text)}
+.d4-seat.team-b{border-left-color:var(--opponent,#d3ba90)}.d4-seat:disabled{opacity:1;cursor:default}.d4-seat.is-mine{outline:1px solid var(--accent);outline-offset:2px}.d4-seat.is-ready .d4-seat-state{color:var(--accent)}
+.d4-seat strong{font:600 12px ui-monospace,monospace;color:var(--accent)}.d4-seat.team-b strong{color:var(--opponent,#d3ba90)}.d4-seat-name{font-size:12px;font-weight:600;overflow-wrap:anywhere}.d4-seat-state{font-size:10px;color:var(--muted)}.d4-seat-meta{font-size:9px;color:var(--faint);margin-top:auto}
+.d4-notice{font-size:11px;line-height:1.8;color:var(--muted);padding:10px 11px;background:var(--surface);border:1px solid var(--border);border-radius:7px;margin:12px 0;overflow-wrap:anywhere}
+.d4-join{margin-top:12px}.d4-join label,.d4-card label{display:block;font-size:10px;color:var(--muted);margin:8px 0 4px}.d4-code{display:block;width:100%;min-height:76px;max-height:200px;font:10px/1.5 ui-monospace,monospace;word-break:break-all}.d4-room-code{font:700 30px ui-monospace,monospace;text-align:center;letter-spacing:.3em;width:100%;margin-top:10px}
+.d4-card{border:1px solid var(--border);border-radius:8px;margin-top:10px;padding:10px}.d4-card>summary{font-size:11px;line-height:1.8}.d4-card-state{display:block;padding-left:18px;color:var(--faint);font-size:10px}.d4-swap{padding:10px;border:1px solid var(--accent);border-radius:8px;font-size:11px;margin-top:12px}
+.d4-live-roster{font-size:10px;line-height:1.9;color:var(--muted);margin:10px 0;overflow-wrap:anywhere}.d4-panel-note{font-size:10px;line-height:1.8;color:var(--faint);margin-top:10px}
+:root:not(.ascii-mode) .d4-seat{background:linear-gradient(150deg,#15323d70,#142031);border-top-color:#395064}
+:root:not(.ascii-mode) .d4-seat.team-b{background:linear-gradient(150deg,#3c2b2270,#142031)}
+:root:not(.ascii-mode) .d4-seat.is-mine{box-shadow:0 0 15px #69d5ed12,inset 0 1px 0 #c7f8ff0c}
+.ascii-mode .d4-seat,.ascii-mode .d4-card,.ascii-mode .d4-notice{box-shadow:none;background:var(--surface)}
+@media(max-width:800px){.d4-seat{min-height:98px}.d4-roster{gap:10px}.d4-actions>.btn{min-height:40px}.d4-code{font-size:12px}}
+
+.d4-room-open #modeSection,.d4-room-open #onlineSection,.d4-room-open #menuOverlay>.small-note,.d4-room-open #menuSub{display:none!important}
+.d4-room-open .doubles-panel{margin-top:14px;padding-top:14px}
