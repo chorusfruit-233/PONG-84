@@ -1,5 +1,9 @@
     // Team simulation stays authoritative on exactly one elected device. Graphics
     // and ASCII consume the same state; neither renderer participates in physics.
+    // Shared movement budget, finite reaction time, CPU-only trajectory prediction.
+    // No future random effect/curve samples are consumed by the AI.
+    const D4_AI = Object.freeze({reaction:.045, urgentReaction:.025, urgentTime:.18,
+      deadZone:2, horizon:2.5, maxSteps:600, guardBias:.32});
     function validD4Snapshot(s) {
       if(!s||!isId(s.matchId)||!Number.isSafeInteger(s.seq)||s.seq<0||!Number.isSafeInteger(s.round)||s.round<0||
         !Number.isSafeInteger(s.term)||s.term<1||!Number.isSafeInteger(s.event)||!['split','depth'].includes(s.formation)||
@@ -47,7 +51,6 @@
       isLocalSeat(seat){return this.localSeats().includes(seat);}
       padFor(seat){return this.ensureD4Pads().find(p=>p.id===seat)||null;}
       isBotSeat(seat){return this.room?.isBot(this.room?.playerAt(seat))||false;}
-      teamHasAI(side){return !!this.room&&[...this.room.players.values()].some(p=>seatSide(p.seat)===side&&this.room.isBot(p));}
       applySettingsToEntities(){super.applySettingsToEntities();if(this.isDoubles())for(const p of this.ensureD4Pads()){p.height=p.baseHeight=D4.height;p.y=clamp(p.y,p.minY,p.maxY-p.height);}}
       setSetting(key,value){
         if(key==='mode'&&value!==this.settings.mode&&this.room?.role)return; // Leave through the migration-aware room action.
@@ -77,8 +80,8 @@
         this.room?.roundBoundary();this.clearEffect(false);this.clearCurve();this.serveSide=side==='right'?'right':'left';
         const n=this.serveTurns[this.serveSide]||0;this.serveSlot=(this.serveSide==='left'?'A':'B')+(n+1);this.serveTurns[this.serveSide]=1-n;
         this.roundId++;this.eventId++;this.ball.radius=this.ball.baseRadius;this.ball.rallySpeed=this.ball.baseSpeed;
-        this.ball.speed=this.ball.baseSpeed;this.ball.spin=0;this.ball.vx=this.ball.vy=0;this.lastHitSeat=null;this.aiServeRemaining=randomRange(.85,1.3);
-        this.trail.length=0;this.positionServeBall();this.enforceNoAIBuffs();this.emitUi();
+        this.ball.speed=this.ball.baseSpeed;this.ball.spin=0;this.ball.vx=this.ball.vy=0;this.lastHitSeat=null;this.botBrains={};this.aiServeRemaining=randomRange(.85,1.3);
+        this.trail.length=0;this.positionServeBall();this.syncD4Benefits();this.emitUi();
       }
       positionServeBall(){
         if(!this.isDoubles())return super.positionServeBall();if(!this.serveSlot)return;
@@ -110,30 +113,27 @@
       quitToMenu(){if(this.isDoubles()&&this.room?.role){this.room.leaveRoom().catch(e=>{this.room.notice=e.message;this.room.emit();});return;}super.quitToMenu();}
       spawnEffect(type=choice(Object.keys(POWERUPS))){
         if(!this.isDoubles()||type!=='long')return super.spawnEffect(type);
-        const eligible=this.ensureD4Pads().filter(p=>!this.isBotSeat(p.id));
+        const eligible=this.ensureD4Pads(); // All four seats have identical long-paddle eligibility.
         if(!eligible.length){this.effectCooldown=randomRange(EFFECT_TIMING.gapMin,EFFECT_TIMING.gapMax);return false;}
         if(this.effect)this.clearEffect(false);const p=choice(eligible);this.effect={type:'long',target:p.id,remaining:POWERUPS.long.duration,applied:true};
         p.height=Math.min(p.maxY-p.minY,p.baseHeight*1.5);p.y=clamp(p.y,p.minY,p.maxY-p.height);this.audio.powerup();this.eventId++;this.emitUi();return true;
       }
       syncBallEffect(){
-        if(!this.isDoubles())return super.syncBallEffect();const b=this.ball,type=this.effect?.type;
-        const fromBot=this.lastHitSeat&&this.isBotSeat(this.lastHitSeat),recipient=b.vx<0?'left':'right';
-        let applied=!!type;
-        if((type==='speed'||type==='small')&&fromBot)applied=false;
-        // A team containing a CPU never receives an easier incoming ball or a shared shield.
-        if((type==='slow'||type==='big')&&this.teamHasAI(recipient))applied=false;
-        if(type==='long')applied=!this.isBotSeat(this.effect.target);
-        let speed=b.rallySpeed||b.baseSpeed;if(fromBot)speed=Math.min(speed,BALL_TUNING.baseSpeed);b.radius=b.baseRadius;
-        if(applied){if(type==='speed')speed*=1.5;else if(type==='slow')speed*=.58;else if(type==='big')b.radius=b.baseRadius*2;else if(type==='small')b.radius=b.baseRadius*.55;}
-        b.speed=clamp(speed,BALL_TUNING.minEffectSpeed,b.maxSpeed);b.y=clamp(b.y,b.radius,540-b.radius);this.normalizeBallVelocityToSpeed();if(this.effect)this.effect.applied=applied;
+        // The base implementation already treats every non-solo-AI mode equally.
+        // Delegating avoids separate bot/human interpretations of a shared ball.
+        return super.syncBallEffect();
       }
-      enforceNoAIBuffs(){
-        if(!this.isDoubles()||!this.room)return;
-        for(const p of this.ensureD4Pads())if(this.isBotSeat(p.id)){p.height=p.baseHeight;p.y=clamp(p.y,p.minY,p.maxY-p.height);}
-        for(const side of ['left','right'])if(this.teamHasAI(side)){this.match[side+'Shield']=false;this.match[side+'Streak']=0;}
-        if(this.effect?.type==='long'&&this.isBotSeat(this.effect.target))this.clearEffect(false);
-        if(this.lastHitSeat&&this.isBotSeat(this.lastHitSeat)){this.ball.spin=0;this.clearCurve();this.ball.rallySpeed=Math.min(this.ball.rallySpeed||1200,1200);}
-        this.syncBallEffect();
+      syncD4Benefits(){
+        if(!this.isDoubles())return;
+        // A control handoff changes WHO moves a paddle, never its live benefits.
+        // Do not normalize ball velocity here: doing so on a roster change would
+        // erase the spin-integrated trajectory or a current curve perturbation.
+        const longSeat=this.effect?.type==='long'?this.effect.target:null;
+        for(const p of this.ensureD4Pads()){
+          p.height=Math.min(p.maxY-p.minY,p.baseHeight*(p.id===longSeat?1.5:1));
+          p.y=clamp(p.y,p.minY,p.maxY-p.height);
+        }
+        for(const brain of Object.values(this.botBrains||{}))brain.wait=0;
       }
       clearEffect(sound=true){
         if(!this.isDoubles()||this.effect?.type!=='long')return super.clearEffect(sound);
@@ -144,29 +144,98 @@
         if(!this.isDoubles())return super.resolvePaddle(p,isLeft);const b=this.ball;
         if(isLeft?b.vx>=0:b.vx<=0)return false;
         if(b.x+b.radius<p.x||b.x-b.radius>p.x+p.width||b.y+b.radius<p.y||b.y-b.radius>p.y+p.height)return false;
-        const ai=this.isBotSeat(p.id),hit=clamp((b.y-p.y-p.height/2)/(p.height/2),-1,1),angle=hit*Math.PI/3;
-        this.lastHitSeat=p.id;b.rallySpeed=ai?Math.min(b.rallySpeed||1200,1200):Math.min((b.rallySpeed||b.baseSpeed)+BALL_TUNING.hitAcceleration,b.maxSpeed);
-        b.vx=Math.cos(angle)*(isLeft?1:-1);b.vy=Math.sin(angle);this.syncBallEffect();b.spin=ai?0:hit*.92*Math.abs(hit);
-        if(ai)this.clearCurve();else{if(Math.abs(b.spin)>.15){b.vx*=1.12;this.audio.spin();}this.tryStartCurve(isLeft);}
+        const hit=clamp((b.y-p.y-p.height/2)/(p.height/2),-1,1),angle=hit*Math.PI/3;
+        this.lastHitSeat=p.id;b.rallySpeed=Math.min((b.rallySpeed||b.baseSpeed)+BALL_TUNING.hitAcceleration,b.maxSpeed);
+        b.vx=Math.cos(angle)*(isLeft?1:-1);b.vy=Math.sin(angle);this.syncBallEffect();b.spin=hit*.92*Math.abs(hit);
+        if(Math.abs(b.spin)>.15){b.vx*=1.12;this.audio.spin();}this.tryStartCurve(isLeft);
         const mag=Math.hypot(b.vx,b.vy);if(mag>b.maxSpeed){b.vx*=b.maxSpeed/mag;b.vy*=b.maxSpeed/mag;}
         b.x=isLeft?p.x+p.width+b.radius+.5:p.x-b.radius-.5;this.audio.hit();this.emitUi();return true;
       }
-      updateCurve(dt){if(this.isDoubles()&&this.lastHitSeat&&this.isBotSeat(this.lastHitSeat)){this.clearCurve();return;}super.updateCurve(dt);}
       scorePoint(side){if(!this.isDoubles())return super.scorePoint(side);if(this.respawnRemaining>0||this.phase!==Phase.PLAYING)return;
-        this.enforceNoAIBuffs();this.eventId++;this.serveSlot=this.serveSide=null;super.scorePoint(side);this.enforceNoAIBuffs();this.emitUi();}
+        this.syncD4Benefits();this.eventId++;this.serveSlot=this.serveSide=null;super.scorePoint(side);this.syncD4Benefits();this.emitUi();}
       localInput(player){
         const dual=this.localPlayers().length===2,index=player.index;
         const dir=dual?(index===0?this.input.leftDir(false):this.input.rightDir()):this.input.onlineLocalDir();
         const raw=this.input.targetFor(dual?(index===0?'left':'right'):'local');return {dir,target:Number.isFinite(raw)?clamp(raw/540,0,1):null};
       }
       moveD4Pad(p,dir,target,dt){if(!p)return;if(Number.isFinite(target)){const dest=p.minY+clamp(target,0,1)*(p.maxY-p.minY-p.height);p.y+=clamp(dest-p.y,-p.speed*dt,p.speed*dt);}else p.y+=clamp(dir||0,-1,1)*p.speed*dt;p.y=clamp(p.y,p.minY,p.maxY-p.height);}
+      predictD4Intercept(p,source=this.ball){
+        if(!p||!source)return null;
+        let {x,y,vx,vy,spin=0}=source,r=source.radius;
+        if(![x,y,vx,vy,spin,r].every(Number.isFinite)||r<=0||r>=WORLD.height/2||Math.abs(vx)<1e-6)return null;
+        if(p.side==='left'?vx>=0:vx<=0)return null;
+        const face=radius=>p.side==='left'?p.x+p.width+radius:p.x-radius;
+        let eta=(face(r)-x)/vx;
+        // Front players do not chase a ball that has already passed their plane.
+        if(eta< -1e-7)return null;
+        if(eta<0)eta=0;
+        const effect=this.effect,type=effect?.type;
+        const expires=effect&&['speed','slow','big','small'].includes(type)?Math.max(0,effect.remaining):Infinity;
+        const reflect=(position,velocity,radius)=>{
+          const span=WORLD.height-2*radius,period=2*span;
+          const z=((position-radius)%period+period)%period;
+          if(z<1e-9)return {y:radius,vy:Math.abs(velocity)};
+          if(Math.abs(z-span)<1e-9)return {y:WORLD.height-radius,vy:-Math.abs(velocity)};
+          return z<span?{y:radius+z,vy:velocity}:{y:radius+period-z,vy:-velocity};
+        };
+        // The common no-spin case is exact and O(1), including many wall bounces.
+        if(Math.abs(spin)<=.002&&expires>eta+FIXED_DT){
+          if(eta>D4_AI.horizon)return null;
+          const end=reflect(y+vy*eta,vy,r);
+          return {y:end.y,time:eta,vx,vy:end.vy,radius:r};
+        }
+        // Mirrors the production fixed-step ordering: known effect expiry, spin
+        // acceleration/decay, then radius-aware swept wall motion. Future random
+        // curves and new powerups are deliberately not sampled or guessed.
+        let elapsed=0,expired=false;
+        for(let n=0;n<D4_AI.maxSteps&&elapsed<D4_AI.horizon;n++){
+          const dt=Math.min(FIXED_DT,D4_AI.horizon-elapsed);
+          if(!expired&&expires<=elapsed+dt+1e-10){
+            expired=true;r=source.baseRadius||this.ball.baseRadius;y=clamp(y,r,WORLD.height-r);
+            const speed=clamp(source.rallySpeed||source.baseSpeed||this.ball.baseSpeed,BALL_TUNING.minEffectSpeed,source.maxSpeed||this.ball.maxSpeed);
+            const mag=Math.hypot(vx,vy)||1;vx=vx/mag*speed;vy=vy/mag*speed;
+          }
+          if(Math.abs(spin)>.002){vy+=spin*84*dt;spin*=Math.pow(.985,dt*60);}
+          eta=(face(r)-x)/vx;
+          if(eta< -1e-7)return null;
+          const travel=Math.min(dt,Math.max(0,eta)),end=reflect(y+vy*travel,vy,r);
+          if(eta<=dt+1e-9)return {y:end.y,time:elapsed+travel,vx,vy:end.vy,radius:r};
+          x+=vx*dt;y=end.y;vy=end.vy;elapsed+=dt;
+        }
+        return null;
+      }
+      botGuardTarget(p){
+        const centre=(p.minY+p.maxY)/2,b=this.ball;
+        if(this.serveSlot||this.respawnRemaining>0||Math.abs(b.vx)<1e-6)return centre;
+        // While our ball travels away, modestly pre-position towards its likely
+        // arrival at the opposing front line. The opponent's future input is unknown.
+        if(p.side==='left'?b.vx<=0:b.vx>=0)return centre;
+        let next=null;
+        for(const other of this.ensureD4Pads())if(other.side!==p.side){
+          const hit=this.predictD4Intercept(other);
+          if(hit&&(!next||hit.time<next.time))next=hit;
+        }
+        return next?centre+(next.y-centre)*D4_AI.guardBias:centre;
+      }
       moveBot(p,dt){
-        const brain=this.botBrains[p.id]||(this.botBrains[p.id]={wait:0,target:(p.minY+p.maxY)/2});brain.wait=Math.max(0,brain.wait-dt);
-        if(!brain.wait){const b=this.ball,toward=p.side==='left'?b.vx<0:b.vx>0;
-          let target=(p.minY+p.maxY)/2;if(toward){const lead=clamp((p.x-b.x)/b.vx,0,.45)*.42;target=b.y+b.vy*lead;
-            target=((target%1080)+1080)%1080;if(target>540)target=1080-target;target+=randomRange(-18,18);}
-          brain.target=clamp(target,p.minY+p.height/2,p.maxY-p.height/2);brain.wait=randomRange(.13,.21);}
-        const delta=brain.target-(p.y+p.height/2);if(Math.abs(delta)>9)p.y+=clamp(delta,-375*dt,375*dt);p.y=clamp(p.y,p.minY,p.maxY-p.height);
+        if(!p||!Number.isFinite(dt)||dt<=0)return;
+        const brain=this.botBrains[p.id]||(this.botBrains[p.id]={wait:0,target:(p.minY+p.maxY)/2});
+        brain.wait=Math.max(0,brain.wait-dt);
+        if(!brain.wait){
+          const hit=!this.serveSlot&&this.respawnRemaining<=0?this.predictD4Intercept(p):null;
+          // Split partners hold their own half if the predicted arrival cannot
+          // touch their zone. A rear defender always prepares for a front miss.
+          const canCover=hit&&hit.y+hit.radius>=p.minY&&hit.y-hit.radius<=p.maxY;
+          const target=canCover?hit.y:this.botGuardTarget(p);
+          brain.target=clamp(target,p.minY+p.height/2,p.maxY-p.height/2);
+          brain.wait=this.curveRemaining>0||(hit&&hit.time<D4_AI.urgentTime)?D4_AI.urgentReaction:D4_AI.reaction;
+        }
+        const delta=brain.target-(p.y+p.height/2);
+        // Same speed budget as human keyboards/touch, including any future shared
+        // speed modifier on the paddle. No teleports or AI-only speed multiplier.
+        const speed=Number.isFinite(p.speed)?Math.max(0,p.speed):PC_PADDLE_SPEED;
+        if(Math.abs(delta)>D4_AI.deadZone)p.y+=clamp(delta,-speed*dt,speed*dt);
+        p.y=clamp(p.y,p.minY,p.maxY-p.height);
       }
       moveD4(dt){const now=performance.now();for(const p of this.room.players.values()){const pad=this.padFor(p.seat);
         if(this.room.isBot(p)){this.moveBot(pad,dt);continue;}

@@ -105,7 +105,7 @@
               "seq": 1,
               "dir": 1,
               "target": null,
-              "at": 4469.699999999953,
+              "at": 3319,
               "ack": 1
             }
           ],
@@ -115,7 +115,7 @@
               "seq": 2,
               "dir": -1,
               "target": null,
-              "at": 4469.79999999993,
+              "at": 3319,
               "ack": 2
             }
           ]
@@ -243,182 +243,164 @@
       "detail": null
     },
     {
-      "name": "Team AI equal-benefit: long",
+      "name": "AI no-benefit: noLong",
       "passed": true,
       "detail": {
-        "long": true,
-        "shield": true,
+        "noLong": true,
+        "noShield": true,
         "longTargets": [
           "A1",
-          "A2",
-          "B1",
-          "B2"
+          "A2"
         ],
-        "speed": true,
-        "small": true,
-        "slow": true,
-        "big": true,
-        "spin": true,
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
         "speedCap": true
       }
     },
     {
-      "name": "Team AI equal-benefit: shield",
+      "name": "AI no-benefit: noShield",
       "passed": true,
       "detail": {
-        "long": true,
-        "shield": true,
+        "noLong": true,
+        "noShield": true,
         "longTargets": [
           "A1",
-          "A2",
-          "B1",
-          "B2"
+          "A2"
         ],
-        "speed": true,
-        "small": true,
-        "slow": true,
-        "big": true,
-        "spin": true,
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
         "speedCap": true
       }
     },
     {
-      "name": "Team AI equal-benefit: longTargets",
+      "name": "AI no-benefit: longTargets",
       "passed": true,
       "detail": {
-        "long": true,
-        "shield": true,
+        "noLong": true,
+        "noShield": true,
         "longTargets": [
           "A1",
-          "A2",
-          "B1",
-          "B2"
+          "A2"
         ],
-        "speed": true,
-        "small": true,
-        "slow": true,
-        "big": true,
-        "spin": true,
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
         "speedCap": true
       }
     },
     {
-      "name": "Team AI equal-benefit: speed",
+      "name": "AI no-benefit: noSpeed",
       "passed": true,
       "detail": {
-        "long": true,
-        "shield": true,
+        "noLong": true,
+        "noShield": true,
         "longTargets": [
           "A1",
-          "A2",
-          "B1",
-          "B2"
+          "A2"
         ],
-        "speed": true,
-        "small": true,
-        "slow": true,
-        "big": true,
-        "spin": true,
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
         "speedCap": true
       }
     },
     {
-      "name": "Team AI equal-benefit: small",
+      "name": "AI no-benefit: noSmall",
       "passed": true,
       "detail": {
-        "long": true,
-        "shield": true,
+        "noLong": true,
+        "noShield": true,
         "longTargets": [
           "A1",
-          "A2",
-          "B1",
-          "B2"
+          "A2"
         ],
-        "speed": true,
-        "small": true,
-        "slow": true,
-        "big": true,
-        "spin": true,
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
         "speedCap": true
       }
     },
     {
-      "name": "Team AI equal-benefit: slow",
+      "name": "AI no-benefit: noSlow",
       "passed": true,
       "detail": {
-        "long": true,
-        "shield": true,
+        "noLong": true,
+        "noShield": true,
         "longTargets": [
           "A1",
-          "A2",
-          "B1",
-          "B2"
+          "A2"
         ],
-        "speed": true,
-        "small": true,
-        "slow": true,
-        "big": true,
-        "spin": true,
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
         "speedCap": true
       }
     },
     {
-      "name": "Team AI equal-benefit: big",
+      "name": "AI no-benefit: noBig",
       "passed": true,
       "detail": {
-        "long": true,
-        "shield": true,
+        "noLong": true,
+        "noShield": true,
         "longTargets": [
           "A1",
-          "A2",
-          "B1",
-          "B2"
+          "A2"
         ],
-        "speed": true,
-        "small": true,
-        "slow": true,
-        "big": true,
-        "spin": true,
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
         "speedCap": true
       }
     },
     {
-      "name": "Team AI equal-benefit: spin",
+      "name": "AI no-benefit: noSpin",
       "passed": true,
       "detail": {
-        "long": true,
-        "shield": true,
+        "noLong": true,
+        "noShield": true,
         "longTargets": [
           "A1",
-          "A2",
-          "B1",
-          "B2"
+          "A2"
         ],
-        "speed": true,
-        "small": true,
-        "slow": true,
-        "big": true,
-        "spin": true,
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
         "speedCap": true
       }
     },
     {
-      "name": "Team AI equal-benefit: speedCap",
+      "name": "AI no-benefit: speedCap",
       "passed": true,
       "detail": {
-        "long": true,
-        "shield": true,
+        "noLong": true,
+        "noShield": true,
         "longTargets": [
           "A1",
-          "A2",
-          "B1",
-          "B2"
+          "A2"
         ],
-        "speed": true,
-        "small": true,
-        "slow": true,
-        "big": true,
-        "spin": true,
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
         "speedCap": true
       }
     },
@@ -446,12 +428,12 @@
       "name": "Remaining player becomes host with spectator witness vote",
       "passed": true,
       "detail": {
-        "version": 3,
+        "version": 2,
         "role": "host",
         "localDevice": "G1",
         "host": "G1",
         "term": 2,
-        "room": "c5b802ef",
+        "room": "4d718c3b",
         "status": "paused",
         "formation": "depth",
         "aiFill": true,
@@ -517,7 +499,7 @@
             "ready": false,
             "rtt": 0,
             "route": "unknown",
-            "lostAt": 6584.900000000023
+            "lostAt": 4913.600000000093
           },
           {
             "id": "G1",
@@ -528,9 +510,9 @@
             "visible": true,
             "synced": true,
             "ready": false,
-            "rtt": 189,
+            "rtt": 25,
             "route": "unknown",
-            "lostAt": 6582.400000000023
+            "lostAt": 4912.100000000093
           },
           {
             "id": "G2",
@@ -541,7 +523,7 @@
             "visible": true,
             "synced": true,
             "ready": false,
-            "rtt": 79,
+            "rtt": 17,
             "route": "unknown",
             "lostAt": 0
           },
@@ -586,7 +568,7 @@
             "connected": true,
             "authenticated": true,
             "kind": "mesh",
-            "rtt": 79,
+            "rtt": 17,
             "route": "unknown",
             "sent": 0,
             "dropped": 0,
@@ -598,7 +580,7 @@
             "connected": true,
             "authenticated": true,
             "kind": "mesh",
-            "rtt": 13,
+            "rtt": 8,
             "route": "unknown",
             "sent": 0,
             "dropped": 0,
@@ -620,16 +602,6 @@
     },
     {
       "name": "Old host two-seat team is replaced by AI after election",
-      "passed": true,
-      "detail": null
-    },
-    {
-      "name": "Migration preserves powered old-host seat when AI takes over",
-      "passed": true,
-      "detail": null
-    },
-    {
-      "name": "Migrated AI attack retains spin and curve",
       "passed": true,
       "detail": null
     },

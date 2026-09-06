@@ -129,21 +129,21 @@ class Harness:
   # AI handoff of a whole disconnected two-player device.
   await h.evaluate("doubles.status='match';game.phase=Phase.PLAYING;doubles.linkLost('G1','模拟掉线')");await self.pump()
   await self.check('Disconnect replaces both same-device teammates with AI',await h.evaluate("doubles.isBot(doubles.playerAt('B1'))&&doubles.isBot(doubles.playerAt('B2'))"))
-  ai=await h.evaluate('''()=>{game.match.rightShield=true;game.match.rightStreak=2;game.effect={type:'long',target:'B1',remaining:4,applied:true};game.padFor('B1').height=120;game.enforceNoAIBuffs();const noLong=game.padFor('B1').height===80&&game.effect===null,noShield=!game.match.rightShield;
-   const targets=new Set();for(let i=0;i<30;i++){game.spawnEffect('long');targets.add(game.effect.target);}game.clearEffect(false);
-   const p=game.padFor('B1');p.y=230;game.lastHitSeat='B1';Object.assign(game.ball,{vx:-1800,vy:0,rallySpeed:1800,radius:5,spin:1});game.effect={type:'speed',remaining:4};game.syncBallEffect();const noSpeed=game.ball.speed===1200;
-   game.effect={type:'small',remaining:4};game.syncBallEffect();const noSmall=game.ball.radius===5;
-   game.lastHitSeat='A1';game.ball.vx=1200;game.effect={type:'slow',remaining:4};game.syncBallEffect();const noSlow=game.ball.speed!==1044&&game.effect.applied===false;
-   game.effect={type:'big',remaining:4};game.syncBallEffect();const noBig=game.ball.radius===5;
-   game.effect={type:'speed',remaining:4};game.curveRemaining=3;Object.assign(game.ball,{x:p.x-4.99,y:270,vx:1900,vy:0,spin:1,radius:5,rallySpeed:1900});game.resolvePaddle(p,false);const noSpin=game.ball.spin===0&&game.curveRemaining===0&&Math.abs(game.ball.vx)<=1200.01;
-   p.y=0;game.botBrains.B1={target:540,wait:.2};game.moveBot(p,.1);const speedCap=p.y<=37.50001;
-   game.clearEffect(false);return {noLong,noShield,longTargets:[...targets],noSpeed,noSmall,noSlow,noBig,noSpin,speedCap};}''')
-  for k,val in ai.items():await self.check('AI no-benefit: '+k,(all(t.startswith('A') for t in val) if k=='longTargets' else val),ai)
+  ai=await h.evaluate('''()=>{game.match.rightShield=true;game.match.rightStreak=2;game.effect={type:'long',target:'B1',remaining:4,applied:true};game.padFor('B1').height=120;game.syncD4Benefits();const long=game.padFor('B1').height===120&&game.effect.target==='B1',shield=game.match.rightShield&&game.match.rightStreak===2;
+   const targets=new Set(),rng=Math.random;for(const n of [.01,.26,.51,.76]){Math.random=()=>n;game.spawnEffect('long');targets.add(game.effect.target);}Math.random=rng;game.clearEffect(false);
+   const p=game.padFor('B1');p.y=230;game.lastHitSeat='B1';Object.assign(game.ball,{vx:-1800,vy:0,rallySpeed:1800,radius:5,spin:1});game.effect={type:'speed',remaining:4};game.syncBallEffect();const speed=game.ball.speed===1900;
+   game.effect={type:'small',remaining:4};game.syncBallEffect();const small=game.ball.radius===2.75;
+   game.lastHitSeat='A1';game.ball.vx=1200;game.effect={type:'slow',remaining:4};game.syncBallEffect();const slow=Math.abs(game.ball.speed-1044)<.001&&game.effect.applied===true;
+   game.effect={type:'big',remaining:4};game.syncBallEffect();const big=game.ball.radius===10;
+   game.effect={type:'speed',remaining:4};game.curveRemaining=3;Object.assign(game.ball,{x:p.x-4.99,y:290,vx:1900,vy:0,spin:1,radius:5,rallySpeed:1800});game.resolvePaddle(p,false);const spin=game.ball.spin>0&&game.curveRemaining===3&&game.ball.rallySpeed===1834;
+   p.y=0;game.botBrains.B1={target:540,wait:.2};game.moveBot(p,.1);const speedCap=Math.abs(p.y-p.speed*.1)<.00001;
+   game.clearEffect(false);return {long,shield,longTargets:[...targets],speed,small,slow,big,spin,speedCap};}''')
+  for k,val in ai.items():await self.check('Team AI equal-benefit: '+k,(len(val)==4 if k=='longTargets' else val),ai)
   await h.evaluate("doubles.nodes.get('G1').connected=true;doubles.nodes.get('G1').synced=true;doubles.restoreDevice('G1')");await self.pump()
   await self.check('Reconnected human waits for next rally boundary',await h.evaluate("doubles.playerAt('B1').pendingReturn&&doubles.isBot(doubles.playerAt('B1'))"))
   await h.evaluate("game.prepareServe('left')");await self.pump();await self.check('New serve returns both paddles to original people',await h.evaluate("!doubles.isBot(doubles.playerAt('B1'))&&!doubles.isBot(doubles.playerAt('B2'))"))
   # A committed paused test snapshot survives a sudden host failure.
-  await h.evaluate("game.match.leftScore=4;game.match.rightScore=2;game.effectCooldown=2.25;doubles.freeze('迁移前');doubles.setVoters(['H','G1','G2']);doubles.pendingCheckpoint=null");await self.sync_checkpoint()
+  await h.evaluate("game.match.leftScore=4;game.match.rightScore=2;game.effectCooldown=2.25;game.effect={type:'long',target:'A1',remaining:3.25,applied:true};game.syncD4Benefits();game.match.leftShield=true;game.lastHitSeat='A1';game.ball.spin=.3;game.curveRemaining=2;doubles.freeze('迁移前');doubles.setVoters(['H','G1','G2']);doubles.pendingCheckpoint=null");await self.sync_checkpoint()
   committed=await h.evaluate('doubles.committed.id');await self.check('Same committed checkpoint reaches all members',all(await asyncio.gather(*[p.evaluate('id=>doubles.committed?.id===id',committed) for p in self.pages.values()])))
   # Drop every link to old host; all remaining links retain the actual production receive path.
   for id,p in self.pages.items():
@@ -156,6 +156,8 @@ class Harness:
   await self.check('Observers follow elected authority without becoming host',await v.evaluate("doubles.role==='client'&&doubles.hostId==='G1'&&doubles.term===2"))
   await self.check('Migration retains team scores and hidden effect timer',await c.evaluate("game.match.leftScore===4&&game.match.rightScore===2&&game.effectCooldown===2.25"))
   await self.check('Old host two-seat team is replaced by AI after election',await c.evaluate("doubles.isBot(doubles.playerAt('A1'))&&doubles.isBot(doubles.playerAt('A2'))"))
+  await self.check('Migration preserves powered old-host seat when AI takes over',await c.evaluate("game.effect?.target==='A1'&&game.effect.remaining===3.25&&game.padFor('A1').height===120&&game.match.leftShield"))
+  await self.check('Migrated AI attack retains spin and curve',await c.evaluate("game.ball.spin===.3&&game.curveRemaining===2"))
   await self.sync_checkpoint()
   await c.evaluate('doubles.autoResumeAt=performance.now()-1;doubles.tick()');await self.pump(.3)
   await self.check('New host automatically issues synchronized resume barrier',await c.evaluate("game.phase==='countdown'"))

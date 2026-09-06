@@ -1,0 +1,618 @@
+{
+  "checks": [
+    {
+      "name": "Team-only protocol revision is 3",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Team UI announces equal AI benefits",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Identical AI/human return for A1 / normal",
+      "passed": true,
+      "detail": {
+        "seat": "A1",
+        "type": null,
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for A1 / speed",
+      "passed": true,
+      "detail": {
+        "seat": "A1",
+        "type": "speed",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for A1 / slow",
+      "passed": true,
+      "detail": {
+        "seat": "A1",
+        "type": "slow",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for A1 / big",
+      "passed": true,
+      "detail": {
+        "seat": "A1",
+        "type": "big",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for A1 / small",
+      "passed": true,
+      "detail": {
+        "seat": "A1",
+        "type": "small",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for A2 / normal",
+      "passed": true,
+      "detail": {
+        "seat": "A2",
+        "type": null,
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for A2 / speed",
+      "passed": true,
+      "detail": {
+        "seat": "A2",
+        "type": "speed",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for A2 / slow",
+      "passed": true,
+      "detail": {
+        "seat": "A2",
+        "type": "slow",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for A2 / big",
+      "passed": true,
+      "detail": {
+        "seat": "A2",
+        "type": "big",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for A2 / small",
+      "passed": true,
+      "detail": {
+        "seat": "A2",
+        "type": "small",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for B1 / normal",
+      "passed": true,
+      "detail": {
+        "seat": "B1",
+        "type": null,
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for B1 / speed",
+      "passed": true,
+      "detail": {
+        "seat": "B1",
+        "type": "speed",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for B1 / slow",
+      "passed": true,
+      "detail": {
+        "seat": "B1",
+        "type": "slow",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for B1 / big",
+      "passed": true,
+      "detail": {
+        "seat": "B1",
+        "type": "big",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for B1 / small",
+      "passed": true,
+      "detail": {
+        "seat": "B1",
+        "type": "small",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for B2 / normal",
+      "passed": true,
+      "detail": {
+        "seat": "B2",
+        "type": null,
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for B2 / speed",
+      "passed": true,
+      "detail": {
+        "seat": "B2",
+        "type": "speed",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for B2 / slow",
+      "passed": true,
+      "detail": {
+        "seat": "B2",
+        "type": "slow",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for B2 / big",
+      "passed": true,
+      "detail": {
+        "seat": "B2",
+        "type": "big",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "Identical AI/human return for B2 / small",
+      "passed": true,
+      "detail": {
+        "seat": "B2",
+        "type": "small",
+        "equal": true,
+        "spin": 0.23,
+        "curve": 2.824
+      }
+    },
+    {
+      "name": "All seats eligible for identical long-paddle effect: A1",
+      "passed": true,
+      "detail": {
+        "seat": "A1",
+        "okay": true,
+        "preserved": true,
+        "cleared": true,
+        "bounds": true
+      }
+    },
+    {
+      "name": "All seats eligible for identical long-paddle effect: A2",
+      "passed": true,
+      "detail": {
+        "seat": "A2",
+        "okay": true,
+        "preserved": true,
+        "cleared": true,
+        "bounds": true
+      }
+    },
+    {
+      "name": "All seats eligible for identical long-paddle effect: B1",
+      "passed": true,
+      "detail": {
+        "seat": "B1",
+        "okay": true,
+        "preserved": true,
+        "cleared": true,
+        "bounds": true
+      }
+    },
+    {
+      "name": "All seats eligible for identical long-paddle effect: B2",
+      "passed": true,
+      "detail": {
+        "seat": "B2",
+        "okay": true,
+        "preserved": true,
+        "cleared": true,
+        "bounds": true
+      }
+    },
+    {
+      "name": "AI-containing team earns, retains and consumes shield: left",
+      "passed": true,
+      "detail": {
+        "side": "left",
+        "earned": true,
+        "retained": true,
+        "consumed": true
+      }
+    },
+    {
+      "name": "AI-containing team earns, retains and consumes shield: right",
+      "passed": true,
+      "detail": {
+        "side": "right",
+        "earned": true,
+        "retained": true,
+        "consumed": true
+      }
+    },
+    {
+      "name": "Human-to-AI handoff preserves long",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Human-to-AI handoff preserves shield",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Human-to-AI handoff preserves streak",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Human-to-AI handoff preserves spin",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Human-to-AI handoff preserves curve",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Human-to-AI handoff preserves trajectory",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "240 independent production-sweep contact fixtures are reached",
+      "passed": true,
+      "detail": {
+        "reached": 240,
+        "missing": []
+      }
+    },
+    {
+      "name": "Radius, wall, spin and known expiry prediction matches production within 0.05 units",
+      "passed": true,
+      "detail": {
+        "interceptFixtures": 240,
+        "maxInterceptError": 2.4584778657299466e-11,
+        "meanInterceptError": 1.956124151547556e-12,
+        "oldPartialLeadMeanError": 166.25549651189797,
+        "acceleratedStress": [
+          {
+            "formation": "split",
+            "simulatedSeconds": 90,
+            "executionMs": 259.69999999995343,
+            "finite": true,
+            "maxStep": 4.583333333333343,
+            "totalHits": 181,
+            "score": [
+              0,
+              0
+            ],
+            "valid": true
+          },
+          {
+            "formation": "depth",
+            "simulatedSeconds": 90,
+            "executionMs": 185.59999999997672,
+            "finite": true,
+            "maxStep": 4.583333333333343,
+            "totalHits": 324,
+            "score": [
+              0,
+              0
+            ],
+            "valid": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "Prediction error lower than old partial-lead formula on identical fixtures",
+      "passed": true,
+      "detail": {
+        "interceptFixtures": 240,
+        "maxInterceptError": 2.4584778657299466e-11,
+        "meanInterceptError": 1.956124151547556e-12,
+        "oldPartialLeadMeanError": 166.25549651189797,
+        "acceleratedStress": [
+          {
+            "formation": "split",
+            "simulatedSeconds": 90,
+            "executionMs": 259.69999999995343,
+            "finite": true,
+            "maxStep": 4.583333333333343,
+            "totalHits": 181,
+            "score": [
+              0,
+              0
+            ],
+            "valid": true
+          },
+          {
+            "formation": "depth",
+            "simulatedSeconds": 90,
+            "executionMs": 185.59999999997672,
+            "finite": true,
+            "maxStep": 4.583333333333343,
+            "totalHits": 324,
+            "score": [
+              0,
+              0
+            ],
+            "valid": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "Predictive AI tactic / safety: separate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: fullLead",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: frontPassed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: rearCovers",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: partnerHolds",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: ownHalf",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: preposition",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: speedCap",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: noJitter",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: urgent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: reaction",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: curves",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: noRandom",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: pure",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: zero",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: invalid",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Predictive AI tactic / safety: horizon",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AI benefit/prediction checkpoint: valid",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AI benefit/prediction checkpoint: restored",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AI benefit/prediction checkpoint: long",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AI benefit/prediction checkpoint: shield",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AI benefit/prediction checkpoint: spin",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AI benefit/prediction checkpoint: curve",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AI benefit/prediction checkpoint: brain",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AI benefit/prediction checkpoint: velocity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "90 simulated seconds, bounded AI steps and finite match: split",
+      "passed": true,
+      "detail": {
+        "formation": "split",
+        "simulatedSeconds": 90,
+        "executionMs": 259.69999999995343,
+        "finite": true,
+        "maxStep": 4.583333333333343,
+        "totalHits": 181,
+        "score": [
+          0,
+          0
+        ],
+        "valid": true
+      }
+    },
+    {
+      "name": "90 simulated seconds, bounded AI steps and finite match: depth",
+      "passed": true,
+      "detail": {
+        "formation": "depth",
+        "simulatedSeconds": 90,
+        "executionMs": 185.59999999997672,
+        "finite": true,
+        "maxStep": 4.583333333333343,
+        "totalHits": 324,
+        "score": [
+          0,
+          0
+        ],
+        "valid": true
+      }
+    },
+    {
+      "name": "AI tests allocate zero Canvas contexts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "No uncaught JavaScript error during AI tests",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": [],
+  "failure": null,
+  "measurements": {
+    "interceptFixtures": 240,
+    "maxInterceptError": 2.4584778657299466e-11,
+    "meanInterceptError": 1.956124151547556e-12,
+    "oldPartialLeadMeanError": 166.25549651189797,
+    "acceleratedStress": [
+      {
+        "formation": "split",
+        "simulatedSeconds": 90,
+        "executionMs": 259.69999999995343,
+        "finite": true,
+        "maxStep": 4.583333333333343,
+        "totalHits": 181,
+        "score": [
+          0,
+          0
+        ],
+        "valid": true
+      },
+      {
+        "formation": "depth",
+        "simulatedSeconds": 90,
+        "executionMs": 185.59999999997672,
+        "finite": true,
+        "maxStep": 4.583333333333343,
+        "totalHits": 324,
+        "score": [
+          0,
+          0
+        ],
+        "valid": true
+      }
+    ]
+  },
+  "method": "Injected real Chromium, production physics oracle, deterministic fixtures, no live P2P"
+}

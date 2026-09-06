@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070b13">
 <meta name="description" content="PONG-84：精致光影球场与独立低开销 ASCII 双渲染，16:9 自适应原生全屏、移动端横屏提示、本地双人、四人团队双打、手动 WebRTC P2P 与云房间联机。">
-<title>PONG-84 · 团队扩展 · 光学球场</title>
+<title>PONG-84 · 团队 AI 对等增强 · 光学球场</title>
 <style>:root{color-scheme:dark;--bg:#111713;--surface:#19201b;--card:#1d251f;--border:#333e35;--text:#ecf0e8;--muted:#a0aea0;--faint:#6f826f;--accent:#c6f18d;--accent-ink:#1b2812;--crt-color:#33ff33;--crt-bg:#051005;--crt-dim:rgba(51,255,51,.24);--crt-glow:transparent;--crt-soft:rgba(51,255,51,.08);--danger:#ffaaa0;--court-reserve:400px;font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}body{font-size:14px;line-height:1.5;overscroll-behavior-x:none}button,input,textarea,select{font:inherit}button{cursor:pointer;touch-action:manipulation}button,a{-webkit-tap-highlight-color:transparent}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}button:focus:not(:focus-visible){outline:none}[hidden],.hidden-section{display:none!important}h1,h2,h3,p{margin:0}h2{font-size:23px;font-weight:650;letter-spacing:-.5px}kbd{font:11px ui-monospace,Consolas,monospace;border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:var(--muted);white-space:nowrap}a{color:inherit;text-decoration:none}input,textarea,select{min-width:0;color:var(--text);background:#111713;border:1px solid var(--border);border-radius:7px;padding:8px}textarea{resize:vertical;user-select:text}summary{cursor:pointer;list-style:none;user-select:none}summary::-webkit-details-marker{display:none}summary:before{content:'+';font:17px ui-monospace,monospace;color:var(--accent);margin-right:8px}details[open]>summary:before{content:'−'}
 #app{max-width:1560px;padding:0 32px;margin:0 auto}.app-header{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid var(--border)}.wordmark{display:flex;align-items:center;gap:12px;white-space:nowrap}.mark{font:bold 28px ui-monospace,monospace;color:var(--accent);letter-spacing:-4px;margin-right:7px}.wordmark strong{font:800 30px ui-monospace,Consolas,monospace;letter-spacing:-2px}.wordmark strong span{color:var(--accent)}.wordmark small{color:var(--muted);font-size:11px;margin-left:8px}.header-caption{font-size:12px;color:var(--muted)}.header-caption span{color:var(--text);margin-left:8px}.version-tag{border:1px solid var(--border);border-radius:20px;padding:5px 10px;color:var(--muted);font-size:11px;white-space:nowrap}.version-tag b{color:var(--accent);font-weight:500;margin-left:8px}
@@ -272,7 +272,7 @@
   <header class="app-header">
     <a class="wordmark" href="#app" aria-label="PONG-84 首页"><span class="mark">|•|</span><strong>PONG<span>—84</span></strong><small>联机街机</small></a>
     <div class="header-caption">一个文件。一张球场。<span>下一球见。</span></div>
-    <span class="version-tag">组队 / 双渲染 <b>v6.0</b></span>
+    <span class="version-tag">组队 / 双渲染 <b>v6.1</b></span>
   </header>
   <section id="gameShell" class="game-shell" tabindex="-1" aria-label="PONG-84 游戏与控制台">
     <div class="arena-column">
@@ -459,7 +459,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
 <label class="d4-name" for="d4CountSelect">这台设备<select id="d4CountSelect"><option value="1">1 人参赛</option><option value="2">同机 2 人 · 同一队</option><option value="0">观众 · 不占参赛席位</option></select></label>
 <label class="d4-name" for="d4Formation">球场阵型 · 房主设置<select id="d4Formation"><option value="split">上下协防</option><option value="depth">前锋 + 后卫</option></select></label>
 </div>
-<div class="team-switches"><label><input id="d4AI" type="checkbox" checked>AI 补位 · 无增益</label><label><input id="d4Migration" type="checkbox" checked>自动房主迁移</label></div>
+<div class="team-switches"><label><input id="d4AI" type="checkbox" checked>AI 补位 · 对等增益</label><label><input id="d4Migration" type="checkbox" checked>自动房主迁移</label></div>
 <p id="d4RuleSummary" class="d4-panel-note"></p>
 <div id="d4Entry" class="d4-actions"><button id="d4Create" class="btn small" type="button">创建组队房间</button><button id="d4Join" class="btn small secondary" type="button">加入房间</button></div>
 <div id="d4CloudRoom" hidden><input id="d4RoomCode" class="d4-room-code" aria-label="当前房间码" readonly><button id="d4CopyRoom" class="text-btn" type="button">复制当前房间码</button></div>
@@ -482,7 +482,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
 <div id="d4ExchangeG5" hidden><label for="d4OutG5">1. 将邀请发给对应设备（玩家或观众）</label><textarea id="d4OutG5" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4CopyG5" type="button" class="btn small">复制邀请</button><button id="d4SaveG5" type="button" class="btn small secondary">保存文件</button></div><label for="d4InG5">2. 粘贴这台设备返回的回应</label><textarea id="d4InG5" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><div class="d4-actions"><button id="d4ConfirmG5" type="button" class="btn small">确认回应</button><button id="d4ImportG5" type="button" class="btn small secondary">读取文件</button></div><input id="d4FileG5" type="file" accept=".txt,text/plain" hidden></div></details><details id="d4CardG6" class="d4-card"><summary>设备 G6<span id="d4CardStateG6" class="d4-card-state">独立连接名额</span></summary><div class="d4-actions"><button id="d4GenG6" type="button" class="btn small">生成邀请</button><button id="d4ReleaseG6" type="button" class="btn small secondary" hidden>释放离线设备</button></div>
 <div id="d4ExchangeG6" hidden><label for="d4OutG6">1. 将邀请发给对应设备（玩家或观众）</label><textarea id="d4OutG6" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4CopyG6" type="button" class="btn small">复制邀请</button><button id="d4SaveG6" type="button" class="btn small secondary">保存文件</button></div><label for="d4InG6">2. 粘贴这台设备返回的回应</label><textarea id="d4InG6" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><div class="d4-actions"><button id="d4ConfirmG6" type="button" class="btn small">确认回应</button><button id="d4ImportG6" type="button" class="btn small secondary">读取文件</button></div><input id="d4FileG6" type="file" accept=".txt,text/plain" hidden></div></details><details id="d4CardG7" class="d4-card"><summary>设备 G7<span id="d4CardStateG7" class="d4-card-state">独立连接名额</span></summary><div class="d4-actions"><button id="d4GenG7" type="button" class="btn small">生成邀请</button><button id="d4ReleaseG7" type="button" class="btn small secondary" hidden>释放离线设备</button></div>
 <div id="d4ExchangeG7" hidden><label for="d4OutG7">1. 将邀请发给对应设备（玩家或观众）</label><textarea id="d4OutG7" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4CopyG7" type="button" class="btn small">复制邀请</button><button id="d4SaveG7" type="button" class="btn small secondary">保存文件</button></div><label for="d4InG7">2. 粘贴这台设备返回的回应</label><textarea id="d4InG7" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><div class="d4-actions"><button id="d4ConfirmG7" type="button" class="btn small">确认回应</button><button id="d4ImportG7" type="button" class="btn small secondary">读取文件</button></div><input id="d4FileG7" type="file" accept=".txt,text/plain" hidden></div></details></div><div class="d4-actions"><button id="d4Reconnect" type="button" class="btn small" hidden>重新连接</button><button id="d4Leave" type="button" class="btn small secondary" hidden>移交并退出</button></div>
-<details class="d4-panel-note"><summary>操作、补位与迁移边界</summary><p>一人：W/S 或方向键移动，空格或回车发球。同机两人：玩家 1 用 W/S＋空格，玩家 2 用 ↑/↓＋回车；触屏左右半屏各控制一人。同机两人始终属于同一队。</p><p>上下阵型每人负责半区；前后阵型每人可上下移动，前排截击、后排补漏，己方出球穿过队友球拍。所有碰撞与计分由当前房主裁决。</p><p>开启 AI 后，空位和掉线席位可被接管。AI 不得长拍、移速、攻击球和旋转强化；含 AI 的球队不享受共享护盾，也不收到减速或大球防守便利。恢复的真人在下一次发球接回球拍。</p><p>观众最多 4 台，可中途加入，不可移动、发球、暂停或改规则。赛前已加入的观众可参与迁移投票，但不能成为房主。</p><p>自动迁移需要备用链路与原投票组的多数设备仍可通信；两个参赛设备的房间中，一个突然掉线后不能安全自动选主。可赛前加入一名观众作为第三台投票设备。点击游戏内退出支持提前移交；直接关闭页面不等同于有序移交。</p><p>迁移从最近已提交检查点恢复，可能短暂回退。公网网络穿透仍可能需要 TURN。迁移后当前房主可生成新邀请码；云房间会换新短码，已连接设备自动跟随。</p><button id="d4Forget" type="button" class="text-btn">清除本标签页的恢复身份</button></details>
+<details class="d4-panel-note"><summary>操作、补位与迁移边界</summary><p>一人：W/S 或方向键移动，空格或回车发球。同机两人：玩家 1 用 W/S＋空格，玩家 2 用 ↑/↓＋回车；触屏左右半屏各控制一人。同机两人始终属于同一队。</p><p>上下阵型每人负责半区；前后阵型每人可上下移动，前排截击、后排补漏，己方出球穿过队友球拍。所有碰撞与计分由当前房主裁决。</p><p>开启 AI 后，空位和掉线席位可被接管。四人模式中，AI 与真人同等参与长拍、回球加速、小球、旋转、变轨及团队护盾；减速和大球不再排除含 AI 的球队。AI 按墙面反弹、旋转和已知效果到期预判接球，移动速度上限与真人相同，不预知随机变轨。单人人机模式仍禁止 AI 获得增益。恢复的真人在下一次发球接回球拍。</p><p>观众最多 4 台，可中途加入，不可移动、发球、暂停或改规则。赛前已加入的观众可参与迁移投票，但不能成为房主。</p><p>自动迁移需要备用链路与原投票组的多数设备仍可通信；两个参赛设备的房间中，一个突然掉线后不能安全自动选主。可赛前加入一名观众作为第三台投票设备。点击游戏内退出支持提前移交；直接关闭页面不等同于有序移交。</p><p>迁移从最近已提交检查点恢复，可能短暂回退。公网网络穿透仍可能需要 TURN。迁移后当前房主可生成新邀请码；云房间会换新短码，已连接设备自动跟随。</p><button id="d4Forget" type="button" class="text-btn">清除本标签页的恢复身份</button></details>
 <details class="network-details"><summary>组队连接诊断</summary><pre id="d4NetworkReport" class="network-report"></pre></details></section>
 <section id="playingPanel" class="playing-panel" hidden><span class="panel-symbol">[ &gt; ]</span><h2>回球，就是现在。</h2><p class="muted" id="playAdvice">边缘击球能改变方向。功能球会自动出现。</p><div class="live-info"><div><span>当前效果</span><strong id="liveEffect">常规球</strong></div><div><span>连接</span><strong id="liveNetwork">本地对局</strong></div><div><span>操作</span><strong>按键 / 拖动</strong></div></div><p id="d4LiveRoster" class="d4-live-roster" hidden></p><button id="returnMenuBtn" type="button" class="btn secondary full-width">结束对局 / 返回菜单</button></section>
       <details id="displaySettings" class="settings-details"><summary>画面与性能<span>本机独立设置</span></summary><div class="details-body">
@@ -3470,10 +3470,10 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
     // 8) Boot.
     // ============================================================
     // ============================================================
-    // 8) Team protocol v2. A device owns 0, 1 or 2 players and standby links.
+    // 8) Team protocol v3. A device owns 0, 1 or 2 players and standby links.
     //    Identity, connection port and playing seat are deliberately separate.
     // ============================================================
-    const D4 = Object.freeze({version:2, seats:['A1','A2','B1','B2'], ports:['G1','G2','G3','G4','G5','G6','G7'],
+    const D4 = Object.freeze({version:3, seats:['A1','A2','B1','B2'], ports:['G1','G2','G3','G4','G5','G6','G7'],
       height:80, inputTimeout:350, silentTimeout:4500, reconnectWindow:30000, maxSignal:131072});
     const seatSide = seat => String(seat).startsWith('B') ? 'right' : 'left';
     const seatZone = (seat,formation='split') => formation==='depth'?[0,540]:String(seat).endsWith('2')?[270,540]:[0,270];
@@ -3532,7 +3532,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       }
     }
 
-    // Team expansion protocol v2. Device identity is not a seat or host role.
+    // Team expansion protocol v3. Device identity is not a seat or host role.
     // A fixed per-match electorate + majority leases fence a partitioned host.
     // Checkpoints are committed by a majority before they can be recovered.
     const ROOM_NODES = ['H',...D4.ports];
@@ -3603,7 +3603,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
           if(!p&&this.aiFill)this.players.set('AI:'+seat,{id:'AI:'+seat,device:null,index:0,name:'AI '+seat,seat,kind:'bot',botActive:true,pendingReturn:false});
           else if(p?.kind==='bot'&&!this.aiFill)this.players.delete(p.id);
         }
-        this.game?.enforceNoAIBuffs?.();
+        this.game?.syncD4Benefits?.();
       }
       createManual(name,options,score=11){
         this.configure(options);if(!this.localCount)throw new Error('房主需以一人或同机两人身份创建，观众请加入已有房间。');
@@ -3670,7 +3670,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       rejectConnection(c,reason){const reject=()=>{try{c.send({v:D4.version,t:'d4_reject',reason});}catch{}setTimeout(()=>{try{c.close();}catch{}},300);};if(c.open)reject();else c.on('open',reject);}
       acceptCloud(c){
         if(this.role!=='host'){this.rejectConnection(c,'主持权已迁移，请使用当前房主显示的新房间码。');return;}
-        const m=c.metadata;if(m?.game!=='pong84-doubles'||m.v!==D4.version||c.label!=='pong84-ctrl'){this.rejectConnection(c,'协议版本不兼容，请使用团队扩展版。');return;}
+        const m=c.metadata;if(m?.game!=='pong84-doubles'||m.v!==D4.version||c.label!=='pong84-ctrl'){this.rejectConnection(c,'协议版本不兼容，请所有设备更新到 6.1 AI 对等增强版。');return;}
         let id;if(m.resume){const n=this.nodes.get(m.resume.pid);if(!n||m.resume.rid!==this.id||!isId(m.resume.token)||m.resume.token!==n.token){this.rejectConnection(c,'原设备身份无法恢复，请清除重连记录后以观众或新玩家加入。');return;}id=n.id;
           if(this.links.get(id)?.authed&&this.links.get(id)?.connected&&performance.now()-this.links.get(id).lastReceiveAt<4500){this.rejectConnection(c,'原设备仍在线，不允许重复登录。');return;}}
         else {id=ROOM_NODES.find(x=>x!==this.localId&&!this.nodes.has(x)&&!this.links.has(x));if(!id){this.rejectConnection(c,'房间设备数已达上限。');return;}}
@@ -3720,6 +3720,9 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         return true;
       }
       receive(l,raw,ch){
+        if(raw&&typeof raw==='object'&&raw.t==='d4_reject'&&l.kind==='upstream'&&ch==='ctrl'){
+          l.rejected=String(raw.reason||'房主拒绝连接，请确认所有设备使用同一版本。').slice(0,200);this.notice=l.rejected;this.emit();return;
+        }
         if(!raw||typeof raw!=='object'||raw.v!==D4.version||typeof raw.t!=='string'||!raw.t.startsWith('d4_'))return;
         const m={...raw,t:raw.t.slice(3)};let from=l.pid;
         if(m.t==='reject'&&l.kind==='upstream'){l.rejected=String(m.reason||'房主拒绝连接。').slice(0,200);this.notice=l.rejected;this.emit();return;}
@@ -3880,7 +3883,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       abort(message){this.game?.abortD4(message);if(this.role==='host')this.finish(message);}
       replaceWithBots(id,notice){
         if(!this.aiFill)return false;let changed=false;for(const p of this.players.values())if(p.device===id&&!p.botActive){p.botActive=true;p.pendingReturn=false;changed=true;}
-        if(changed){this.game?.enforceNoAIBuffs();this.changed(notice||'掉线席位由 AI 代打；恢复后在下一次发球时归还。');}return changed;
+        if(changed){this.game?.syncD4Benefits();this.changed(notice||'掉线席位由 AI 代打；恢复后在下一次发球时归还。');}return changed;
       }
       restoreDevice(id){
         const n=this.nodes.get(id);if(!n?.visible)return;for(const p of this.players.values())if(p.device===id&&p.botActive){if(this.active)p.pendingReturn=true;else p.botActive=false;}
@@ -3994,7 +3997,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         if(cp.s){this.game.restoreAuthorityState(cp.s,term);this.status=cp.s.phase===Phase.ENDED?'ended':'paused';}else {this.status='lobby';this.game.clearD4Preview();}
         if(this.role==='host'){
           for(const n of this.nodes.values()){n.connected=n.id===local||!!this.links.get(n.id)?.authed&&!!this.links.get(n.id)?.connected;n.synced=n.connected;if(!n.connected){n.lostAt=performance.now();this.replaceWithBots(n.id);}}
-          this.game?.enforceNoAIBuffs();if(cp.s&&cp.s.phase!==Phase.ENDED)this.autoResumeAt=performance.now()+1200;
+          this.game?.syncD4Benefits();if(cp.s&&cp.s.phase!==Phase.ENDED)this.autoResumeAt=performance.now()+1200;
           if(this.transport==='cloud')this.publishCloudEntry().catch(e=>{this.notice='比赛已迁移，但新房间入口创建失败：'+e.message;this.emit();});
           this.broadcast({t:'heartbeat',serial:performance.now()});
         }
@@ -4048,6 +4051,10 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
 
     // Team simulation stays authoritative on exactly one elected device. Graphics
     // and ASCII consume the same state; neither renderer participates in physics.
+    // Shared movement budget, finite reaction time, CPU-only trajectory prediction.
+    // No future random effect/curve samples are consumed by the AI.
+    const D4_AI = Object.freeze({reaction:.045, urgentReaction:.025, urgentTime:.18,
+      deadZone:2, horizon:2.5, maxSteps:600, guardBias:.32});
     function validD4Snapshot(s) {
       if(!s||!isId(s.matchId)||!Number.isSafeInteger(s.seq)||s.seq<0||!Number.isSafeInteger(s.round)||s.round<0||
         !Number.isSafeInteger(s.term)||s.term<1||!Number.isSafeInteger(s.event)||!['split','depth'].includes(s.formation)||
@@ -4095,7 +4102,6 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       isLocalSeat(seat){return this.localSeats().includes(seat);}
       padFor(seat){return this.ensureD4Pads().find(p=>p.id===seat)||null;}
       isBotSeat(seat){return this.room?.isBot(this.room?.playerAt(seat))||false;}
-      teamHasAI(side){return !!this.room&&[...this.room.players.values()].some(p=>seatSide(p.seat)===side&&this.room.isBot(p));}
       applySettingsToEntities(){super.applySettingsToEntities();if(this.isDoubles())for(const p of this.ensureD4Pads()){p.height=p.baseHeight=D4.height;p.y=clamp(p.y,p.minY,p.maxY-p.height);}}
       setSetting(key,value){
         if(key==='mode'&&value!==this.settings.mode&&this.room?.role)return; // Leave through the migration-aware room action.
@@ -4125,8 +4131,8 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         this.room?.roundBoundary();this.clearEffect(false);this.clearCurve();this.serveSide=side==='right'?'right':'left';
         const n=this.serveTurns[this.serveSide]||0;this.serveSlot=(this.serveSide==='left'?'A':'B')+(n+1);this.serveTurns[this.serveSide]=1-n;
         this.roundId++;this.eventId++;this.ball.radius=this.ball.baseRadius;this.ball.rallySpeed=this.ball.baseSpeed;
-        this.ball.speed=this.ball.baseSpeed;this.ball.spin=0;this.ball.vx=this.ball.vy=0;this.lastHitSeat=null;this.aiServeRemaining=randomRange(.85,1.3);
-        this.trail.length=0;this.positionServeBall();this.enforceNoAIBuffs();this.emitUi();
+        this.ball.speed=this.ball.baseSpeed;this.ball.spin=0;this.ball.vx=this.ball.vy=0;this.lastHitSeat=null;this.botBrains={};this.aiServeRemaining=randomRange(.85,1.3);
+        this.trail.length=0;this.positionServeBall();this.syncD4Benefits();this.emitUi();
       }
       positionServeBall(){
         if(!this.isDoubles())return super.positionServeBall();if(!this.serveSlot)return;
@@ -4158,30 +4164,27 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       quitToMenu(){if(this.isDoubles()&&this.room?.role){this.room.leaveRoom().catch(e=>{this.room.notice=e.message;this.room.emit();});return;}super.quitToMenu();}
       spawnEffect(type=choice(Object.keys(POWERUPS))){
         if(!this.isDoubles()||type!=='long')return super.spawnEffect(type);
-        const eligible=this.ensureD4Pads().filter(p=>!this.isBotSeat(p.id));
+        const eligible=this.ensureD4Pads(); // All four seats have identical long-paddle eligibility.
         if(!eligible.length){this.effectCooldown=randomRange(EFFECT_TIMING.gapMin,EFFECT_TIMING.gapMax);return false;}
         if(this.effect)this.clearEffect(false);const p=choice(eligible);this.effect={type:'long',target:p.id,remaining:POWERUPS.long.duration,applied:true};
         p.height=Math.min(p.maxY-p.minY,p.baseHeight*1.5);p.y=clamp(p.y,p.minY,p.maxY-p.height);this.audio.powerup();this.eventId++;this.emitUi();return true;
       }
       syncBallEffect(){
-        if(!this.isDoubles())return super.syncBallEffect();const b=this.ball,type=this.effect?.type;
-        const fromBot=this.lastHitSeat&&this.isBotSeat(this.lastHitSeat),recipient=b.vx<0?'left':'right';
-        let applied=!!type;
-        if((type==='speed'||type==='small')&&fromBot)applied=false;
-        // A team containing a CPU never receives an easier incoming ball or a shared shield.
-        if((type==='slow'||type==='big')&&this.teamHasAI(recipient))applied=false;
-        if(type==='long')applied=!this.isBotSeat(this.effect.target);
-        let speed=b.rallySpeed||b.baseSpeed;if(fromBot)speed=Math.min(speed,BALL_TUNING.baseSpeed);b.radius=b.baseRadius;
-        if(applied){if(type==='speed')speed*=1.5;else if(type==='slow')speed*=.58;else if(type==='big')b.radius=b.baseRadius*2;else if(type==='small')b.radius=b.baseRadius*.55;}
-        b.speed=clamp(speed,BALL_TUNING.minEffectSpeed,b.maxSpeed);b.y=clamp(b.y,b.radius,540-b.radius);this.normalizeBallVelocityToSpeed();if(this.effect)this.effect.applied=applied;
+        // The base implementation already treats every non-solo-AI mode equally.
+        // Delegating avoids separate bot/human interpretations of a shared ball.
+        return super.syncBallEffect();
       }
-      enforceNoAIBuffs(){
-        if(!this.isDoubles()||!this.room)return;
-        for(const p of this.ensureD4Pads())if(this.isBotSeat(p.id)){p.height=p.baseHeight;p.y=clamp(p.y,p.minY,p.maxY-p.height);}
-        for(const side of ['left','right'])if(this.teamHasAI(side)){this.match[side+'Shield']=false;this.match[side+'Streak']=0;}
-        if(this.effect?.type==='long'&&this.isBotSeat(this.effect.target))this.clearEffect(false);
-        if(this.lastHitSeat&&this.isBotSeat(this.lastHitSeat)){this.ball.spin=0;this.clearCurve();this.ball.rallySpeed=Math.min(this.ball.rallySpeed||1200,1200);}
-        this.syncBallEffect();
+      syncD4Benefits(){
+        if(!this.isDoubles())return;
+        // A control handoff changes WHO moves a paddle, never its live benefits.
+        // Do not normalize ball velocity here: doing so on a roster change would
+        // erase the spin-integrated trajectory or a current curve perturbation.
+        const longSeat=this.effect?.type==='long'?this.effect.target:null;
+        for(const p of this.ensureD4Pads()){
+          p.height=Math.min(p.maxY-p.minY,p.baseHeight*(p.id===longSeat?1.5:1));
+          p.y=clamp(p.y,p.minY,p.maxY-p.height);
+        }
+        for(const brain of Object.values(this.botBrains||{}))brain.wait=0;
       }
       clearEffect(sound=true){
         if(!this.isDoubles()||this.effect?.type!=='long')return super.clearEffect(sound);
@@ -4192,29 +4195,98 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         if(!this.isDoubles())return super.resolvePaddle(p,isLeft);const b=this.ball;
         if(isLeft?b.vx>=0:b.vx<=0)return false;
         if(b.x+b.radius<p.x||b.x-b.radius>p.x+p.width||b.y+b.radius<p.y||b.y-b.radius>p.y+p.height)return false;
-        const ai=this.isBotSeat(p.id),hit=clamp((b.y-p.y-p.height/2)/(p.height/2),-1,1),angle=hit*Math.PI/3;
-        this.lastHitSeat=p.id;b.rallySpeed=ai?Math.min(b.rallySpeed||1200,1200):Math.min((b.rallySpeed||b.baseSpeed)+BALL_TUNING.hitAcceleration,b.maxSpeed);
-        b.vx=Math.cos(angle)*(isLeft?1:-1);b.vy=Math.sin(angle);this.syncBallEffect();b.spin=ai?0:hit*.92*Math.abs(hit);
-        if(ai)this.clearCurve();else{if(Math.abs(b.spin)>.15){b.vx*=1.12;this.audio.spin();}this.tryStartCurve(isLeft);}
+        const hit=clamp((b.y-p.y-p.height/2)/(p.height/2),-1,1),angle=hit*Math.PI/3;
+        this.lastHitSeat=p.id;b.rallySpeed=Math.min((b.rallySpeed||b.baseSpeed)+BALL_TUNING.hitAcceleration,b.maxSpeed);
+        b.vx=Math.cos(angle)*(isLeft?1:-1);b.vy=Math.sin(angle);this.syncBallEffect();b.spin=hit*.92*Math.abs(hit);
+        if(Math.abs(b.spin)>.15){b.vx*=1.12;this.audio.spin();}this.tryStartCurve(isLeft);
         const mag=Math.hypot(b.vx,b.vy);if(mag>b.maxSpeed){b.vx*=b.maxSpeed/mag;b.vy*=b.maxSpeed/mag;}
         b.x=isLeft?p.x+p.width+b.radius+.5:p.x-b.radius-.5;this.audio.hit();this.emitUi();return true;
       }
-      updateCurve(dt){if(this.isDoubles()&&this.lastHitSeat&&this.isBotSeat(this.lastHitSeat)){this.clearCurve();return;}super.updateCurve(dt);}
       scorePoint(side){if(!this.isDoubles())return super.scorePoint(side);if(this.respawnRemaining>0||this.phase!==Phase.PLAYING)return;
-        this.enforceNoAIBuffs();this.eventId++;this.serveSlot=this.serveSide=null;super.scorePoint(side);this.enforceNoAIBuffs();this.emitUi();}
+        this.syncD4Benefits();this.eventId++;this.serveSlot=this.serveSide=null;super.scorePoint(side);this.syncD4Benefits();this.emitUi();}
       localInput(player){
         const dual=this.localPlayers().length===2,index=player.index;
         const dir=dual?(index===0?this.input.leftDir(false):this.input.rightDir()):this.input.onlineLocalDir();
         const raw=this.input.targetFor(dual?(index===0?'left':'right'):'local');return {dir,target:Number.isFinite(raw)?clamp(raw/540,0,1):null};
       }
       moveD4Pad(p,dir,target,dt){if(!p)return;if(Number.isFinite(target)){const dest=p.minY+clamp(target,0,1)*(p.maxY-p.minY-p.height);p.y+=clamp(dest-p.y,-p.speed*dt,p.speed*dt);}else p.y+=clamp(dir||0,-1,1)*p.speed*dt;p.y=clamp(p.y,p.minY,p.maxY-p.height);}
+      predictD4Intercept(p,source=this.ball){
+        if(!p||!source)return null;
+        let {x,y,vx,vy,spin=0}=source,r=source.radius;
+        if(![x,y,vx,vy,spin,r].every(Number.isFinite)||r<=0||r>=WORLD.height/2||Math.abs(vx)<1e-6)return null;
+        if(p.side==='left'?vx>=0:vx<=0)return null;
+        const face=radius=>p.side==='left'?p.x+p.width+radius:p.x-radius;
+        let eta=(face(r)-x)/vx;
+        // Front players do not chase a ball that has already passed their plane.
+        if(eta< -1e-7)return null;
+        if(eta<0)eta=0;
+        const effect=this.effect,type=effect?.type;
+        const expires=effect&&['speed','slow','big','small'].includes(type)?Math.max(0,effect.remaining):Infinity;
+        const reflect=(position,velocity,radius)=>{
+          const span=WORLD.height-2*radius,period=2*span;
+          const z=((position-radius)%period+period)%period;
+          if(z<1e-9)return {y:radius,vy:Math.abs(velocity)};
+          if(Math.abs(z-span)<1e-9)return {y:WORLD.height-radius,vy:-Math.abs(velocity)};
+          return z<span?{y:radius+z,vy:velocity}:{y:radius+period-z,vy:-velocity};
+        };
+        // The common no-spin case is exact and O(1), including many wall bounces.
+        if(Math.abs(spin)<=.002&&expires>eta+FIXED_DT){
+          if(eta>D4_AI.horizon)return null;
+          const end=reflect(y+vy*eta,vy,r);
+          return {y:end.y,time:eta,vx,vy:end.vy,radius:r};
+        }
+        // Mirrors the production fixed-step ordering: known effect expiry, spin
+        // acceleration/decay, then radius-aware swept wall motion. Future random
+        // curves and new powerups are deliberately not sampled or guessed.
+        let elapsed=0,expired=false;
+        for(let n=0;n<D4_AI.maxSteps&&elapsed<D4_AI.horizon;n++){
+          const dt=Math.min(FIXED_DT,D4_AI.horizon-elapsed);
+          if(!expired&&expires<=elapsed+dt+1e-10){
+            expired=true;r=source.baseRadius||this.ball.baseRadius;y=clamp(y,r,WORLD.height-r);
+            const speed=clamp(source.rallySpeed||source.baseSpeed||this.ball.baseSpeed,BALL_TUNING.minEffectSpeed,source.maxSpeed||this.ball.maxSpeed);
+            const mag=Math.hypot(vx,vy)||1;vx=vx/mag*speed;vy=vy/mag*speed;
+          }
+          if(Math.abs(spin)>.002){vy+=spin*84*dt;spin*=Math.pow(.985,dt*60);}
+          eta=(face(r)-x)/vx;
+          if(eta< -1e-7)return null;
+          const travel=Math.min(dt,Math.max(0,eta)),end=reflect(y+vy*travel,vy,r);
+          if(eta<=dt+1e-9)return {y:end.y,time:elapsed+travel,vx,vy:end.vy,radius:r};
+          x+=vx*dt;y=end.y;vy=end.vy;elapsed+=dt;
+        }
+        return null;
+      }
+      botGuardTarget(p){
+        const centre=(p.minY+p.maxY)/2,b=this.ball;
+        if(this.serveSlot||this.respawnRemaining>0||Math.abs(b.vx)<1e-6)return centre;
+        // While our ball travels away, modestly pre-position towards its likely
+        // arrival at the opposing front line. The opponent's future input is unknown.
+        if(p.side==='left'?b.vx<=0:b.vx>=0)return centre;
+        let next=null;
+        for(const other of this.ensureD4Pads())if(other.side!==p.side){
+          const hit=this.predictD4Intercept(other);
+          if(hit&&(!next||hit.time<next.time))next=hit;
+        }
+        return next?centre+(next.y-centre)*D4_AI.guardBias:centre;
+      }
       moveBot(p,dt){
-        const brain=this.botBrains[p.id]||(this.botBrains[p.id]={wait:0,target:(p.minY+p.maxY)/2});brain.wait=Math.max(0,brain.wait-dt);
-        if(!brain.wait){const b=this.ball,toward=p.side==='left'?b.vx<0:b.vx>0;
-          let target=(p.minY+p.maxY)/2;if(toward){const lead=clamp((p.x-b.x)/b.vx,0,.45)*.42;target=b.y+b.vy*lead;
-            target=((target%1080)+1080)%1080;if(target>540)target=1080-target;target+=randomRange(-18,18);}
-          brain.target=clamp(target,p.minY+p.height/2,p.maxY-p.height/2);brain.wait=randomRange(.13,.21);}
-        const delta=brain.target-(p.y+p.height/2);if(Math.abs(delta)>9)p.y+=clamp(delta,-375*dt,375*dt);p.y=clamp(p.y,p.minY,p.maxY-p.height);
+        if(!p||!Number.isFinite(dt)||dt<=0)return;
+        const brain=this.botBrains[p.id]||(this.botBrains[p.id]={wait:0,target:(p.minY+p.maxY)/2});
+        brain.wait=Math.max(0,brain.wait-dt);
+        if(!brain.wait){
+          const hit=!this.serveSlot&&this.respawnRemaining<=0?this.predictD4Intercept(p):null;
+          // Split partners hold their own half if the predicted arrival cannot
+          // touch their zone. A rear defender always prepares for a front miss.
+          const canCover=hit&&hit.y+hit.radius>=p.minY&&hit.y-hit.radius<=p.maxY;
+          const target=canCover?hit.y:this.botGuardTarget(p);
+          brain.target=clamp(target,p.minY+p.height/2,p.maxY-p.height/2);
+          brain.wait=this.curveRemaining>0||(hit&&hit.time<D4_AI.urgentTime)?D4_AI.urgentReaction:D4_AI.reaction;
+        }
+        const delta=brain.target-(p.y+p.height/2);
+        // Same speed budget as human keyboards/touch, including any future shared
+        // speed modifier on the paddle. No teleports or AI-only speed multiplier.
+        const speed=Number.isFinite(p.speed)?Math.max(0,p.speed):PC_PADDLE_SPEED;
+        if(Math.abs(delta)>D4_AI.deadZone)p.y+=clamp(delta,-speed*dt,speed*dt);
+        p.y=clamp(p.y,p.minY,p.maxY-p.height);
       }
       moveD4(dt){const now=performance.now();for(const p of this.room.players.values()){const pad=this.padFor(p.seat);
         if(this.room.isBot(p)){this.moveBot(pad,dt);continue;}
@@ -4454,8 +4526,8 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         for(const seat of D4.seats){const p=r.playerAt(seat),n=p?r.nodes.get(p.device):null,el=by('d4Seat'+seat),mine=g.isLocalSeat(seat),ai=r.isBot(p);
           el.disabled=!joined||r.active||r.isSpectator||p?.id===r.mine?.id||!!r.swap;el.classList.toggle('is-mine',mine);el.classList.toggle('is-bot',ai);el.classList.toggle('is-ready',!!n?.ready||p?.kind==='bot');
           this.setText('d4SeatLabel'+seat,seat+' / '+seatLabel(seat,r.formation));this.setText('d4SeatName'+seat,p?p.name+(mine?' · 你':''):'空位');
-          this.setText('d4SeatState'+seat,!p?'等待玩家':p.pendingReturn?'AI 代打 · 下次发球归还':ai?'AI · 无增益':!n?.connected?'掉线保留':!n.visible?'后台':!n.synced?'正在同步':n.ready?'已准备':r.active?'比赛中':'未准备');
-          this.setText('d4SeatMeta'+seat,p?.kind==='bot'?'375 移速上限 · 独立反应延迟':n?(n.id===r.hostId?'房主 · ':'')+n.id+(n.count===2?' · 同机玩家 '+(p.index+1):''):'点击选择');}
+          this.setText('d4SeatState'+seat,!p?'等待玩家':p.pendingReturn?'AI 代打 · 下次发球归还':ai?'AI · 对等增益 / 预判':!n?.connected?'掉线保留':!n.visible?'后台':!n.synced?'正在同步':n.ready?'已准备':r.active?'比赛中':'未准备');
+          this.setText('d4SeatMeta'+seat,r.isBot(p)?`${PC_PADDLE_SPEED} 移速上限 · 反弹 / 旋转预判`:n?(n.id===r.hostId?'房主 · ':'')+n.id+(n.count===2?' · 同机玩家 '+(p.index+1):''):'点击选择');}
         const specs=[...r.nodes.values()].filter(n=>n.count===0);by('d4Spectators').hidden=!r.role;this.setText('d4SpectatorNames',specs.length?specs.map(n=>n.name+(n.id===r.localId?'（你）':'')+(n.connected?'':' · 离线')).join(' / '):'0 / 4 · 可将房间码或独立邀请发给观众');
         const swap=r.swap,toMe=swap&&r.players.get(swap.to)?.device===r.localId;by('d4Swap').hidden=!swap;if(swap)this.setText('d4SwapText',`${r.players.get(swap.from)?.name||'玩家'} 申请与 ${r.players.get(swap.to)?.name||'玩家'} 交换位置。`);by('d4SwapYes').hidden=!toMe;by('d4SwapNo').hidden=!toMe;
         for(const pid of ROOM_NODES){const n=r.nodes.get(pid),l=r.links.get(pid),inv=r.invitations.get(pid),ok=n?.connected&&l?.connected;by('d4Card'+pid).hidden=pid===r.localId;
@@ -4535,8 +4607,8 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
     updateOrientationHint();
 
     window.PONG84 = Object.freeze({
-      version:'6.0.0',
-      diagnostics:()=>({ version:'6.0.0', phase:game.phase, renderer:game.settings.renderMode==='ascii'?'DOM ASCII':'Canvas 2D',
+      version:'6.1.0',
+      diagnostics:()=>({ version:'6.1.0', phase:game.phase, renderer:game.settings.renderMode==='ascii'?'DOM ASCII':'Canvas 2D',
         profile:game.settings.renderProfile, targetFps:game.targetRenderFps(), grid:[game.ascii.cols,game.ascii.rows],
         canvasInitialized:!!game.ctx, canvasSize:[game.canvas.width,game.canvas.height],graphicsQuality:game.settings.graphicsQuality,
         graphicalCaches:game.graphics?game.graphics.sprites.size+(game.graphics.background?1:0):0,

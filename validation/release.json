@@ -1,15 +1,50 @@
 {
-  "version": "6.0.0",
-  "teamProtocol": 2,
-  "deterministicBuild": true,
-  "nodeSyntaxCheck": true,
-  "standaloneHTML": true,
-  "entrySHA256": {
-    "index.html": "ad502fea1a7dd54a5b4468de975ec7438b5cc977b95aed6399825accf98a4d1a",
-    "ascii_start.html": "c9af728b75fb1ccf6eccedd902da2117444cab2a6f5bec0b0b548467da910761"
-  },
-  "browser": "Chromium 144.0.7559.96 built on Debian GNU/Linux 13 (trixie)",
-  "node": "v22.16.0",
-  "python": "3.13.5",
-  "networkAcceptance": "Not completed: no usable native ICE candidates; file navigation blocked by administrator"
+  "checks": [
+    {
+      "name": "Solo-mode source remains unchanged from 6.0.0",
+      "passed": true
+    },
+    {
+      "name": "ASCII is a complete independent copy with only its boot override",
+      "passed": true
+    },
+    {
+      "name": "Built header and diagnostics are 6.1",
+      "passed": true
+    },
+    {
+      "name": "Removed team-only buff revocation and obsolete UI speed label",
+      "passed": true
+    },
+    {
+      "name": "HTML uses embedded source with no mandatory module imports",
+      "passed": true
+    },
+    {
+      "name": "team_ai saved checks pass without page errors",
+      "passed": true
+    },
+    {
+      "name": "team_ui saved checks pass without page errors",
+      "passed": true
+    },
+    {
+      "name": "team_protocol saved checks pass without page errors",
+      "passed": true
+    },
+    {
+      "name": "regression saved checks pass without page errors",
+      "passed": true
+    },
+    {
+      "name": "All 246 functional assertions are present",
+      "passed": true
+    },
+    {
+      "name": "Entrypoints reproduce byte for byte",
+      "passed": true
+    }
+  ],
+  "functionalAssertions": 246,
+  "networkAcceptance": false
 }
