@@ -18,3 +18,5 @@
 
 .d4-room-open #modeSection,.d4-room-open #onlineSection,.d4-room-open #menuOverlay>.small-note,.d4-room-open #menuSub{display:none!important}
 .d4-room-open .doubles-panel{margin-top:14px;padding-top:14px}
+
+.team-input-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.team-input-grid input,.team-input-grid select{min-width:0;width:100%;padding:9px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-size:12px}.team-switches{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--muted);padding:4px 0 8px}.team-switches label{display:flex;gap:5px;align-items:center}.d4-spectators,.d4-mesh{border:1px solid var(--border);padding:10px;border-radius:7px;margin-top:10px;font-size:11px}.d4-spectators p{margin-top:6px;color:var(--muted);line-height:1.6;overflow-wrap:anywhere}.d4-mesh strong{font-size:11px;color:var(--accent)}.d4-tools-toggle{margin:4px 0}.d4-seat.is-bot{border-left-style:dashed}.d4-panel-note p{margin:8px 0;line-height:1.7}.ascii-mode .d4-mesh,.ascii-mode .d4-spectators{box-shadow:none;background:var(--surface);filter:none}.team-input-grid [hidden]{display:none!important}

@@ -1,0 +1,288 @@
+{
+  "checks": [
+    {
+      "name": "New room UI creates a two-person team plus two CPUs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Formation selectors are locked during a match",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Two independently labeled serve buttons are visible",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Real keyboard events address two teammate paddles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Player 2 key cannot serve for player 1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Space serves current teammate without clearing score",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Held Space cannot serve another rally",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Released Space can serve again",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Player 2 toolbar button serves only player 2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Host can open invitation/observer tools without pausing",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Manual connection cards cover all seven guest devices",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Team mode uses native fullscreen",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Team fullscreen aspect fit 1920x1080",
+      "passed": true,
+      "detail": {
+        "w": 1920,
+        "h": 1080,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "name": "Team fullscreen aspect fit 1440x900",
+      "passed": true,
+      "detail": {
+        "w": 1440,
+        "h": 810,
+        "x": 0,
+        "y": 45
+      }
+    },
+    {
+      "name": "Team fullscreen aspect fit 2560x1080",
+      "passed": true,
+      "detail": {
+        "w": 1920,
+        "h": 1080,
+        "x": 320,
+        "y": 0
+      }
+    },
+    {
+      "name": "Team fullscreen aspect fit 1024x768",
+      "passed": true,
+      "detail": {
+        "w": 1024,
+        "h": 576,
+        "x": 0,
+        "y": 96
+      }
+    },
+    {
+      "name": "Graphics still allocates optical renderer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Switching to ASCII releases graphics contexts and caches",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Rendering/fullscreen changes do not replace match identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Leaving a solo-host team clears room and returns menu",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Existing singles modes remain reachable after leaving team room",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Mobile portrait shows orientation hint",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Landscape dismisses portrait hint",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Same-device team activates the dual-pointer touch layer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Two emulated touch pointers move independent teammates",
+      "passed": true,
+      "detail": {
+        "coords": [
+          120,
+          340
+        ],
+        "noServe": true,
+        "otherHeld": true,
+        "clear": true
+      }
+    },
+    {
+      "name": "Cancelling one touch neither serves nor releases the other",
+      "passed": true,
+      "detail": {
+        "coords": [
+          120,
+          340
+        ],
+        "noServe": true,
+        "otherHeld": true,
+        "clear": true
+      }
+    },
+    {
+      "name": "Touch gameplay and landscape changes allocate no Canvas in ASCII",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Returning portrait shows hint again",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Lobby formation select actually changes authoritative rules",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Lobby device-count select atomically adds a teammate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AI checkbox removes empty-seat bots and blocks incomplete start",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AI checkbox restores two vacant-seat bots",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Migration checkbox updates room policy",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Current host cannot turn into a spectator without handing off",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "ASCII authoritative device with 3 CPUs stays finite / zero Canvas at throttle 1",
+      "passed": true,
+      "detail": {
+        "frames": 210,
+        "seconds": 3.5031999999999535,
+        "meanInterval": 16.667942583732504,
+        "p95": 17.699999999953434,
+        "canvas": 0,
+        "phase": "playing",
+        "bots": 3,
+        "finite": true,
+        "cpuThrottle": 1
+      }
+    },
+    {
+      "name": "ASCII authoritative device with 3 CPUs stays finite / zero Canvas at throttle 6",
+      "passed": true,
+      "detail": {
+        "frames": 210,
+        "seconds": 3.5058999999999068,
+        "meanInterval": 16.665550239234896,
+        "p95": 20,
+        "canvas": 0,
+        "phase": "playing",
+        "bots": 3,
+        "finite": true,
+        "cpuThrottle": 6
+      }
+    },
+    {
+      "name": "No uncaught browser JavaScript errors in team UI tests",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": [],
+  "performance": [
+    {
+      "frames": 210,
+      "seconds": 3.5031999999999535,
+      "meanInterval": 16.667942583732504,
+      "p95": 17.699999999953434,
+      "canvas": 0,
+      "phase": "playing",
+      "bots": 3,
+      "finite": true,
+      "cpuThrottle": 1
+    },
+    {
+      "frames": 210,
+      "seconds": 3.5058999999999068,
+      "meanInterval": 16.665550239234896,
+      "p95": 20,
+      "canvas": 0,
+      "phase": "playing",
+      "bots": 3,
+      "finite": true,
+      "cpuThrottle": 6
+    }
+  ],
+  "gpuFeatureStatus": {
+    "2d_canvas": "disabled_software",
+    "direct_rendering_display_compositor": "disabled_off_ok",
+    "gpu_compositing": "disabled_software",
+    "multiple_raster_threads": "disabled_off",
+    "opengl": "disabled_off",
+    "rasterization": "disabled_software",
+    "raw_draw": "disabled_off_ok",
+    "skia_graphite": "disabled_off",
+    "trees_in_viz": "disabled_off",
+    "video_decode": "disabled_software",
+    "video_encode": "disabled_software",
+    "vulkan": "disabled_off",
+    "webgl": "disabled_off",
+    "webgpu": "disabled_off",
+    "webnn": "disabled_off"
+  },
+  "method": "DOM injection, real keys/fullscreen, emulated touch, disabled GPU; performance is script submissions not physical display FPS."
+}

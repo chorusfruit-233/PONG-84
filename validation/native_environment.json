@@ -1,8 +1,30 @@
 {
-  "productionManualAttempt": {
+  "fileNavigation": {
+    "ok": false,
+    "error": "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at file:///mnt/data/PONG84_Team_Expansion_Release/index.html"
+  },
+  "productionManualInvite": {
     "ok": false,
     "error": "浏览器没有提供可用的连接地址，请检查 WebRTC 权限、防火墙或 TURN 设置。"
   },
-  "fileURL": "blocked by administrator in separate smoke run",
-  "policyModified": false
+  "nativeSdp": {
+    "signaling": [
+      "stable",
+      "stable"
+    ],
+    "ice": [
+      "new",
+      "new"
+    ],
+    "candidates": [
+      0,
+      0
+    ],
+    "controlOrdered": true,
+    "realtimeOrdered": false,
+    "realtimeMaxRetransmits": 0
+  },
+  "guardsIntact": true,
+  "policyModified": false,
+  "scope": "Browser native SDP and unchanged application invitation gate only; no four-device/public network/cloud/TURN acceptance test."
 }

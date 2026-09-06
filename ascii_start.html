@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070b13">
 <meta name="description" content="PONG-84：精致光影球场与独立低开销 ASCII 双渲染，16:9 自适应原生全屏、移动端横屏提示、本地双人、四人团队双打、手动 WebRTC P2P 与云房间联机。">
-<title>PONG-84 · 四人双打 · 光学球场</title>
+<title>PONG-84 · 团队扩展 · 光学球场</title>
 <style>:root{color-scheme:dark;--bg:#111713;--surface:#19201b;--card:#1d251f;--border:#333e35;--text:#ecf0e8;--muted:#a0aea0;--faint:#6f826f;--accent:#c6f18d;--accent-ink:#1b2812;--crt-color:#33ff33;--crt-bg:#051005;--crt-dim:rgba(51,255,51,.24);--crt-glow:transparent;--crt-soft:rgba(51,255,51,.08);--danger:#ffaaa0;--court-reserve:400px;font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}body{font-size:14px;line-height:1.5;overscroll-behavior-x:none}button,input,textarea,select{font:inherit}button{cursor:pointer;touch-action:manipulation}button,a{-webkit-tap-highlight-color:transparent}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}button:focus:not(:focus-visible){outline:none}[hidden],.hidden-section{display:none!important}h1,h2,h3,p{margin:0}h2{font-size:23px;font-weight:650;letter-spacing:-.5px}kbd{font:11px ui-monospace,Consolas,monospace;border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:var(--muted);white-space:nowrap}a{color:inherit;text-decoration:none}input,textarea,select{min-width:0;color:var(--text);background:#111713;border:1px solid var(--border);border-radius:7px;padding:8px}textarea{resize:vertical;user-select:text}summary{cursor:pointer;list-style:none;user-select:none}summary::-webkit-details-marker{display:none}summary:before{content:'+';font:17px ui-monospace,monospace;color:var(--accent);margin-right:8px}details[open]>summary:before{content:'−'}
 #app{max-width:1560px;padding:0 32px;margin:0 auto}.app-header{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid var(--border)}.wordmark{display:flex;align-items:center;gap:12px;white-space:nowrap}.mark{font:bold 28px ui-monospace,monospace;color:var(--accent);letter-spacing:-4px;margin-right:7px}.wordmark strong{font:800 30px ui-monospace,Consolas,monospace;letter-spacing:-2px}.wordmark strong span{color:var(--accent)}.wordmark small{color:var(--muted);font-size:11px;margin-left:8px}.header-caption{font-size:12px;color:var(--muted)}.header-caption span{color:var(--text);margin-left:8px}.version-tag{border:1px solid var(--border);border-radius:20px;padding:5px 10px;color:var(--muted);font-size:11px;white-space:nowrap}.version-tag b{color:var(--accent);font-weight:500;margin-left:8px}
@@ -262,6 +262,8 @@
 .d4-room-open #modeSection,.d4-room-open #onlineSection,.d4-room-open #menuOverlay>.small-note,.d4-room-open #menuSub{display:none!important}
 .d4-room-open .doubles-panel{margin-top:14px;padding-top:14px}
 
+.team-input-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.team-input-grid input,.team-input-grid select{min-width:0;width:100%;padding:9px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-size:12px}.team-switches{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--muted);padding:4px 0 8px}.team-switches label{display:flex;gap:5px;align-items:center}.d4-spectators,.d4-mesh{border:1px solid var(--border);padding:10px;border-radius:7px;margin-top:10px;font-size:11px}.d4-spectators p{margin-top:6px;color:var(--muted);line-height:1.6;overflow-wrap:anywhere}.d4-mesh strong{font-size:11px;color:var(--accent)}.d4-tools-toggle{margin:4px 0}.d4-seat.is-bot{border-left-style:dashed}.d4-panel-note p{margin:8px 0;line-height:1.7}.ascii-mode .d4-mesh,.ascii-mode .d4-spectators{box-shadow:none;background:var(--surface);filter:none}.team-input-grid [hidden]{display:none!important}
+
 </style>
 </head>
 <body>
@@ -270,7 +272,7 @@
   <header class="app-header">
     <a class="wordmark" href="#app" aria-label="PONG-84 首页"><span class="mark">|•|</span><strong>PONG<span>—84</span></strong><small>联机街机</small></a>
     <div class="header-caption">一个文件。一张球场。<span>下一球见。</span></div>
-    <span class="version-tag">双打 / 双渲染 <b>v5.0</b></span>
+    <span class="version-tag">组队 / 双渲染 <b>v6.0</b></span>
   </header>
   <section id="gameShell" class="game-shell" tabindex="-1" aria-label="PONG-84 游戏与控制台">
     <div class="arena-column">
@@ -338,7 +340,7 @@
             <button class="choice mode-card" data-setting="mode" data-value="pvp" type="button"><span class="mode-no">02</span><strong>同屏双人</strong><small>共享键盘 · 并肩对战</small></button>
             <button class="choice mode-card" data-setting="mode" data-value="timer" type="button"><span class="mode-no">03</span><strong>双人计时</strong><small>限时回合 · 分高者胜</small></button>
             <button class="choice mode-card" data-setting="mode" data-value="online" type="button"><span class="mode-no">04</span><strong>联机对战</strong><small>两台设备 · 同场对决</small></button>
-<button class="choice mode-card" data-setting="mode" data-value="doubles" type="button"><span class="mode-no">05 / 2 × 2</span><strong>四人双打</strong><small>上下协防 · 团队计分 · 四台设备</small></button>
+<button class="choice mode-card" data-setting="mode" data-value="doubles" type="button"><span class="mode-no">05 / 2 × 2</span><strong>四人双打</strong><small>前后阵型 · 同机组队 · 观战与 AI</small></button>
           </div>
         </div>
         <div id="difficultySection" class="section"><div class="section-title">电脑难度</div><div class="select-row compact">
@@ -448,26 +450,40 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         <p class="small-note">发球不重开，切换画面不清空比分。</p>
       </section>
       <section id="pauseOverlay" class="pause-panel" aria-hidden="true"><span class="panel-symbol">[ II ]</span><h2>暂停一下。</h2><p class="muted">计时、球和功能效果均已冻结。</p><div class="actions"><button id="resumeBtn" class="btn primary" type="button">继续游戏</button><button id="quitBtn" class="btn secondary" type="button">返回菜单</button></div></section>
-      <section id="doublesPanel" class="doubles-panel" hidden>
-<div class="d4-heading"><h3 id="d4Title">组队，守住半场。</h3><span id="d4Count" class="d4-count">0 / 4</span></div>
-<label class="d4-name" for="d4Name">你的昵称<input id="d4Name" maxlength="32" value="玩家" autocomplete="off"></label>
+      <button id="d4ToolsToggle" class="text-btn d4-tools-toggle" type="button" hidden>房间 / 邀请观众</button>
+<section id="doublesPanel" class="doubles-panel" hidden>
+<div class="d4-heading"><h3 id="d4Title">两道防线，一个团队。</h3><span id="d4Count" class="d4-count">2 × 2</span></div>
+<div class="team-input-grid">
+<label class="d4-name" for="d4Name">玩家 1 / 观众昵称<input id="d4Name" maxlength="32" value="玩家" autocomplete="off"></label>
+<label class="d4-name" id="d4Name2Label" for="d4Name2" hidden>玩家 2 昵称<input id="d4Name2" maxlength="32" value="队友" autocomplete="off"></label>
+<label class="d4-name" for="d4CountSelect">这台设备<select id="d4CountSelect"><option value="1">1 人参赛</option><option value="2">同机 2 人 · 同一队</option><option value="0">观众 · 不占参赛席位</option></select></label>
+<label class="d4-name" for="d4Formation">球场阵型 · 房主设置<select id="d4Formation"><option value="split">上下协防</option><option value="depth">前锋 + 后卫</option></select></label>
+</div>
+<div class="team-switches"><label><input id="d4AI" type="checkbox" checked>AI 补位 · 无增益</label><label><input id="d4Migration" type="checkbox" checked>自动房主迁移</label></div>
 <p id="d4RuleSummary" class="d4-panel-note"></p>
-<div id="d4Entry" class="d4-actions"><button id="d4Create" class="btn small" type="button">创建双打房间</button><button id="d4Join" class="btn small secondary" type="button">粘贴邀请加入</button></div>
-<div id="d4CloudRoom" hidden><input id="d4RoomCode" class="d4-room-code" aria-label="四人房间码" readonly><button id="d4CopyRoom" class="text-btn" type="button">复制房间码，发给三名玩家</button></div>
-<div id="d4Slots" class="d4-roster" hidden><button id="d4SeatA1" class="d4-seat team-a" type="button"><strong>A1 / 左上</strong><span id="d4SeatNameA1" class="d4-seat-name">等待加入</span><span id="d4SeatStateA1" class="d4-seat-state">空席位</span><span id="d4SeatMetaA1" class="d4-seat-meta"></span></button><button id="d4SeatB1" class="d4-seat team-b" type="button"><strong>B1 / 右上</strong><span id="d4SeatNameB1" class="d4-seat-name">等待加入</span><span id="d4SeatStateB1" class="d4-seat-state">空席位</span><span id="d4SeatMetaB1" class="d4-seat-meta"></span></button><button id="d4SeatA2" class="d4-seat team-a" type="button"><strong>A2 / 左下</strong><span id="d4SeatNameA2" class="d4-seat-name">等待加入</span><span id="d4SeatStateA2" class="d4-seat-state">空席位</span><span id="d4SeatMetaA2" class="d4-seat-meta"></span></button><button id="d4SeatB2" class="d4-seat team-b" type="button"><strong>B2 / 右下</strong><span id="d4SeatNameB2" class="d4-seat-name">等待加入</span><span id="d4SeatStateB2" class="d4-seat-state">空席位</span><span id="d4SeatMetaB2" class="d4-seat-meta"></span></button></div>
+<div id="d4Entry" class="d4-actions"><button id="d4Create" class="btn small" type="button">创建组队房间</button><button id="d4Join" class="btn small secondary" type="button">加入房间</button></div>
+<div id="d4CloudRoom" hidden><input id="d4RoomCode" class="d4-room-code" aria-label="当前房间码" readonly><button id="d4CopyRoom" class="text-btn" type="button">复制当前房间码</button></div>
+<div id="d4Slots" class="d4-roster" hidden><button id="d4SeatA1" class="d4-seat team-a" type="button"><strong id="d4SeatLabelA1">A1</strong><span id="d4SeatNameA1" class="d4-seat-name">等待加入</span><span id="d4SeatStateA1" class="d4-seat-state">空席位</span><span id="d4SeatMetaA1" class="d4-seat-meta"></span></button><button id="d4SeatB1" class="d4-seat team-b" type="button"><strong id="d4SeatLabelB1">B1</strong><span id="d4SeatNameB1" class="d4-seat-name">等待加入</span><span id="d4SeatStateB1" class="d4-seat-state">空席位</span><span id="d4SeatMetaB1" class="d4-seat-meta"></span></button><button id="d4SeatA2" class="d4-seat team-a" type="button"><strong id="d4SeatLabelA2">A2</strong><span id="d4SeatNameA2" class="d4-seat-name">等待加入</span><span id="d4SeatStateA2" class="d4-seat-state">空席位</span><span id="d4SeatMetaA2" class="d4-seat-meta"></span></button><button id="d4SeatB2" class="d4-seat team-b" type="button"><strong id="d4SeatLabelB2">B2</strong><span id="d4SeatNameB2" class="d4-seat-name">等待加入</span><span id="d4SeatStateB2" class="d4-seat-state">空席位</span><span id="d4SeatMetaB2" class="d4-seat-meta"></span></button></div><p id="d4SeatAdvice" class="d4-panel-note" hidden>点击席位为玩家 1 换位；同队点队友可交换两套操作，跨队时同机两人一起移动。</p>
+<div id="d4Spectators" class="d4-spectators" hidden><strong>观众席</strong><p id="d4SpectatorNames"></p></div>
 <div id="d4Swap" class="d4-swap" hidden><p id="d4SwapText"></p><div class="d4-actions"><button id="d4SwapYes" type="button" class="btn small">同意换位</button><button id="d4SwapNo" type="button" class="btn small secondary">拒绝</button></div></div>
 <p id="d4Notice" class="d4-notice" role="status" aria-live="polite"></p>
-<div id="d4RosterActions" hidden><div class="d4-actions"><button id="d4Ready" type="button" class="btn" aria-pressed="false">准备好了</button><button id="d4Start" type="button" class="btn" disabled>四人开始</button></div></div>
-<p id="d4RecoveryHint" class="d4-panel-note" hidden></p>
-<div id="d4JoinBox" class="d4-join" hidden><div id="d4ManualGuest"><label for="d4InviteInput">粘贴房主发给你的邀请码</label><textarea id="d4InviteInput" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><button id="d4InviteImport" type="button" class="text-btn">从文件读取邀请</button><input id="d4InviteFile" type="file" hidden accept=".txt,text/plain"></div>
-<div id="d4CloudGuest" hidden><label for="d4CloudInput">四人房间码</label><input id="d4CloudInput" class="d4-room-code" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="0000"></div>
-<div class="d4-actions"><button id="d4JoinAction" type="button" class="btn small">生成回应码</button></div>
-<div id="d4AnswerGroup" hidden><label for="d4AnswerOutput">将此回应码发回房主；房主确认后才会连通</label><textarea id="d4AnswerOutput" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4AnswerCopy" type="button" class="btn small">复制回应</button><button id="d4AnswerSave" type="button" class="btn small secondary">保存文件</button></div></div>
-</div><div id="d4ManualCards" hidden><details id="d4CardG1" class="d4-card"><summary>来宾 1 · 独立邀请<span id="d4CardStateG1" class="d4-card-state">独立连接名额</span></summary><div class="d4-actions"><button id="d4GenG1" type="button" class="btn small">生成邀请</button><button id="d4ReleaseG1" type="button" class="btn small secondary" hidden>释放空席位</button></div>
-<div id="d4ExchangeG1" hidden><label for="d4OutG1">1. 发送这张邀请给对应玩家</label><textarea id="d4OutG1" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4CopyG1" type="button" class="btn small">复制邀请</button><button id="d4SaveG1" type="button" class="btn small secondary">保存文件</button></div><label for="d4InG1">2. 粘贴此玩家返回的回应</label><textarea id="d4InG1" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><div class="d4-actions"><button id="d4ConfirmG1" type="button" class="btn small">确认回应</button><button id="d4ImportG1" type="button" class="btn small secondary">读取文件</button></div><input id="d4FileG1" type="file" accept=".txt,text/plain" hidden></div></details><details id="d4CardG2" class="d4-card"><summary>来宾 2 · 独立邀请<span id="d4CardStateG2" class="d4-card-state">独立连接名额</span></summary><div class="d4-actions"><button id="d4GenG2" type="button" class="btn small">生成邀请</button><button id="d4ReleaseG2" type="button" class="btn small secondary" hidden>释放空席位</button></div>
-<div id="d4ExchangeG2" hidden><label for="d4OutG2">1. 发送这张邀请给对应玩家</label><textarea id="d4OutG2" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4CopyG2" type="button" class="btn small">复制邀请</button><button id="d4SaveG2" type="button" class="btn small secondary">保存文件</button></div><label for="d4InG2">2. 粘贴此玩家返回的回应</label><textarea id="d4InG2" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><div class="d4-actions"><button id="d4ConfirmG2" type="button" class="btn small">确认回应</button><button id="d4ImportG2" type="button" class="btn small secondary">读取文件</button></div><input id="d4FileG2" type="file" accept=".txt,text/plain" hidden></div></details><details id="d4CardG3" class="d4-card"><summary>来宾 3 · 独立邀请<span id="d4CardStateG3" class="d4-card-state">独立连接名额</span></summary><div class="d4-actions"><button id="d4GenG3" type="button" class="btn small">生成邀请</button><button id="d4ReleaseG3" type="button" class="btn small secondary" hidden>释放空席位</button></div>
-<div id="d4ExchangeG3" hidden><label for="d4OutG3">1. 发送这张邀请给对应玩家</label><textarea id="d4OutG3" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4CopyG3" type="button" class="btn small">复制邀请</button><button id="d4SaveG3" type="button" class="btn small secondary">保存文件</button></div><label for="d4InG3">2. 粘贴此玩家返回的回应</label><textarea id="d4InG3" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><div class="d4-actions"><button id="d4ConfirmG3" type="button" class="btn small">确认回应</button><button id="d4ImportG3" type="button" class="btn small secondary">读取文件</button></div><input id="d4FileG3" type="file" accept=".txt,text/plain" hidden></div></details></div><div class="d4-actions"><button id="d4Reconnect" type="button" class="btn small" hidden>重新连接原房间</button><button id="d4Leave" type="button" class="btn small secondary" hidden>退出房间</button></div>
-<details class="d4-panel-note"><summary>双打规则与连接说明</summary><p>点击席位可选位；已有玩家的位置需对方同意交换。四人都准备后由房主开始。上下两拍不越区，比分与护盾全队共享，长拍只作用于一名玩家。只允许当前发球员发球。</p><p>房主分别连接三名玩家，来宾无需相互连接。手动邀请每人独立；重新生成一张邀请不会断开其他来宾。公网直连失败可能需要 TURN，GitHub Pages 只托管页面。</p><p>掉线冻结并保留席位 30 秒。手动重连需重新交换该来宾的邀请与回应；云端可点重新连接。房主离开不自动迁移，不使用 AI 补位。重连记录仅存当前标签页。</p><button id="d4Forget" type="button" class="text-btn">清除本标签页的重连记录</button></details><details class="network-details"><summary>四人连接诊断</summary><pre id="d4NetworkReport" class="network-report"></pre></details></section>
+<div id="d4RosterActions" hidden><div class="d4-actions"><button id="d4Ready" type="button" class="btn" aria-pressed="false">本机准备好了</button><button id="d4Start" type="button" class="btn" disabled>开始比赛</button></div></div>
+<div id="d4MeshBox" class="d4-mesh" hidden><strong id="d4MeshState"></strong><p id="d4MigrationHint" class="d4-panel-note"></p><div class="d4-actions"><button id="d4MeshRetry" type="button" class="text-btn">重试备用链路</button><button id="d4Handoff" type="button" class="text-btn">移交房主</button></div></div>
+<div id="d4JoinBox" class="d4-join" hidden><div id="d4ManualGuest"><label for="d4InviteInput">粘贴当前房主分配给本设备的邀请码</label><textarea id="d4InviteInput" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><button id="d4InviteImport" type="button" class="text-btn">从文件读取邀请</button><input id="d4InviteFile" type="file" hidden accept=".txt,text/plain"></div>
+<div id="d4CloudGuest" hidden><label for="d4CloudInput">当前房间码</label><input id="d4CloudInput" class="d4-room-code" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="0000"></div>
+<div class="d4-actions"><button id="d4JoinAction" type="button" class="btn small">加入</button></div>
+<div id="d4AnswerGroup" hidden><label for="d4AnswerOutput">发送回应给房主，在原来宾卡确认后连通</label><textarea id="d4AnswerOutput" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4AnswerCopy" type="button" class="btn small">复制回应</button><button id="d4AnswerSave" type="button" class="btn small secondary">保存文件</button></div></div>
+</div><div id="d4ManualCards" hidden><details id="d4CardH" class="d4-card"><summary>设备 H<span id="d4CardStateH" class="d4-card-state">独立连接名额</span></summary><div class="d4-actions"><button id="d4GenH" type="button" class="btn small">生成邀请</button><button id="d4ReleaseH" type="button" class="btn small secondary" hidden>释放离线设备</button></div>
+<div id="d4ExchangeH" hidden><label for="d4OutH">1. 将邀请发给对应设备（玩家或观众）</label><textarea id="d4OutH" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4CopyH" type="button" class="btn small">复制邀请</button><button id="d4SaveH" type="button" class="btn small secondary">保存文件</button></div><label for="d4InH">2. 粘贴这台设备返回的回应</label><textarea id="d4InH" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><div class="d4-actions"><button id="d4ConfirmH" type="button" class="btn small">确认回应</button><button id="d4ImportH" type="button" class="btn small secondary">读取文件</button></div><input id="d4FileH" type="file" accept=".txt,text/plain" hidden></div></details><details id="d4CardG1" class="d4-card"><summary>设备 G1<span id="d4CardStateG1" class="d4-card-state">独立连接名额</span></summary><div class="d4-actions"><button id="d4GenG1" type="button" class="btn small">生成邀请</button><button id="d4ReleaseG1" type="button" class="btn small secondary" hidden>释放离线设备</button></div>
+<div id="d4ExchangeG1" hidden><label for="d4OutG1">1. 将邀请发给对应设备（玩家或观众）</label><textarea id="d4OutG1" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4CopyG1" type="button" class="btn small">复制邀请</button><button id="d4SaveG1" type="button" class="btn small secondary">保存文件</button></div><label for="d4InG1">2. 粘贴这台设备返回的回应</label><textarea id="d4InG1" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><div class="d4-actions"><button id="d4ConfirmG1" type="button" class="btn small">确认回应</button><button id="d4ImportG1" type="button" class="btn small secondary">读取文件</button></div><input id="d4FileG1" type="file" accept=".txt,text/plain" hidden></div></details><details id="d4CardG2" class="d4-card"><summary>设备 G2<span id="d4CardStateG2" class="d4-card-state">独立连接名额</span></summary><div class="d4-actions"><button id="d4GenG2" type="button" class="btn small">生成邀请</button><button id="d4ReleaseG2" type="button" class="btn small secondary" hidden>释放离线设备</button></div>
+<div id="d4ExchangeG2" hidden><label for="d4OutG2">1. 将邀请发给对应设备（玩家或观众）</label><textarea id="d4OutG2" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4CopyG2" type="button" class="btn small">复制邀请</button><button id="d4SaveG2" type="button" class="btn small secondary">保存文件</button></div><label for="d4InG2">2. 粘贴这台设备返回的回应</label><textarea id="d4InG2" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><div class="d4-actions"><button id="d4ConfirmG2" type="button" class="btn small">确认回应</button><button id="d4ImportG2" type="button" class="btn small secondary">读取文件</button></div><input id="d4FileG2" type="file" accept=".txt,text/plain" hidden></div></details><details id="d4CardG3" class="d4-card"><summary>设备 G3<span id="d4CardStateG3" class="d4-card-state">独立连接名额</span></summary><div class="d4-actions"><button id="d4GenG3" type="button" class="btn small">生成邀请</button><button id="d4ReleaseG3" type="button" class="btn small secondary" hidden>释放离线设备</button></div>
+<div id="d4ExchangeG3" hidden><label for="d4OutG3">1. 将邀请发给对应设备（玩家或观众）</label><textarea id="d4OutG3" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4CopyG3" type="button" class="btn small">复制邀请</button><button id="d4SaveG3" type="button" class="btn small secondary">保存文件</button></div><label for="d4InG3">2. 粘贴这台设备返回的回应</label><textarea id="d4InG3" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><div class="d4-actions"><button id="d4ConfirmG3" type="button" class="btn small">确认回应</button><button id="d4ImportG3" type="button" class="btn small secondary">读取文件</button></div><input id="d4FileG3" type="file" accept=".txt,text/plain" hidden></div></details><details id="d4CardG4" class="d4-card"><summary>设备 G4<span id="d4CardStateG4" class="d4-card-state">独立连接名额</span></summary><div class="d4-actions"><button id="d4GenG4" type="button" class="btn small">生成邀请</button><button id="d4ReleaseG4" type="button" class="btn small secondary" hidden>释放离线设备</button></div>
+<div id="d4ExchangeG4" hidden><label for="d4OutG4">1. 将邀请发给对应设备（玩家或观众）</label><textarea id="d4OutG4" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4CopyG4" type="button" class="btn small">复制邀请</button><button id="d4SaveG4" type="button" class="btn small secondary">保存文件</button></div><label for="d4InG4">2. 粘贴这台设备返回的回应</label><textarea id="d4InG4" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><div class="d4-actions"><button id="d4ConfirmG4" type="button" class="btn small">确认回应</button><button id="d4ImportG4" type="button" class="btn small secondary">读取文件</button></div><input id="d4FileG4" type="file" accept=".txt,text/plain" hidden></div></details><details id="d4CardG5" class="d4-card"><summary>设备 G5<span id="d4CardStateG5" class="d4-card-state">独立连接名额</span></summary><div class="d4-actions"><button id="d4GenG5" type="button" class="btn small">生成邀请</button><button id="d4ReleaseG5" type="button" class="btn small secondary" hidden>释放离线设备</button></div>
+<div id="d4ExchangeG5" hidden><label for="d4OutG5">1. 将邀请发给对应设备（玩家或观众）</label><textarea id="d4OutG5" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4CopyG5" type="button" class="btn small">复制邀请</button><button id="d4SaveG5" type="button" class="btn small secondary">保存文件</button></div><label for="d4InG5">2. 粘贴这台设备返回的回应</label><textarea id="d4InG5" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><div class="d4-actions"><button id="d4ConfirmG5" type="button" class="btn small">确认回应</button><button id="d4ImportG5" type="button" class="btn small secondary">读取文件</button></div><input id="d4FileG5" type="file" accept=".txt,text/plain" hidden></div></details><details id="d4CardG6" class="d4-card"><summary>设备 G6<span id="d4CardStateG6" class="d4-card-state">独立连接名额</span></summary><div class="d4-actions"><button id="d4GenG6" type="button" class="btn small">生成邀请</button><button id="d4ReleaseG6" type="button" class="btn small secondary" hidden>释放离线设备</button></div>
+<div id="d4ExchangeG6" hidden><label for="d4OutG6">1. 将邀请发给对应设备（玩家或观众）</label><textarea id="d4OutG6" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4CopyG6" type="button" class="btn small">复制邀请</button><button id="d4SaveG6" type="button" class="btn small secondary">保存文件</button></div><label for="d4InG6">2. 粘贴这台设备返回的回应</label><textarea id="d4InG6" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><div class="d4-actions"><button id="d4ConfirmG6" type="button" class="btn small">确认回应</button><button id="d4ImportG6" type="button" class="btn small secondary">读取文件</button></div><input id="d4FileG6" type="file" accept=".txt,text/plain" hidden></div></details><details id="d4CardG7" class="d4-card"><summary>设备 G7<span id="d4CardStateG7" class="d4-card-state">独立连接名额</span></summary><div class="d4-actions"><button id="d4GenG7" type="button" class="btn small">生成邀请</button><button id="d4ReleaseG7" type="button" class="btn small secondary" hidden>释放离线设备</button></div>
+<div id="d4ExchangeG7" hidden><label for="d4OutG7">1. 将邀请发给对应设备（玩家或观众）</label><textarea id="d4OutG7" class="d4-code" readonly spellcheck="false"></textarea><div class="d4-actions"><button id="d4CopyG7" type="button" class="btn small">复制邀请</button><button id="d4SaveG7" type="button" class="btn small secondary">保存文件</button></div><label for="d4InG7">2. 粘贴这台设备返回的回应</label><textarea id="d4InG7" class="d4-code" maxlength="131072" placeholder="P84D4.…" spellcheck="false" autocomplete="off"></textarea><div class="d4-actions"><button id="d4ConfirmG7" type="button" class="btn small">确认回应</button><button id="d4ImportG7" type="button" class="btn small secondary">读取文件</button></div><input id="d4FileG7" type="file" accept=".txt,text/plain" hidden></div></details></div><div class="d4-actions"><button id="d4Reconnect" type="button" class="btn small" hidden>重新连接</button><button id="d4Leave" type="button" class="btn small secondary" hidden>移交并退出</button></div>
+<details class="d4-panel-note"><summary>操作、补位与迁移边界</summary><p>一人：W/S 或方向键移动，空格或回车发球。同机两人：玩家 1 用 W/S＋空格，玩家 2 用 ↑/↓＋回车；触屏左右半屏各控制一人。同机两人始终属于同一队。</p><p>上下阵型每人负责半区；前后阵型每人可上下移动，前排截击、后排补漏，己方出球穿过队友球拍。所有碰撞与计分由当前房主裁决。</p><p>开启 AI 后，空位和掉线席位可被接管。AI 不得长拍、移速、攻击球和旋转强化；含 AI 的球队不享受共享护盾，也不收到减速或大球防守便利。恢复的真人在下一次发球接回球拍。</p><p>观众最多 4 台，可中途加入，不可移动、发球、暂停或改规则。赛前已加入的观众可参与迁移投票，但不能成为房主。</p><p>自动迁移需要备用链路与原投票组的多数设备仍可通信；两个参赛设备的房间中，一个突然掉线后不能安全自动选主。可赛前加入一名观众作为第三台投票设备。点击游戏内退出支持提前移交；直接关闭页面不等同于有序移交。</p><p>迁移从最近已提交检查点恢复，可能短暂回退。公网网络穿透仍可能需要 TURN。迁移后当前房主可生成新邀请码；云房间会换新短码，已连接设备自动跟随。</p><button id="d4Forget" type="button" class="text-btn">清除本标签页的恢复身份</button></details>
+<details class="network-details"><summary>组队连接诊断</summary><pre id="d4NetworkReport" class="network-report"></pre></details></section>
 <section id="playingPanel" class="playing-panel" hidden><span class="panel-symbol">[ &gt; ]</span><h2>回球，就是现在。</h2><p class="muted" id="playAdvice">边缘击球能改变方向。功能球会自动出现。</p><div class="live-info"><div><span>当前效果</span><strong id="liveEffect">常规球</strong></div><div><span>连接</span><strong id="liveNetwork">本地对局</strong></div><div><span>操作</span><strong>按键 / 拖动</strong></div></div><p id="d4LiveRoster" class="d4-live-roster" hidden></p><button id="returnMenuBtn" type="button" class="btn secondary full-width">结束对局 / 返回菜单</button></section>
       <details id="displaySettings" class="settings-details"><summary>画面与性能<span>本机独立设置</span></summary><div class="details-body">
         <div id="renderSection" class="section"><div class="section-title">渲染方式</div><div class="select-row"><button class="choice selected" data-setting="renderMode" data-value="ascii" type="button">ASCII 纯字符</button><button class="choice" data-setting="renderMode" data-value="crt" type="button">精致图形</button></div><p class="small-note">ASCII 是独立文本路径，不创建 Canvas / WebGL / WebGPU；图形模式独立使用高清画布与光影效果。</p></div>
@@ -1337,17 +1353,17 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         else if(g.respawnRemaining>0)status='POINT SCORED';
         else if(g.effect)status=({speed:'FAST',slow:'SLOW',big:'BIG',small:'SMALL',long:'LONG PADDLE'})[g.effect.type]+(g.effect.applied===false?' READY':'')+' / '+Math.max(0,g.effect.remaining).toFixed(1)+'s';
         else if(g.curveRemaining>0)status='~ CURVE SHOT';
-        if(g.isDoubles()){if(g.phase===Phase.PAUSED)status='PAUSED / HOST RESUMES';else if(g.phase===Phase.PLAYING&&g.serveSlot)status=g.serveSlot+' SERVE';if(g.localSeat())status+=' / YOU '+g.localSeat();}
+        if(g.isDoubles()){if(g.phase===Phase.PAUSED)status='PAUSED / HOST RESUMES';else if(g.phase===Phase.PLAYING&&g.serveSlot)status=g.serveSlot+' SERVE';if(g.localSeat())status+=' / YOU '+g.localSeats().join('+');else if(g.room?.isSpectator)status+=' / VIEWER';}
         if(g.isTimerMode())status+=' / TIME '+formatTime(g.match.remaining);
         if(g.match.leftShield)status+=' / L SHIELD';
         if(g.match.rightShield&&g.settings.mode!=='ai')status+=' / R SHIELD';
         this.center(this.rows-1,' '+status.slice(0,this.cols-6)+' ');
         const paddles=g.getPaddles();
-        if(g.isDoubles()){const mid=this.wy(WORLD.height/2);for(let x=4;x<this.cols-4;x+=5)this.put(x,mid,'.');}
+        if(g.isDoubles()&&g.room.formation==='split'){const mid=this.wy(WORLD.height/2);for(let x=4;x<this.cols-4;x+=5)this.put(x,mid,'.');}
         for(let i=0;i<paddles.length;i++) {
           const p=paddles[i],x0=this.wx(p.x),x1=x0+Math.max(1,Math.round(p.width/WORLD.width*(this.cols-2)))-1,y0=this.wy(p.y),y1=this.wy(p.y+p.height-0.001);
           for(let y=y0;y<=y1;y++)this.put(x0,y,'#'.repeat(x1-x0+1));
-          if(g.isDoubles())this.put(p.side==='left'?x1+2:x0-5,Math.max(1,y0-1),(p.id===g.localSeat()?'>':' ')+p.id);
+          if(g.isDoubles())this.put(p.side==='left'?x1+2:x0-5,Math.max(1,y0-1),(g.isLocalSeat(p.id)?'>':g.isBotSeat(p.id)?'~':' ')+p.id);
         }
         if(g.respawnRemaining<=0&&g.ball.x>=0&&g.ball.x<=WORLD.width) {
           const b=g.ball,x=this.wx(b.x),y=this.wy(b.y);
@@ -1693,15 +1709,15 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         // Backing buffer is exactly 16:9, so x/y use the same world-to-pixel scale.
         const scale=this.canvas.width/W;c.setTransform(scale,0,0,scale,0,0);
         this.drawScore(g,p);this.drawLighting(g,p);
-        if(g.isDoubles()){
+        if(g.isDoubles()&&g.room.formation==='split'){
           c.save();c.strokeStyle='#a7d8e41a';c.lineWidth=.6;c.setLineDash([4,14]);c.beginPath();c.moveTo(58,H/2);c.lineTo(W-58,H/2);c.stroke();c.setLineDash([]);c.restore();
         }
         for(const d of g.getPaddles()){
           const side=d.side||(d===g.left?'left':'right');this.drawPaddle(g,p,d,side);
           if(g.isDoubles()){
-            c.save();const mine=d.id===g.localSeat();c.font=(mine?'700':'500')+' 10px ui-monospace,Consolas,monospace';c.fillStyle=mine?'#f6fdff':p[side];
+            c.save();const mine=g.isLocalSeat(d.id);c.font=(mine?'700':'500')+' 10px ui-monospace,Consolas,monospace';c.fillStyle=mine?'#f6fdff':p[side];
             c.textAlign='center';c.globalAlpha=mine?.95:.70;
-            c.fillText(d.id,side==='left'?16:944,d.y+d.height/2+3);
+            c.fillText(d.id+(g.isBotSeat(d.id)?' AI':''),side==='left'?Math.max(24,d.x-15):Math.min(936,d.x+d.width+15),Math.max(12,d.y-9));
             if(mine){c.strokeStyle='#f4feff';c.lineWidth=1;c.globalAlpha=.65;this.rounded(c,d.x-3,d.y-3,d.width+6,d.height+6,6);c.stroke();}
             // Lower player gets two end marks, upper player one: not color-only identification.
             c.fillStyle=p[side];for(let n=0;n<(d.id.endsWith('2')?2:1);n++)c.fillRect(d.x+3,d.y+8+n*4,d.width-6,1);c.restore();
@@ -3454,14 +3470,14 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
     // 8) Boot.
     // ============================================================
     // ============================================================
-    // 8) Four-player room protocol. A room owns three independent links.
+    // 8) Team protocol v2. A device owns 0, 1 or 2 players and standby links.
     //    Identity, connection port and playing seat are deliberately separate.
     // ============================================================
-    const D4 = Object.freeze({version:1, seats:['A1','A2','B1','B2'], ports:['G1','G2','G3'],
+    const D4 = Object.freeze({version:2, seats:['A1','A2','B1','B2'], ports:['G1','G2','G3','G4','G5','G6','G7'],
       height:80, inputTimeout:350, silentTimeout:4500, reconnectWindow:30000, maxSignal:131072});
     const seatSide = seat => String(seat).startsWith('B') ? 'right' : 'left';
-    const seatZone = seat => String(seat).endsWith('2') ? [270,540] : [0,270];
-    const seatLabel = seat => ({A1:'左队 · 上位',A2:'左队 · 下位',B1:'右队 · 上位',B2:'右队 · 下位'})[seat] || '未入座';
+    const seatZone = (seat,formation='split') => formation==='depth'?[0,540]:String(seat).endsWith('2')?[270,540]:[0,270];
+    const seatLabel = (seat,formation='split') => (formation==='depth'?{A1:'左队 · 后卫',A2:'左队 · 前锋',B1:'右队 · 后卫',B2:'右队 · 前锋'}:{A1:'左队 · 上位',A2:'左队 · 下位',B1:'右队 · 上位',B2:'右队 · 下位'})[seat] || '观众';
     const cleanName = name => Array.from(String(name||'玩家').replace(/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/g,'').trim()).slice(0,16).join('') || '玩家';
     const isId = value => typeof value==='string' && /^[0-9a-f]{32}$/.test(value);
     function packD4Signal(data) { return 'P84D4.'+btoa(JSON.stringify({game:'pong84-doubles',v:D4.version,...data})); }
@@ -3471,7 +3487,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       if(!source.startsWith('P84D4.'))throw new Error('这不是四人双打连接码。请使用四人版生成的 P84D4. 邀请／回应。');
       let data;try{data=JSON.parse(atob(source.slice(6)));}catch{throw new Error('连接码损坏，请完整复制或从文件读取。');}
       if(data?.game!=='pong84-doubles'||data.v!==D4.version||data.kind!==kind||!isId(data.rid)||!isId(data.iid)||
-        !D4.ports.includes(data.pid)||typeof data.signal!=='string')throw new Error('连接码类型、版本或房间信息不匹配。');
+        !['H',...D4.ports].includes(data.pid)||typeof data.signal!=='string')throw new Error('连接码类型、版本或房间信息不匹配。');
       unpackSignal(data.signal,kind==='invite'?'offer':'answer');return data;
     }
 
@@ -3516,530 +3532,720 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       }
     }
 
+    // Team expansion protocol v2. Device identity is not a seat or host role.
+    // A fixed per-match electorate + majority leases fence a partitioned host.
+    // Checkpoints are committed by a majority before they can be recovered.
+    const ROOM_NODES = ['H',...D4.ports];
+    const TEAM_NET = Object.freeze({maxSpectators:4, heartbeat:450, lease:2200, election:4600,
+      checkpoint:500, meshRetry:28000, botDelay:1600, maxNodes:8});
+    const cloneJSON = x => JSON.parse(JSON.stringify(x));
+    const nodeOrder = id => ROOM_NODES.indexOf(id);
+    const pairKey = (a,b) => [a,b].sort((x,y)=>nodeOrder(x)-nodeOrder(y)).join('/');
+
     class DoublesRoom {
       constructor(){
-        this.role=null;this.id='';this.code='';this.transport='manual';this.options={...NETWORK_DEFAULTS};
-        this.localId=null;this.token='';this.name='玩家';this.peer=null;this.links=new Map();this.players=new Map();
-        this.invitations=new Map();this.revision=0;this.configRevision=1;this.score=11;this.status='lobby';
-        this.notice='';this.swap=null;this.barrier=null;this.epoch=0;this.game=null;this.onChange=null;
-        this.timer=null;this.closed=false;this.resumeSaved=null;this.lastRosterAt=0;this.unresponsiveSince=0;
+        this.options={...NETWORK_DEFAULTS};this.game=null;this.onChange=null;this.epoch=0;
+        this.links=new Map();this.players=new Map();this.nodes=new Map();this.invitations=new Map();
+        this.peers=new Set();this.timer=null;this.meshJobs=new Map();this.meshReports=new Map();
+        this.role=null;this.localId=null;this.hostId='H';this.id='';this.code='';this.name='玩家';this.name2='队友';
+        this.localCount=1;this.formation='split';this.aiFill=true;this.autoMigration=true;this.score=11;
+        this.status='lobby';this.notice='';this.revision=0;this.configRevision=1;this.term=1;
+        this.voters=[];this.voteTerm=0;this.votedFor=null;this.votes=new Map();this.electionAt=0;
+        this.committed=null;this.pendingCheckpoint=null;this.pendingCommits=new Map();this.cpCounter=0;
+        this.lastAuthorityAt=performance.now();this.lastHeartbeat=0;this.lastCheckpoint=0;this.lastRosterAt=0;
+        this.heartbeatAcks=new Map();this.leaseEstablished=false;this.barrier=null;this.swap=null;
+        this.token='';this.resumeSaved=null;this.closed=false;this.migrating=false;this.hostHistory=[];
+        this.transfer=null;this.autoResumeAt=0;this.lastState=new Map();this.inputByPlayer=new Map();
+        this.meshError='';this.meshAttempts=new Map();this.futureAuthority=null;this.listener=null;
       }
-      get mine(){return this.players.get(this.localId)||null;}
-      get connected(){return this.role==='host'?Array.from(this.players.values()).filter(p=>p.connected).length===4:!!this.links.get('H')?.connected&&!!this.mine?.connected;}
-      get active(){return ['arming','match','paused'].includes(this.status);}
-      get allPresent(){return this.players.size===4&&Array.from(this.players.values()).every(p=>p.connected&&p.visible&&p.synced);}
-      get canStart(){return this.role==='host'&&!this.active&&this.allPresent&&Array.from(this.players.values()).every(p=>p.ready)&&!this.swap;}
-      get canResume(){return this.role==='host'&&this.status==='paused'&&this.allPresent&&!this.barrier;}
+      get localPlayers(){return [...this.players.values()].filter(p=>p.device===this.localId).sort((a,b)=>a.index-b.index);}
+      get localNode(){return this.nodes.get(this.localId)||null;}
+      get mine(){return this.localPlayers[0]||null;}
+      get isSpectator(){return !!this.localNode&&this.localNode.count===0;}
+      get active(){return ['arming','match','paused','migrating'].includes(this.status);}
+      get connected(){return this.role==='host'||!!this.links.get(this.hostId)?.authed&&!!this.links.get(this.hostId)?.connected;}
+      get playingNodes(){return [...this.nodes.values()].filter(n=>n.count>0);}
+      get allPresent(){return this.players.size===4&&[...this.players.values()].every(p=>this.isBot(p)||this.nodes.get(p.device)?.connected&&this.nodes.get(p.device)?.visible&&this.nodes.get(p.device)?.synced);}
+      get electorate(){return this.voters.length?this.voters:[this.localId].filter(Boolean);}
+      get quorum(){return Math.floor(this.electorate.length/2)+1;}
+      get canStart(){return this.role==='host'&&!this.active&&this.allPresent&&!this.swap&&this.playingNodes.filter(n=>n.connected&&n.visible&&[...this.players.values()].some(p=>p.device===n.id&&!this.isBot(p))).every(n=>n.ready)&&(!this.autoMigration||this.meshComplete())&&this.hasLease()&&this.prospectiveLease();}
+      get canResume(){return this.role==='host'&&this.status==='paused'&&this.allPresent&&!this.barrier&&this.hasLease();}
+      isBot(p){return !!p&&(p.kind==='bot'||p.botActive===true);}
+      playerAt(seat){return [...this.players.values()].find(p=>p.seat===seat)||null;}
+      owns(id,seat){const p=this.playerAt(seat);return !!p&&p.device===id&&!this.isBot(p)&&!!this.nodes.get(id)?.connected&&!!this.nodes.get(id)?.visible;}
       emit(){this.onChange?.();}
       configure(options){const validator=new OnlinePeer();validator.configure(options);this.options={...validator.options};}
-      player(id,seat,name,token=sessionId()) {return {id,seat,name:cleanName(name),token,connected:id==='H',visible:true,ready:false,synced:id==='H',lostAt:0,rtt:0,route:'unknown',jitter:0};}
-      startTimer(){clearInterval(this.timer);this.timer=setInterval(()=>this.tick(),500);}
+      peerOptions(){const validator=new OnlinePeer();validator.configure(this.options);return validator.peerOptions();}
+      signalId(code){return `p84team2-${this.options.namespace}-${code}`;}
+      startTimer(){clearInterval(this.timer);this.timer=setInterval(()=>this.tick(),250);}
+      configureTeam({count=1,name2='队友',formation='split',aiFill=true,migration=true}={}){
+        if(this.role)return;this.localCount=[0,1,2].includes(Number(count))?Number(count):1;this.name2=cleanName(name2);
+        this.formation=formation==='depth'?'depth':'split';this.aiFill=!!aiFill;this.autoMigration=!!migration;
+      }
       begin(role,transport,name){
-        this.close(false);this.role=role;this.transport=transport;this.name=cleanName(name);this.closed=false;
-        this.status='lobby';this.notice='';this.game?.clearD4Preview();this.startTimer();return this.epoch;
+        const pref={localCount:this.localCount,name2:this.name2,formation:this.formation,aiFill:this.aiFill,autoMigration:this.autoMigration};
+        this.close(false);Object.assign(this,pref);this.role=role;this.transport=transport;this.name=cleanName(name);
+        this.closed=false;this.status='lobby';this.notice='';this.game?.clearD4Preview();this.startTimer();return this.epoch;
+      }
+      makeNode(id,name,count,token=sessionId()){
+        return {id,name:cleanName(name),count,token,order:nodeOrder(id),connected:true,visible:true,synced:id===this.localId,ready:false,rtt:0,route:'unknown',lostAt:0};
+      }
+      allocatePlayers(node,names){
+        if(node.count===0)return;
+        const free=D4.seats.filter(s=>!this.playerAt(s)||this.playerAt(s).kind==='bot');let seats;
+        if(node.count===2){const team=['A','B'].find(t=>free.includes(t+'1')&&free.includes(t+'2'));if(!team)throw new Error('没有同一队的两个空位；同机双人必须完整加入同一队。');seats=[team+'1',team+'2'];}
+        else{if(!free.length)throw new Error('参赛席位已满。可选择观众加入。');seats=[free[0]];}
+        for(let i=0;i<seats.length;i++){const old=this.playerAt(seats[i]);if(old)this.players.delete(old.id);
+          const p={id:node.id+':'+i,device:node.id,index:i,name:cleanName(names[i]||node.name),seat:seats[i],kind:'human',botActive:false,pendingReturn:false};this.players.set(p.id,p);}
+      }
+      fillBots(){
+        for(const seat of D4.seats){const p=this.playerAt(seat);
+          if(!p&&this.aiFill)this.players.set('AI:'+seat,{id:'AI:'+seat,device:null,index:0,name:'AI '+seat,seat,kind:'bot',botActive:true,pendingReturn:false});
+          else if(p?.kind==='bot'&&!this.aiFill)this.players.delete(p.id);
+        }
+        this.game?.enforceNoAIBuffs?.();
       }
       createManual(name,options,score=11){
-        this.configure(options);this.begin('host','manual',name);this.id=sessionId();this.localId='H';this.score=score;
-        this.players.set('H',this.player('H','A1',name));this.changed('房间已建立。分别邀请三名玩家。');
+        this.configure(options);if(!this.localCount)throw new Error('房主需以一人或同机两人身份创建，观众请加入已有房间。');
+        this.begin('host','manual',name);this.id=sessionId();this.hostId=this.localId='H';this.score=score;
+        const node=this.makeNode('H',name,this.localCount);this.token=node.token;this.nodes.set('H',node);
+        this.allocatePlayers(node,[this.name,this.name2]);this.fillBots();this.voters=['H'];this.leaseEstablished=true;
+        this.changed('房间已创建。可邀请玩家或观众；开启 AI 后无需凑满四名真人。');this.saveRecovery();this.publishCheckpoint();
       }
-      createLink(key){
-        this.disposeLink(key);const link=new DoublesLink();link.configure(this.options);link.pid=key;
-        this.links.set(key,link);const epoch=this.epoch;
-        const current=()=>epoch===this.epoch&&this.links.get(key)===link;
-        link.onOpen=()=>{
-          if(!current())return;
-          if(this.role==='client')this.sendHello(link);
-          else {this.notice='连接已通，正在校验玩家身份…';this.emit();}
-        };
-        link.onMessage=(msg,channel)=>{if(current())this.receive(link,msg,channel);};
-        link.onClose=reason=>{if(current())this.linkLost(key,reason,!!link.voluntaryClose);};
-        link.onConnectionState=(state,detail)=>{
-          if(!current())return;
-          if(['reconnecting','channel-error','congested'].includes(state)&&link.authed){
-            const player=this.role==='host'?this.players.get(key):this.mine;
-            if(player){player.connected=false;player.ready=false;player.synced=false;player.lostAt=player.lostAt||performance.now();}
-            if(this.role==='client')this.unresponsiveSince=this.unresponsiveSince||performance.now();
-            this.freeze('网络波动，比赛已冻结。');
-          }
-          if(detail)this.notice=detail;this.emit();
-        };
-        link.onStats=()=>{
-          if(!current())return;
-          if(this.role==='host'){
-            const p=this.players.get(key);if(p){p.rtt=Math.round(link.rtt);p.jitter=Math.round(link.jitter);p.route=link.route;}
-          }
-        };
-        return link;
-      }
-      disposeLink(key){const link=this.links.get(key);if(!link)return;this.links.delete(key);link.onOpen=link.onClose=link.onMessage=link.onStats=link.onConnectionState=null;link.cleanup();}
-      async createInvite(pid){
-        if(this.role!=='host'||this.transport!=='manual'||!D4.ports.includes(pid))throw new Error('请先创建手动双打房间。');
-        if(this.links.get(pid)?.connected&&this.players.get(pid)?.connected)throw new Error('该玩家仍在线；不需要重新邀请。');
-        const epoch=this.epoch,link=this.createLink(pid),iid=sessionId();this.invitations.set(pid,{iid,output:'',busy:true});this.emit();
-        try{
-          const signal=await link.createOffer();if(epoch!==this.epoch||this.links.get(pid)!==link)throw new Error('邀请已取消。');
-          const output=packD4Signal({kind:'invite',rid:this.id,pid,iid,signal});
-          this.invitations.set(pid,{iid,output,busy:false});this.notice=`来宾 ${pid.slice(1)} 的邀请已生成；其他连接不受影响。`;this.emit();return output;
-        }catch(error){if(epoch===this.epoch&&this.links.get(pid)===link){this.invitations.set(pid,{iid,output:'',busy:false});this.emit();}throw error;}
-      }
-      async acceptInvite(text,name,options){
-        const env=unpackD4Signal(text,'invite');this.configure(options);
-        const recovered=this.loadRecovery(env.rid),same=this.role==='client'&&this.id===env.rid;
-        const token=same?this.token:recovered?.token||'';
-        if(!same)this.begin('client','manual',name);else{this.name=cleanName(name);this.disposeLink('H');}
-        this.id=env.rid;this.localId=env.pid;this.token=token;this.resumeSaved={rid:env.rid,pid:env.pid,token};
-        const epoch=this.epoch,link=this.createLink('H');this.inviteEnvelope=env;this.notice='正在生成回应码…';this.emit();
-        const signal=await link.acceptOffer(env.signal);
-        if(epoch!==this.epoch||this.links.get('H')!==link)throw new Error('操作已取消。');
-        this.notice='回应已生成。将其发给房主，等待房主确认。';this.emit();
-        return packD4Signal({kind:'answer',rid:env.rid,pid:env.pid,iid:env.iid,signal});
-      }
-      async acceptAnswer(pid,text){
-        const env=unpackD4Signal(text,'answer'),invite=this.invitations.get(pid),link=this.links.get(pid);
-        if(this.role!=='host'||env.rid!==this.id||env.pid!==pid||env.iid!==invite?.iid||!link)throw new Error('回应不属于这张来宾连接卡，或邀请已经被替换。');
-        await link.acceptAnswer(env.signal);this.notice='已确认回应，正在建立该玩家的数据通道。';this.emit();
-      }
-      signalId(code){return `p84d4-${this.options.namespace}-${code}`;}
-      peerOptions(){const link=new OnlinePeer();link.configure(this.options);return link.peerOptions();}
-      waitPeer(peer,epoch){
-        return new Promise((resolve,reject)=>{
-          let done=false;const finish=(err)=>{if(done)return;done=true;clearTimeout(timer);peer.off?.('open',open);peer.off?.('error',error);err?reject(err):resolve();};
+      async waitPeer(peer,epoch){
+        return new Promise((resolve,reject)=>{let done=false;const finish=e=>{if(done)return;done=true;clearTimeout(timer);peer.off?.('open',open);peer.off?.('error',error);e?reject(e):resolve();};
           const open=()=>finish(epoch!==this.epoch?new Error('操作已取消。'):null),error=e=>finish(e);
-          const timer=setTimeout(()=>finish(new Error('信令连接超时，请检查网络，或改用手动 P2P。')),12000);
-          peer.on('open',open);peer.on('error',error);if(peer.open)open();
-        });
+          const timer=setTimeout(()=>finish(new Error('信令连接超时，可改用手动 P2P。')),12000);peer.on('open',open);peer.on('error',error);if(peer.open)open();});
       }
       attachSignal(peer,epoch){
-        const current=()=>this.epoch===epoch&&this.peer===peer;
-        peer.on('connection',conn=>{if(current()&&this.role==='host')this.acceptCloud(conn);else try{conn.close();}catch{}});
-        peer.on('disconnected',()=>{
-          if(!current())return;this.notice='信令暂时离线；已建立的数据连接可继续。';this.emit();
-          setTimeout(()=>{if(current()&&!peer.destroyed&&peer.disconnected)try{peer.reconnect();}catch{}},1200);
-        });
-        peer.on('error',err=>{if(current()&&err?.type!=='unavailable-id'){this.notice=new OnlinePeer().cloudError(err);this.emit();}});
+        const current=()=>epoch===this.epoch&&!this.closed;
+        peer.on('connection',c=>{if(current()&&this.role==='host')this.acceptCloud(c);else this.rejectConnection(c,'此入口已不是房主，请使用房间界面显示的新房间码。');});
+        peer.on('disconnected',()=>{if(!current())return;this.notice='云信令暂时离线；已建立的主链路和备用链路不因此关闭。';this.emit();setTimeout(()=>{if(current()&&!peer.destroyed&&peer.disconnected)try{peer.reconnect();}catch{}},1400);});
+        peer.on('error',e=>{if(current()&&e?.type!=='unavailable-id'){this.notice=new OnlinePeer().cloudError(e);this.emit();}});
+      }
+      async publishCloudEntry(){
+        const epoch=this.epoch;await loadPeerLibrary();if(epoch!==this.epoch||this.role!=='host')return;
+        for(let n=0;n<12;n++){const a=new Uint32Array(1);crypto.getRandomValues(a);const code=String(1000+a[0]%9000);
+          const peer=new window.Peer(this.signalId(code),this.peerOptions());this.peers.add(peer);
+          try{await this.waitPeer(peer,epoch);if(this.role!=='host'){peer.destroy();return;}this.listener=peer;this.attachSignal(peer,epoch);this.code=code;this.saveRecovery();this.changed('房间入口 '+code+' 可用于新玩家或观众加入。');return code;}
+          catch(e){peer.destroy();this.peers.delete(peer);if(e?.type==='unavailable-id')continue;throw e;}}
+        throw new Error('房间码分配冲突，请重试。');
       }
       async createCloud(name,options,score=11){
-        this.configure(options);this.peerOptions();this.begin('host','cloud',name);this.id=sessionId();this.localId='H';this.score=score;
-        this.players.set('H',this.player('H','A1',name));const epoch=this.epoch;this.notice='正在创建四人云端房间…';this.emit();
-        try{
-          await loadPeerLibrary();if(epoch!==this.epoch)throw new Error('操作已取消。');
-          for(let i=0;i<12;i++){
-            const bytes=new Uint32Array(1);crypto.getRandomValues(bytes);const code=String(1000+bytes[0]%9000);
-            const peer=new window.Peer(this.signalId(code),this.peerOptions());this.peer=peer;
-            try{await this.waitPeer(peer,epoch);this.attachSignal(peer,epoch);this.code=code;this.changed('四人房间已创建。三名来宾输入同一个房间码即可加入。');return code;}
-            catch(error){peer.destroy();if(error?.type==='unavailable-id')continue;throw error;}
-          }
-          throw new Error('房间码冲突，请重试。');
-        }catch(error){if(epoch===this.epoch){this.close(false);this.notice=new OnlinePeer().cloudError(error);this.emit();}throw error;}
+        this.createManual(name,options,score);this.transport='cloud';try{return await this.publishCloudEntry();}catch(e){this.close(false);throw e;}
       }
-      rejectConnection(conn,reason){
-        const reject=()=>{try{conn.send({t:'d4_reject',v:D4.version,reason});}catch{}setTimeout(()=>{try{conn.close();}catch{}},250);};
-        if(conn.open)reject();else{conn.on('open',reject);setTimeout(()=>{if(!conn.open)try{conn.close();}catch{}},8000);}
+      createLink(key,kind='downstream'){
+        this.disposeLink(key);const l=new DoublesLink();l.configure(this.options);l.pid=key;l.kind=kind;this.links.set(key,l);const epoch=this.epoch;
+        const current=()=>epoch===this.epoch&&this.links.get(l.pid)===l;
+        l.onOpen=()=>{if(!current())return;if(l.kind==='mesh')this.sendTo(l,{t:'mesh_hello',ticket:l.ticket});else if(l.kind==='upstream')this.sendHello(l);this.reportMesh();};
+        l.onMessage=(m,ch)=>{if(current())this.receive(l,m,ch);};
+        l.onClose=reason=>{if(current())this.linkLost(l.pid,reason);};
+        l.onConnectionState=(s,detail)=>{if(!current())return;if(detail)this.notice=detail;if(s==='failed'&&l.authed)this.linkLost(l.pid,detail||'链路失败');this.emit();};
+        l.onStats=()=>{if(!current())return;const node=this.nodes.get(l.pid);if(node){node.rtt=Math.round(l.rtt);node.route=l.route;}};
+        return l;
       }
-      acceptCloud(conn){
-        const meta=conn.metadata;
-        if(meta?.game!=='pong84-doubles'||meta.v!==D4.version||conn.label!=='pong84-ctrl'){this.rejectConnection(conn,'四人协议版本不兼容，请所有人更新到同一版本。');return;}
-        let pid=null;
-        if(meta.resume){
-          const p=this.players.get(meta.resume.pid);
-          if(meta.resume.rid!==this.id||!p||!isId(meta.resume.token)||meta.resume.token!==p.token){this.rejectConnection(conn,'旧席位无法恢复。请清除重连记录后重新加入，或让房主释放席位。');return;}
-          if(p.connected&&this.links.get(p.id)?.connected&&performance.now()-this.links.get(p.id).lastReceiveAt<4500){this.rejectConnection(conn,'原席位仍在线，不能重复登录。');return;}
-          pid=p.id;
-        }else{
-          if(this.active){this.rejectConnection(conn,'比赛已经开始，暂不接受新玩家。');return;}
-          pid=D4.ports.find(id=>!this.players.has(id)&&!this.links.has(id));
-          if(!pid){this.rejectConnection(conn,'四人房间已满。');return;}
-        }
-        const link=this.createLink(pid);link.role='host';link.transport='cloud';link.remotePeerId=conn.peer;
-        link.wireDoublesCloud(conn,false);link.armConnectTimeout(link.epoch);
-        this.notice='有玩家正在加入…';this.emit();
+      disposeLink(key){const l=this.links.get(key);if(!l)return;this.links.delete(key);l.onOpen=l.onClose=l.onMessage=l.onStats=l.onConnectionState=null;l.cleanup();}
+      async createInvite(pid){
+        if(this.role!=='host'||this.transport!=='manual'||!ROOM_NODES.includes(pid)||pid===this.localId)throw new Error('请选择空闲来宾卡。');
+        if(this.links.get(pid)?.authed&&this.links.get(pid)?.connected)throw new Error('此设备仍在线，无需重新邀请。');
+        const epoch=this.epoch,l=this.createLink(pid),iid=sessionId();this.invitations.set(pid,{iid,busy:true,output:''});this.emit();
+        try{const signal=await l.createOffer();if(epoch!==this.epoch||this.links.get(pid)!==l)throw new Error('邀请已取消。');
+          const output=packD4Signal({kind:'invite',rid:this.id,hid:this.localId,pid,iid,term:this.term,signal});this.invitations.set(pid,{iid,output,busy:false});this.emit();return output;
+        }catch(e){if(epoch===this.epoch){this.invitations.set(pid,{iid,busy:false,output:''});this.emit();}throw e;}
+      }
+      async acceptInvite(text,name,options){
+        const env=unpackD4Signal(text,'invite');if(!ROOM_NODES.includes(env.hid))throw new Error('连接码缺少本版房主身份，请双方更新。');
+        this.configure(options);const saved=this.loadRecovery(env.rid);const same=this.role==='client'&&this.id===env.rid;
+        const token=this.id===env.rid&&this.localId===env.pid?this.token:saved?.pid===env.pid?saved.token:'';
+        if(!same)this.begin('client','manual',name);else this.disposeLink(this.hostId);
+        this.id=env.rid;this.hostId=env.hid;this.localId=env.pid;this.term=env.term||1;this.token=token;
+        this.resumeSaved=token?{rid:env.rid,pid:env.pid,token}:null;
+        const l=this.createLink(this.hostId,'upstream'),epoch=this.epoch;const signal=await l.acceptOffer(env.signal);
+        if(epoch!==this.epoch)throw new Error('连接已取消。');this.notice='将回应发回对应来宾卡。连接后备用链路会自动建立。';this.emit();
+        return packD4Signal({kind:'answer',rid:env.rid,hid:env.hid,pid:env.pid,iid:env.iid,signal});
+      }
+      async acceptAnswer(pid,text){const env=unpackD4Signal(text,'answer'),inv=this.invitations.get(pid),l=this.links.get(pid);
+        if(this.role!=='host'||env.rid!==this.id||env.hid!==this.localId||env.pid!==pid||env.iid!==inv?.iid||!l)throw new Error('回应不属于当前这张邀请。');
+        await l.acceptAnswer(env.signal);this.emit();}
+      rejectConnection(c,reason){const reject=()=>{try{c.send({v:D4.version,t:'d4_reject',reason});}catch{}setTimeout(()=>{try{c.close();}catch{}},300);};if(c.open)reject();else c.on('open',reject);}
+      acceptCloud(c){
+        if(this.role!=='host'){this.rejectConnection(c,'主持权已迁移，请使用当前房主显示的新房间码。');return;}
+        const m=c.metadata;if(m?.game!=='pong84-doubles'||m.v!==D4.version||c.label!=='pong84-ctrl'){this.rejectConnection(c,'协议版本不兼容，请使用团队扩展版。');return;}
+        let id;if(m.resume){const n=this.nodes.get(m.resume.pid);if(!n||m.resume.rid!==this.id||!isId(m.resume.token)||m.resume.token!==n.token){this.rejectConnection(c,'原设备身份无法恢复，请清除重连记录后以观众或新玩家加入。');return;}id=n.id;
+          if(this.links.get(id)?.authed&&this.links.get(id)?.connected&&performance.now()-this.links.get(id).lastReceiveAt<4500){this.rejectConnection(c,'原设备仍在线，不允许重复登录。');return;}}
+        else {id=ROOM_NODES.find(x=>x!==this.localId&&!this.nodes.has(x)&&!this.links.has(x));if(!id){this.rejectConnection(c,'房间设备数已达上限。');return;}}
+        const l=this.createLink(id);l.role='host';l.transport='cloud';l.remotePeerId=c.peer;l.wireDoublesCloud(c,false);l.armConnectTimeout(l.epoch);
       }
       async joinCloud(code,name,options,reconnecting=false){
-        if(!/^\d{4}$/.test(String(code)))throw new Error('请输入四位房间码。');
-        this.configure(options);this.peerOptions();
+        if(!/^\d{4}$/.test(String(code)))throw new Error('请输入四位房间码。');this.configure(options);this.peerOptions();
         const saved=reconnecting?{rid:this.id,pid:this.localId,token:this.token}:this.loadRecovery(null,String(code));
-        if(!reconnecting)this.begin('client','cloud',name);else{this.disposeLink('H');try{this.peer?.destroy();}catch{}this.peer=null;}
+        if(!reconnecting)this.begin('client','cloud',name);else this.disposeLink(this.hostId);
         this.code=String(code);this.resumeSaved=saved;this.name=cleanName(name);const epoch=this.epoch;
-        this.notice=reconnecting?'正在恢复原席位…':'正在加入四人房间…';this.emit();
         await loadPeerLibrary();if(epoch!==this.epoch)throw new Error('操作已取消。');
-        const peer=new window.Peer(undefined,this.peerOptions());this.peer=peer;this.attachSignal(peer,epoch);
-        await this.waitPeer(peer,epoch);if(epoch!==this.epoch)throw new Error('操作已取消。');
-        const link=this.createLink('H');link.role='client';link.transport='cloud';link.remotePeerId=this.signalId(code);
-        const conn=peer.connect(link.remotePeerId,{label:'pong84-ctrl',metadata:{game:'pong84-doubles',v:D4.version,
-          resume:saved&&isId(saved.token)?{rid:saved.rid,pid:saved.pid,token:saved.token}:null},serialization:'json',reliable:true});
-        link.wireDoublesCloud(conn,true);link.armConnectTimeout(link.epoch);
-        // PeerJS peer-unavailable errors happen before a data channel exists.
-        const error=err=>{if(epoch===this.epoch&&!link.authed){this.notice=new OnlinePeer().cloudError(err);this.emit();}};
-        peer.on('error',error);
-        return new Promise((resolve,reject)=>{
-          let complete=false;const finish=err=>{if(complete)return;complete=true;clearInterval(poll);clearTimeout(timeout);peer.off?.('error',failed);err?reject(err):resolve(true);};
-          const failed=err=>finish(new Error(new OnlinePeer().cloudError(err)));
-          const poll=setInterval(()=>{if(epoch!==this.epoch)finish(new Error('操作已取消。'));else if(link.authed)finish();else if(link.rejected)finish(new Error(link.rejected));},50);
-          const timeout=setTimeout(()=>finish(new Error(this.notice||'连接超时，请检查网络或 TURN。')),26000);peer.on('error',failed);
-        });
+        const peer=new window.Peer(undefined,this.peerOptions());this.peers.add(peer);this.attachSignal(peer,epoch);await this.waitPeer(peer,epoch);
+        const l=this.createLink('@host','upstream');l.role='client';l.transport='cloud';l.remotePeerId=this.signalId(code);
+        const c=peer.connect(l.remotePeerId,{label:'pong84-ctrl',metadata:{game:'pong84-doubles',v:D4.version,resume:saved&&isId(saved.token)?saved:null},serialization:'json',reliable:true});l.wireDoublesCloud(c,true);l.armConnectTimeout(l.epoch);
+        await new Promise((resolve,reject)=>{let done=false;const finish=e=>{if(done)return;done=true;clearInterval(poll);clearTimeout(timer);peer.off?.('error',failed);e?reject(e):resolve();};const failed=e=>finish(new Error(new OnlinePeer().cloudError(e)));
+          const poll=setInterval(()=>{if(epoch!==this.epoch)finish(new Error('操作已取消。'));else if(l.authed)finish();else if(l.rejected)finish(new Error(l.rejected));},60);
+          const timer=setTimeout(()=>finish(new Error('连接未完成，请检查双方网络或 TURN。')),26000);peer.on('error',failed);});return true;
       }
-      async reconnect(){if(this.role!=='client'||this.transport!=='cloud')throw new Error('手动联机需房主在原来宾卡重新生成邀请，再交换回应。');return this.joinCloud(this.code,this.name,this.options,true);}
-      sendHello(link){
-        this.sendTo(link,{t:'hello',name:this.name,resume:this.resumeSaved&&isId(this.resumeSaved.token)?this.resumeSaved:null});
-      }
-      sendTo(link,msg,realtime=false){return (realtime?link.sendRealtime.bind(link):link.sendControl.bind(link))({v:D4.version,rid:this.id,...msg,t:'d4_'+msg.t});}
-      sendHost(msg,realtime=false){const link=this.links.get('H');return !!link&&this.sendTo(link,msg,realtime);}
-      broadcast(msg,realtime=false){for(const [pid,link] of this.links)if(link.authed&&this.players.get(pid)?.connected)this.sendTo(link,msg,realtime);}
-      roster(){return {rid:this.id,code:this.code,transport:this.transport,revision:this.revision,configRevision:this.configRevision,
-        score:this.score,status:this.status,notice:this.notice,swap:this.swap?{id:this.swap.id,from:this.swap.from,to:this.swap.to}:null,
-        players:Array.from(this.players.values(),p=>({id:p.id,seat:p.seat,name:p.name,connected:p.connected,visible:p.visible,ready:p.ready,
-          synced:p.synced,rtt:p.rtt,jitter:p.jitter,route:p.route,lost:!!p.lostAt}))};}
+      async reconnect(){if(this.transport!=='cloud'||this.role!=='client')throw new Error('手动恢复：请当前房主在你的原来宾卡生成新邀请；备用链路仍在时会自动恢复。');return this.joinCloud(this.code,this.name,this.options,true);}
+      sendHello(l){this.sendTo(l,{t:'hello',count:this.localCount,names:[this.name,this.name2],resume:this.resumeSaved});}
+      sendTo(l,msg,rt=false){if(!l)return false;return (rt?l.sendRealtime.bind(l):l.sendControl.bind(l))({v:D4.version,rid:this.id,term:this.term,...msg,t:'d4_'+msg.t});}
+      sendNode(id,msg,rt=false){return this.sendTo(this.links.get(id),msg,rt);}
+      sendHost(msg,rt=false){return this.sendNode(this.hostId,msg,rt);}
+      broadcast(msg,rt=false){for(const [id,l] of this.links)if(l.authed&&l.connected)this.sendTo(l,msg,rt);}
+      roster(){return {rid:this.id,hostId:this.hostId,term:this.term,code:this.code,transport:this.transport,revision:this.revision,configRevision:this.configRevision,
+        score:this.score,formation:this.formation,aiFill:this.aiFill,autoMigration:this.autoMigration,status:this.status,notice:this.notice,voters:[...this.voters],
+        nodes:[...this.nodes.values()].map(({token,...n})=>({...n,lostAt:n.lostAt?1:0})),players:[...this.players.values()].map(p=>({...p})),
+        swap:this.swap?{...this.swap,at:0}:null};}
       changed(notice){if(typeof notice==='string')this.notice=notice;this.revision++;if(this.role==='host')this.broadcast({t:'roster',roster:this.roster()});this.emit();}
-      applyRoster(data){
-        if(!data||data.rid!==this.id||!Number.isSafeInteger(data.revision)||!Number.isInteger(data.score)||data.score<1||data.score>99||
-          !Array.isArray(data.players)||data.players.length>4||!['lobby','arming','match','paused','ended'].includes(data.status))return false;
-        const ids=new Set(),seats=new Set();
-        for(const p of data.players){if(!['H',...D4.ports].includes(p.id)||!D4.seats.includes(p.seat)||ids.has(p.id)||seats.has(p.seat))return false;ids.add(p.id);seats.add(p.seat);}
-        if(data.revision<this.revision)return false;
-        this.revision=data.revision;this.configRevision=data.configRevision;this.score=data.score;this.status=data.status;
-        this.notice=String(data.notice||'').slice(0,300);this.swap=data.swap&&isId(data.swap.id)?data.swap:null;
-        this.players=new Map(data.players.map(p=>[p.id,{...p,name:cleanName(p.name),connected:p.connected===true,visible:p.visible===true,ready:p.ready===true,synced:p.synced===true}]));
-        if(this.game?.isDoubles())this.game.settings.score=this.score;return true;
+      validateRoster(d){
+        if(!d||d.rid!==this.id||!ROOM_NODES.includes(d.hostId)||!Number.isSafeInteger(d.term)||d.term<1||!Number.isSafeInteger(d.revision)||
+          !Number.isInteger(d.score)||d.score<1||d.score>99||!['split','depth'].includes(d.formation)||!['lobby','arming','match','paused','ended','migrating'].includes(d.status)||
+          !Array.isArray(d.nodes)||d.nodes.length>8||!Array.isArray(d.players)||d.players.length>4||!Array.isArray(d.voters)||d.voters.length>8)return false;
+        const nodes=new Set(),seats=new Set(),players=new Set();for(const n of d.nodes){if(!ROOM_NODES.includes(n.id)||nodes.has(n.id)||![0,1,2].includes(n.count))return false;nodes.add(n.id);}
+        for(const p of d.players){if(!D4.seats.includes(p.seat)||seats.has(p.seat)||typeof p.id!=='string'||players.has(p.id)||!['human','bot'].includes(p.kind)||
+          p.kind==='human'&&(!nodes.has(p.device)||![0,1].includes(p.index)))return false;seats.add(p.seat);players.add(p.id);}
+        for(const n of d.nodes){const list=d.players.filter(p=>p.device===n.id);if(list.length!==n.count)return false;if(n.count===2&&(new Set(list.map(p=>seatSide(p.seat))).size!==1||new Set(list.map(p=>p.index)).size!==2))return false;}
+        return new Set(d.voters).size===d.voters.length&&d.voters.every(id=>nodes.has(id));
       }
-      receive(link,raw,channel){
+      applyRoster(d,force=false){
+        if(!this.validateRoster(d)||!force&&(d.term<this.term||d.term===this.term&&d.revision<this.revision))return false;
+        this.hostId=d.hostId;this.term=d.term;this.revision=d.revision;this.configRevision=d.configRevision;this.score=d.score;this.formation=d.formation;
+        this.aiFill=d.aiFill===true;this.autoMigration=d.autoMigration===true;this.status=d.status;this.code=String(d.code||'');this.notice=String(d.notice||'').slice(0,260);this.voters=[...d.voters];
+        const old=this.nodes;this.nodes=new Map(d.nodes.map(n=>[n.id,{...n,name:cleanName(n.name),token:old.get(n.id)?.token,lostAt:n.lostAt?performance.now():0}]));
+        this.players=new Map(d.players.map(p=>[p.id,{...p,name:cleanName(p.name)}]));this.swap=d.swap&&isId(d.swap.id)?d.swap:null;
+        this.role=this.localId===this.hostId?'host':'client';if(this.localNode)this.localCount=this.localNode.count;this.game?.configureFormation?.(this.formation);if(this.game?.isDoubles())this.game.settings.score=this.score;
+        return true;
+      }
+      receive(l,raw,ch){
         if(!raw||typeof raw!=='object'||raw.v!==D4.version||typeof raw.t!=='string'||!raw.t.startsWith('d4_'))return;
-        const msg={...raw,t:raw.t.slice(3)};
-        if(msg.t==='reject'&&this.role==='client'){link.rejected=String(msg.reason||'房主拒绝连接。').slice(0,200);this.notice=link.rejected;this.emit();return;}
-        if(msg.t==='hello'&&this.role==='host'&&channel==='ctrl'){
-          if(link.authed)return;
-          const pid=link.pid;let p=this.players.get(pid);
-          if(p){
-            if(!msg.resume||msg.resume.rid!==this.id||msg.resume.pid!==pid||msg.resume.token!==p.token){this.sendTo(link,{t:'reject',reason:'该席位为原玩家保留，请从原标签页重连，或让房主释放席位。'});return;}
-          }else{
-            if(this.active){this.sendTo(link,{t:'reject',reason:'比赛已开始，暂不接受新玩家。'});return;}
-            const seat=D4.seats.find(s=>!Array.from(this.players.values()).some(x=>x.seat===s));
-            if(!seat){this.sendTo(link,{t:'reject',reason:'房间已满。'});return;}
-            p=this.player(pid,seat,msg.name);this.players.set(pid,p);
+        const m={...raw,t:raw.t.slice(3)};let from=l.pid;
+        if(m.t==='reject'&&l.kind==='upstream'){l.rejected=String(m.reason||'房主拒绝连接。').slice(0,200);this.notice=l.rejected;this.emit();return;}
+        if(m.t==='hello'&&this.role==='host'&&l.kind==='downstream'&&ch==='ctrl'){this.acceptHello(l,m);return;}
+        if(m.t==='welcome'&&l.kind==='upstream'&&!l.authed&&ch==='ctrl'){
+          if(!isId(m.rid)||!ROOM_NODES.includes(m.id)||!ROOM_NODES.includes(m.hostId)||!isId(m.token))return;
+          const previousId=this.id;this.id=m.rid;if(!this.validateRoster(m.roster)){this.id=previousId;return;}
+          this.localId=m.id;this.token=m.token;this.links.delete(l.pid);l.pid=m.hostId;this.links.set(l.pid,l);l.authed=true;
+          this.applyRoster(m.roster,true);this.lastAuthorityAt=performance.now();this.saveRecovery();
+          if(m.snapshot&&this.game?.isDoubles())this.game.applyD4(m.snapshot,true);
+          this.sendHost({t:'synced',visible:!document.hidden});this.reportMesh();this.emit();return;
+        }
+        if(m.t==='mesh_hello'&&l.kind==='mesh'&&m.rid===this.id&&ch==='ctrl'){
+          if(m.ticket!==l.ticket)return;const first=!l.authed;l.authed=true;if(first)this.sendTo(l,{t:'mesh_hello',ticket:l.ticket});this.reportMesh();return;
+        }
+        if(!l.authed||m.rid!==this.id)return;
+        if(ch==='ctrl'&&['vote_request','vote','authority','handoff','handoff_ack'].includes(m.t)){this.receiveElection(from,m);return;}
+        if(m.term!==this.term)return;
+        // Only the current authority can publish room or simulation state.
+        if(from===this.hostId){
+          if(m.t==='state'&&ch==='rt'){if(this.game?.isDoubles())this.game.applyD4(m.s);return;}
+          if(ch==='ctrl'){
+            if(m.t==='heartbeat'){this.lastAuthorityAt=performance.now();this.sendHost({t:'heartbeat_ack',serial:m.serial});return;}
+            if(m.t==='roster'){if(this.applyRoster(m.roster)){this.saveRecovery();this.emit();}return;}
+            if(m.t==='notice'){this.notice=String(m.text||'').slice(0,260);this.emit();return;}
+            if(m.t==='checkpoint'){this.receiveCheckpoint(from,m);return;}
+            if(m.t==='checkpoint_commit'){this.commitCheckpoint(m);return;}
+            if(m.t==='secrets'&&this.localNode?.count>0){for(const [id,t] of Object.entries(m.tokens||{}))if(this.nodes.has(id)&&isId(t))this.nodes.get(id).token=t;return;}
+            if(m.t==='mesh_prepare'){this.prepareMesh(m).catch(e=>{this.meshError=e.message;this.emit();});return;}
+            if(m.t==='mesh_signal'){this.meshSignal(m).catch(e=>{this.meshError=e.message;this.emit();});return;}
+            if(m.t==='prepare'&&isId(m.barrier)&&validD4Snapshot(m.s)){this.clientBarrier=m.barrier;this.game.applyD4(m.s,true);this.status='arming';this.sendHost({t:'loaded',barrier:m.barrier,matchId:m.s.matchId});this.emit();return;}
+            if(m.t==='release'&&m.barrier===this.clientBarrier){this.clientBarrier=null;this.status='match';this.game.applyD4(m.s,true);this.emit();return;}
+            if(m.t==='freeze'&&validD4Snapshot(m.s)){this.clientBarrier=null;this.status='paused';this.game.applyD4(m.s,true);this.emit();return;}
+            if(m.t==='finish'&&validD4Snapshot(m.s)){this.status='ended';this.game.applyD4(m.s,true);this.game.onEnd?.(String(m.message||'比赛结束'));this.emit();return;}
           }
-          p.name=cleanName(msg.name);p.connected=true;p.visible=true;p.synced=false;p.ready=false;p.lostAt=0;
-          link.authed=true;link.remoteInputSeq=-1;link.inputAck=-1;link.lastInputAt=0;
-          this.revision++;
-          this.sendTo(link,{t:'welcome',id:pid,token:p.token,roster:this.roster(),snapshot:this.game?.matchId?this.game.snapshotD4():null});
-          this.changed(p.name+' 已加入，正在同步状态。');return;
         }
-        if(msg.t==='welcome'&&this.role==='client'&&channel==='ctrl'){
-          if(!isId(msg.rid)||!D4.ports.includes(msg.id)||!isId(msg.token))return;
-          if(link.authed)return;
-          this.id=msg.rid;this.localId=msg.id;this.token=msg.token;link.authed=true;
-          if(!this.applyRoster(msg.roster))return;
-          this.saveRecovery();this.unresponsiveSince=0;
-          if(msg.snapshot&&this.game?.isDoubles())this.game.applyD4(msg.snapshot,true);
-          this.sendHost({t:'synced',matchId:this.game?.matchId||'',visible:!document.hidden});this.emit();return;
-        }
-        if(!link.authed||msg.rid!==this.id)return;
-        if(this.role==='host'){
-          const p=this.players.get(link.pid);if(!p||this.links.get(p.id)!==link)return;
-          if(msg.t==='input'&&channel==='rt'){
-            if(this.game?.phase!==Phase.PLAYING||msg.matchId!==this.game.matchId||msg.round!==this.game.roundId||
-              !Number.isSafeInteger(msg.seq)||msg.seq<=link.remoteInputSeq||!Number.isFinite(msg.dir))return;
-            link.remoteInputSeq=msg.seq;link.lastInputAt=performance.now();link.remoteInput=clamp(msg.dir,-1,1);
-            link.remoteTarget=Number.isFinite(msg.target)?clamp(msg.target,0,1):null;return;
-          }
-          if(channel!=='ctrl')return;
-          if(msg.t==='synced'&&(!this.game?.matchId||msg.matchId===this.game.matchId)){p.synced=true;p.visible=msg.visible!==false;p.connected=true;p.lostAt=0;this.changed();}
-          else if(msg.t==='ready'&&!this.active&&msg.rev===this.configRevision&&p.connected&&p.visible&&p.synced){p.ready=msg.ready===true;this.changed();}
-          else if(msg.t==='seat')this.chooseSeatFor(p.id,msg.seat);
-          else if(msg.t==='swap')this.answerSwapFor(p.id,msg.id,msg.accept===true);
-          else if(msg.t==='name'&&!this.active){p.name=cleanName(msg.name);p.ready=false;this.changed();}
-          else if(msg.t==='serve'&&msg.matchId===this.game?.matchId&&msg.round===this.game?.roundId){this.game.launchServe(p.seat);}
-          else if(msg.t==='presence'){
-            p.visible=msg.visible===true;if(!p.visible){p.ready=false;this.freeze(p.name+' 离开前台，比赛已冻结。');}this.changed();
-          }else if(msg.t==='pause'&&msg.matchId===this.game?.matchId)this.freeze(p.name+' 请求暂停。');
-          else if(msg.t==='loaded'&&this.barrier&&msg.barrier===this.barrier.id&&msg.matchId===this.game?.matchId){this.barrier.acks.add(p.id);this.releaseBarrier();}
-          else if(msg.t==='leave'){this.linkLost(p.id,p.name+' 已退出。',true);this.disposeLink(p.id);}
-        }else{
-          if(msg.t==='state'&&channel==='rt'){if(this.game?.isDoubles())this.game.applyD4(msg.s);return;}
-          if(channel!=='ctrl')return;
-          if(msg.t==='roster'){this.applyRoster(msg.roster);this.emit();}
-          else if(msg.t==='prepare'&&this.game?.isDoubles()){
-            if(!isId(msg.barrier)||!validD4Snapshot(msg.s))return;
-            this.clientBarrier=msg.barrier;this.game.applyD4(msg.s,true);this.status='arming';
-            this.sendHost({t:'loaded',barrier:msg.barrier,matchId:this.game.matchId});this.emit();
-          }else if(msg.t==='release'&&msg.barrier===this.clientBarrier){this.clientBarrier=null;this.status='match';this.game.applyD4(msg.s,true);this.emit();}
-          else if(msg.t==='freeze'&&this.game?.isDoubles()&&msg.s?.matchId===this.game.matchId){this.clientBarrier=null;this.status='paused';this.game.applyD4(msg.s,true);this.emit();}
-          else if(msg.t==='finish'&&this.game?.isDoubles()&&msg.s?.matchId===this.game.matchId){this.status='ended';this.clientBarrier=null;this.game.applyD4(msg.s,true);this.game.onEnd?.(String(msg.message||'本局结束').slice(0,180));this.emit();}
-          else if(msg.t==='closing'){this.notice='房主已关闭房间，本局中断。';this.game?.abortD4(this.notice);this.close(false);this.status='ended';this.emit();}
-        }
-      }
-      setName(name){this.name=cleanName(name);if(this.role==='host'&&this.mine&&!this.active){this.mine.name=this.name;this.mine.ready=false;this.changed();}else if(this.role==='client')this.sendHost({t:'name',name:this.name});}
-      setReady(value){if(this.active)return;if(this.role==='host'&&this.mine){this.mine.ready=!!value;this.changed();}else if(this.role==='client')this.sendHost({t:'ready',ready:!!value,rev:this.configRevision});}
-      clearReady(){for(const p of this.players.values())p.ready=false;}
-      changeScore(value){if(this.role!=='host'||this.active)return;this.score=clamp(value,1,99);this.configRevision++;this.clearReady();this.swap=null;this.changed('目标比分已改变，请四人重新准备。');}
-      chooseSeat(seat){if(this.role==='host')this.chooseSeatFor('H',seat);else this.sendHost({t:'seat',seat});}
-      chooseSeatFor(id,seat){
-        if(this.active||!D4.seats.includes(seat)||this.swap)return;const p=this.players.get(id);if(!p||p.seat===seat)return;
-        const other=Array.from(this.players.values()).find(x=>x.seat===seat);
-        if(!other){p.seat=seat;this.clearReady();this.configRevision++;this.changed('位置已变更，请重新准备。');}
-        else if(other.connected){this.swap={id:sessionId(),from:id,to:other.id,at:performance.now()};this.changed(p.name+' 申请交换位置，等待对方确认。');}
-      }
-      answerSwap(accept){if(!this.swap)return;if(this.role==='host')this.answerSwapFor('H',this.swap.id,accept);else this.sendHost({t:'swap',id:this.swap.id,accept:!!accept});}
-      answerSwapFor(id,request,accept){
-        if(!this.swap||this.active||this.swap.id!==request||this.swap.to!==id)return;
-        const a=this.players.get(this.swap.from),b=this.players.get(this.swap.to);
-        if(accept&&a&&b){[a.seat,b.seat]=[b.seat,a.seat];this.clearReady();this.configRevision++;}
-        this.swap=null;this.changed(accept?'位置已交换，请重新准备。':'换位申请已取消。');
-      }
-      startMatch(){if(!this.canStart)return false;this.game.resetD4();this.beginBarrier(true);return true;}
-      beginBarrier(fresh=false){
-        if(this.role!=='host'||!this.allPresent)return false;
-        this.status='arming';this.clearReady();this.swap=null;
-        this.game.pauseReason=fresh?'正在同步四名玩家…':'正在同步恢复状态…';this.game.phase=Phase.PAUSED;
-        this.game.countdownRemaining=fresh?3.55:2.55;this.game.countdownMark=null;this.game.accumulator=0;
-        this.barrier={id:sessionId(),acks:new Set(['H']),at:performance.now()};
-        const s=this.game.snapshotD4();this.broadcast({t:'prepare',barrier:this.barrier.id,s});this.changed(this.game.pauseReason);this.game.emitUi();return true;
-      }
-      releaseBarrier(){
-        const barrier=this.barrier;if(!barrier||!this.allPresent||!Array.from(this.players.keys()).every(id=>barrier.acks.has(id)))return;
-        this.barrier=null;this.status='match';this.game.phase=Phase.COUNTDOWN;this.game.pauseReason='';this.game.pausedFrom=null;
-        this.game.lastTs=performance.now();this.game.accumulator=0;this.game.resetPerf();
-        this.broadcast({t:'release',barrier:barrier.id,s:this.game.snapshotD4()});this.changed('四人已同步，倒计时后开始。');this.game.emitUi();
-      }
-      freeze(reason){
-        if(!this.game?.isDoubles()||!this.active)return;
-        if(this.role==='client'){this.sendHost({t:'pause',matchId:this.game.matchId});this.game.localSafetyPause(reason);return;}
         if(this.role!=='host')return;
-        this.status='paused';this.barrier=null;this.game.pauseReason=String(reason||'比赛已暂停。').slice(0,180);
-        if(this.game.phase!==Phase.PAUSED)this.game.pausedFrom=this.game.phase;
-        this.game.phase=Phase.PAUSED;this.game.accumulator=0;this.game.input.keys.clear();this.game.input.clearTouches(true);
-        for(const link of this.links.values()){link.remoteInput=0;link.remoteTarget=null;link.lastInputAt=0;}
+        const node=this.nodes.get(from);if(!node)return;
+        if(m.t==='input'&&ch==='rt'){
+          if(!node.count||this.game?.phase!==Phase.PLAYING||m.matchId!==this.game.matchId||m.round!==this.game.roundId||!Array.isArray(m.inputs)||m.inputs.length>2)return;
+          for(const data of m.inputs){const p=this.players.get(data.id),last=this.inputByPlayer.get(data.id);
+            if(!p||p.device!==from||this.isBot(p)||!node.visible||!Number.isSafeInteger(data.seq)||data.seq<0||last&&data.seq<=last.seq||!Number.isFinite(data.dir))continue;
+            this.inputByPlayer.set(p.id,{seq:data.seq,dir:clamp(data.dir,-1,1),target:Number.isFinite(data.target)?clamp(data.target,0,1):null,at:performance.now(),ack:last?.ack??-1});}
+          return;
+        }
+        if(ch!=='ctrl')return;
+        if(m.t==='heartbeat_ack'){if(Number.isFinite(m.serial)&&performance.now()-m.serial>=0&&performance.now()-m.serial<TEAM_NET.lease){this.heartbeatAcks.set(from,performance.now());}return;}
+        if(m.t==='checkpoint_ack'){this.ackCheckpoint(from,m);return;}
+        if(m.t==='mesh_report'){if(Array.isArray(m.ids))this.meshReports.set(from,new Set(m.ids.filter(x=>ROOM_NODES.includes(x))));return;}
+        if(m.t==='relay'){this.relayMesh(from,m);return;}
+        if(m.t==='synced'){this.heartbeatAcks.set(from,performance.now());node.synced=true;node.connected=true;node.visible=m.visible!==false;node.lostAt=0;this.changed();this.scheduleMesh();return;}
+        if(m.t==='presence'){node.visible=m.visible===true;if(!node.visible&&node.count){node.ready=false;if(this.active){if(this.aiFill)this.replaceWithBots(from,'设备离开前台，AI 已接管。');else this.freeze('玩家页面离开前台。');}}else if(node.visible)this.restoreDevice(from);this.changed();return;}
+        if(m.t==='ready'&&!this.active&&node.count&&m.rev===this.configRevision){node.ready=m.ready===true;this.changed();return;}
+        if(m.t==='serve'&&node.count&&m.matchId===this.game?.matchId&&m.round===this.game?.roundId&&this.owns(from,m.seat)){this.game.launchServe(m.seat);return;}
+        if(m.t==='pause'&&node.count&&m.matchId===this.game?.matchId){this.freeze(node.name+' 请求暂停。');return;}
+        if(m.t==='loaded'&&this.barrier&&m.barrier===this.barrier.id&&m.matchId===this.game?.matchId){this.barrier.acks.add(from);this.releaseBarrier();return;}
+        if(m.t==='seat'&&!this.active&&node.count){this.chooseSeatFor(from,m.seat,m.index);return;}
+        if(m.t==='swap'&&!this.active){this.answerSwapFor(from,m.id,m.accept===true);return;}
+        if(m.t==='name'&&!this.active){this.renameNode(from,m.names);return;}
+        if(m.t==='participation'&&!this.active){try{this.setParticipationFor(from,m.count,m.names);}catch(e){this.sendNode(from,{t:'notice',text:e.message});}return;}
+        if(m.t==='leave'){this.linkLost(from,node.name+' 退出了房间。',true);this.disposeLink(from);return;}
+      }
+      acceptHello(l,m){
+        if(l.authed)return;let node=this.nodes.get(l.pid);const count=Number(m.count),names=Array.isArray(m.names)?m.names.slice(0,2):[];
+        if(![0,1,2].includes(count))return;
+        const reject=reason=>{this.sendTo(l,{t:'reject',reason});setTimeout(()=>{if(!l.authed&&this.links.get(l.pid)===l)this.disposeLink(l.pid);},700);};
+        if(node){if(!m.resume||m.resume.rid!==this.id||m.resume.pid!==node.id||m.resume.token!==node.token){reject('此设备身份为原玩家保留，请从原标签页重连。');return;}}
+        else{
+          if(this.active&&count>0){reject('比赛中只接受新观众。参赛请在大厅加入。');return;}
+          if(count===0&&[...this.nodes.values()].filter(n=>n.count===0).length>=TEAM_NET.maxSpectators){reject('观众已达 4 台设备上限。');return;}
+          node=this.makeNode(l.pid,names[0],count);try{this.allocatePlayers(node,names);}catch(e){reject(e.message);return;}this.nodes.set(node.id,node);this.fillBots();this.configRevision++;this.clearReady();
+        }
+        node.connected=true;node.visible=true;node.synced=false;node.ready=false;node.lostAt=0;l.authed=true;
+        this.restoreDevice(node.id);this.revision++;
+        this.sendTo(l,{t:'welcome',id:node.id,hostId:this.localId,token:node.token,roster:this.roster(),snapshot:this.game?.matchId?this.game.snapshotD4():null});
+        this.changed((node.count?node.name:'观众 '+node.name)+' 已连接。');
+      }
+      // The live authority relays negotiation only; standby gameplay links are direct.
+      reportMesh(){const ids=[...this.links].filter(([,l])=>l.authed&&l.connected).map(([id])=>id);this.meshReports.set(this.localId,new Set(ids));if(this.role==='client')this.sendHost({t:'mesh_report',ids});}
+      meshComplete(){const ids=[...this.nodes.values()].filter(n=>n.connected&&n.synced).map(n=>n.id);if(ids.length!==[...this.nodes.values()].filter(n=>n.connected).length)return false;
+        return ids.every(a=>ids.every(b=>a===b||(a===this.localId?this.links.get(b)?.authed&&this.links.get(b)?.connected:this.meshReports.get(a)?.has(b))));}
+      meshSummary(){const ids=[...this.nodes.values()].filter(n=>n.connected).map(n=>n.id);let ready=0,total=ids.length*(ids.length-1)/2;
+        for(let i=0;i<ids.length;i++)for(let j=i+1;j<ids.length;j++){const a=ids[i],b=ids[j];if(a===this.localId?this.links.get(b)?.authed&&this.links.get(b)?.connected:b===this.localId?this.links.get(a)?.authed&&this.links.get(a)?.connected:this.meshReports.get(a)?.has(b)&&this.meshReports.get(b)?.has(a))ready++;}return {ready,total};}
+      scheduleMesh(){
+        if(this.role!=='host'||!this.autoMigration)return;this.reportMesh();const ids=[...this.nodes.values()].filter(n=>n.connected&&n.synced&&n.id!==this.localId).map(n=>n.id).sort((a,b)=>nodeOrder(a)-nodeOrder(b));
+        for(let i=0;i<ids.length;i++)for(let j=i+1;j<ids.length;j++){const a=ids[i],b=ids[j],key=pairKey(a,b),job=this.meshJobs.get(key);
+          if(this.meshReports.get(a)?.has(b)&&this.meshReports.get(b)?.has(a))continue;
+          if(job&&performance.now()-job.at<TEAM_NET.meshRetry)continue;if((this.meshAttempts.get(key)||0)>=3)continue;
+          const nonce=sessionId(),ticket=sessionId();this.meshJobs.set(key,{a,b,nonce,ticket,at:performance.now()});this.meshAttempts.set(key,(this.meshAttempts.get(key)||0)+1);
+          this.sendNode(b,{t:'mesh_prepare',other:a,nonce,ticket,initiator:false});this.sendNode(a,{t:'mesh_prepare',other:b,nonce,ticket,initiator:true});}
+      }
+      async prepareMesh(m){
+        if(!ROOM_NODES.includes(m.other)||m.other===this.localId||!this.nodes.has(m.other)||!isId(m.nonce)||!isId(m.ticket))return;
+        if(this.links.get(m.other)?.authed&&this.links.get(m.other)?.connected){this.reportMesh();return;}
+        const l=this.createLink(m.other,'mesh');l.nonce=m.nonce;l.ticket=m.ticket;const epoch=this.epoch;
+        if(m.initiator){const signal=await l.createOffer();if(epoch===this.epoch&&this.links.get(m.other)===l)this.sendHost({t:'relay',to:m.other,op:'offer',nonce:m.nonce,signal});}
+      }
+      relayMesh(from,m){const j=this.meshJobs.get(pairKey(from,m.to));if(!j||j.nonce!==m.nonce||!['offer','answer'].includes(m.op)||typeof m.signal!=='string'||m.signal.length>D4.maxSignal)return;
+        if(![j.a,j.b].includes(from)||![j.a,j.b].includes(m.to)||from===m.to)return;this.sendNode(m.to,{t:'mesh_signal',from,nonce:m.nonce,op:m.op,signal:m.signal});}
+      async meshSignal(m){const l=this.links.get(m.from);if(!l||l.kind!=='mesh'||l.nonce!==m.nonce||typeof m.signal!=='string')return;
+        if(m.op==='offer'){const epoch=this.epoch,answer=await l.acceptOffer(m.signal);if(epoch===this.epoch&&this.links.get(m.from)===l)this.sendHost({t:'relay',to:m.from,nonce:m.nonce,op:'answer',signal:answer});}
+        else if(m.op==='answer')await l.acceptAnswer(m.signal);}
+      retryMesh(){this.meshAttempts.clear();this.meshJobs.clear();if(this.role==='host'){this.scheduleMesh();this.changed('正在重试未连通的备用链路。');}}
+      clearReady(){for(const n of this.nodes.values())n.ready=false;}
+      setReady(v){if(this.active||!this.localNode?.count)return;if(this.role==='host'){this.localNode.ready=!!v;this.changed();}else this.sendHost({t:'ready',ready:!!v,rev:this.configRevision});}
+      changeScore(v){if(this.role!=='host'||this.active)return;this.score=clamp(Number(v)||11,1,99);this.configRevision++;this.clearReady();this.changed('目标比分已改变，请重新准备。');}
+      changeRules({formation=this.formation,aiFill=this.aiFill,migration=this.autoMigration}={}){if(this.role!=='host'||this.active)return;this.formation=formation==='depth'?'depth':'split';this.aiFill=!!aiFill;this.autoMigration=!!migration;
+        if(!this.aiFill)for(const p of this.players.values())if(p.kind==='human'){p.botActive=false;p.pendingReturn=false;}
+        this.fillBots();if(this.aiFill)for(const n of this.nodes.values())if(n.count>0&&(!n.connected||!n.visible))this.replaceWithBots(n.id);this.configRevision++;this.clearReady();this.game?.configureFormation(this.formation,true);this.changed('阵型或房间规则已更新，请重新准备。');this.scheduleMesh();}
+      renameNode(id,names){const n=this.nodes.get(id);if(!n||!Array.isArray(names))return;n.name=cleanName(names[0]);for(const p of this.players.values())if(p.device===id)p.name=cleanName(names[p.index]||n.name);n.ready=false;this.changed();}
+      setName(name,name2=this.name2){this.name=cleanName(name);this.name2=cleanName(name2);if(!this.role||this.active)return;if(this.role==='host')this.renameNode(this.localId,[this.name,this.name2]);else this.sendHost({t:'name',names:[this.name,this.name2]});}
+      setParticipationFor(id,count,names){
+        if(this.active||![0,1,2].includes(Number(count)))return;const n=this.nodes.get(id);if(!n)return;count=Number(count);
+        if(id===this.hostId&&count===0)throw new Error('房主先移交主持权，再转为观众。');
+        if(count===0&&n.count>0&&[...this.nodes.values()].filter(n=>n.count===0).length>=TEAM_NET.maxSpectators)throw new Error('观众席已满。');
+        const backup=cloneJSON([...this.players]);const old=n.count;for(const [pid,p] of this.players)if(p.device===id)this.players.delete(pid);
+        n.count=count;try{this.allocatePlayers(n,names||[n.name,'队友']);}catch(e){this.players=new Map(backup);n.count=old;throw e;}
+        this.fillBots();this.clearReady();this.configRevision++;this.changed('设备参赛人数已更新，请重新准备。');
+      }
+      changeParticipation(count){if(this.role==='host')this.setParticipationFor(this.localId,count,[this.name,this.name2]);else this.sendHost({t:'participation',count,names:[this.name,this.name2]});}
+      chooseSeat(seat,index=0){if(this.role==='host')this.chooseSeatFor(this.localId,seat,index);else this.sendHost({t:'seat',seat,index});}
+      chooseSeatFor(id,seat,index=0){
+        if(this.active||this.swap||!D4.seats.includes(seat))return;const own=[...this.players.values()].filter(p=>p.device===id).sort((a,b)=>a.index-b.index),p=own.find(p=>p.index===(Number(index)||0));if(!p||p.seat===seat)return;
+        // A two-player device moves as a team across sides; within the team it swaps controls.
+        if(own.length===2&&seatSide(seat)!==seatSide(p.seat)){
+          const target=[...this.players.values()].filter(x=>seatSide(x.seat)===seatSide(seat));
+          if(target.some(x=>x.kind!=='bot')){this.changed('同机双人跨队需要对面整队为空或为 AI；可先让对面玩家调整位置。');return;}
+          const old=own.map(x=>x.seat);for(const x of target)this.players.delete(x.id);own.forEach(x=>x.seat=seat[0]+(x.index+1));this.fillBots();
+        }else{const other=this.playerAt(seat);if(other&&other.device!==id&&other.kind!=='bot'){this.swap={id:sessionId(),from:p.id,to:other.id,at:performance.now()};this.changed(p.name+' 申请交换位置。');return;}
+          const original=p.seat;p.seat=seat;if(other){other.seat=original;if(other.kind==='bot'){this.players.delete(other.id);other.id='AI:'+original;this.players.set(other.id,other);}}this.fillBots();}
+        this.clearReady();this.configRevision++;this.changed('位置已更新，请重新准备。');
+      }
+      answerSwap(accept){if(!this.swap)return;if(this.role==='host')this.answerSwapFor(this.localId,this.swap.id,accept);else this.sendHost({t:'swap',id:this.swap.id,accept:!!accept});}
+      answerSwapFor(device,id,accept){if(!this.swap||this.active||this.swap.id!==id)return;const a=this.players.get(this.swap.from),b=this.players.get(this.swap.to);if(!b||b.device!==device)return;
+        if(accept&&a){const na=this.nodes.get(a.device),nb=this.nodes.get(b.device);if(seatSide(a.seat)!==seatSide(b.seat)&&(na?.count===2||nb?.count===2)){this.swap=null;this.changed('不能将同机队友拆散到两队。');return;}[a.seat,b.seat]=[b.seat,a.seat];this.clearReady();this.configRevision++;}
+        this.swap=null;this.changed(accept?'位置已交换。':'换位已取消。');}
+      setVoters(ids){this.voters=[...new Set(ids)].sort((a,b)=>nodeOrder(a)-nodeOrder(b));this.heartbeatAcks.set(this.localId,performance.now());this.leaseEstablished=this.voters.length===1;}
+      startMatch(){if(!this.canStart)return false;this.setVoters([...this.nodes.values()].filter(n=>n.connected&&n.synced).map(n=>n.id));this.game.resetD4();this.beginBarrier(true);return true;}
+      beginBarrier(fresh=false){
+        if(this.role!=='host'||!this.allPresent||!this.hasLease()&&this.leaseEstablished)return false;
+        this.status='arming';this.clearReady();this.swap=null;this.game.pauseReason=fresh?'正在同步全部设备…':'正在同步恢复状态…';this.game.phase=Phase.PAUSED;
+        this.game.countdownRemaining=fresh?3.55:2.55;this.game.accumulator=0;
+        this.barrier={id:sessionId(),acks:new Set([this.localId]),at:performance.now(),required:[...this.nodes.values()].filter(n=>n.connected&&n.visible&&n.count>0&&n.synced&&[...this.players.values()].some(p=>p.device===n.id&&!this.isBot(p))).map(n=>n.id)};
+        this.changed(this.game.pauseReason);this.broadcast({t:'prepare',barrier:this.barrier.id,s:this.game.snapshotD4()});this.releaseBarrier();this.game.emitUi();return true;
+      }
+      releaseBarrier(){const b=this.barrier;if(!b||!b.required.every(id=>b.acks.has(id))||!this.allPresent)return;this.barrier=null;this.status='match';this.game.phase=Phase.COUNTDOWN;
+        this.game.pauseReason='';this.game.clientSafety=false;this.game.lastTs=performance.now();this.game.accumulator=0;this.game.resetPerf();
+        this.broadcast({t:'release',barrier:b.id,s:this.game.snapshotD4()});this.changed('状态已同步，倒计时后继续。');this.publishCheckpoint();this.game.emitUi();}
+      freeze(reason){
+        if(!this.active||!this.game?.isDoubles())return;
+        if(this.role==='client'){if(!this.isSpectator)this.sendHost({t:'pause',matchId:this.game.matchId});return;}
+        if(this.role!=='host')return;this.status='paused';this.barrier=null;this.autoResumeAt=0;this.game.pauseReason=String(reason||'比赛已暂停。').slice(0,180);
+        this.game.phase=Phase.PAUSED;this.game.accumulator=0;this.game.input.keys.clear();this.game.input.clearTouches(true);this.inputByPlayer.clear();
         this.broadcast({t:'freeze',s:this.game.snapshotD4()});this.changed(this.game.pauseReason);this.game.emitUi();
       }
       resume(){if(!this.canResume)return false;return this.beginBarrier(false);}
-      finish(message){if(this.role!=='host')return;this.status='ended';this.clearReady();this.barrier=null;this.swap=null;this.broadcast({t:'finish',message,s:this.game.snapshotD4()});this.changed(message);}
-      abort(message){if(this.role==='host'){this.game?.abortD4(message);this.finish(message);}else this.game?.abortD4(message);}
-      linkLost(key,reason,voluntary=false){
-        if(this.role==='host'){
-          const p=this.players.get(key);
-          if(!p){this.disposeLink(key);this.changed(reason);return;}
-          p.connected=false;p.ready=false;p.synced=false;p.lostAt=p.lostAt||performance.now();
-          if(this.active){if(voluntary)this.abort(p.name+' 已退出，本局中断。');else this.freeze(p.name+' 掉线，保留席位 30 秒。');}
-          if(voluntary){this.players.delete(key);this.disposeLink(key);this.invitations.delete(key);this.clearReady();}
-          this.swap=null;this.changed(reason);
-        }else{
-          const mine=this.mine;if(mine)mine.connected=false;
-          this.unresponsiveSince=this.unresponsiveSince||performance.now();
-          if(this.active){this.game?.localSafetyPause('与房主连接中断。请恢复连接；30 秒内未恢复则本局中断。');}
-          this.notice=reason;this.emit();
-        }
+      finish(message){if(this.role!=='host')return;this.status='ended';this.clearReady();this.barrier=null;this.broadcast({t:'finish',message,s:this.game.snapshotD4()});this.changed(message);this.publishCheckpoint();}
+      abort(message){this.game?.abortD4(message);if(this.role==='host')this.finish(message);}
+      replaceWithBots(id,notice){
+        if(!this.aiFill)return false;let changed=false;for(const p of this.players.values())if(p.device===id&&!p.botActive){p.botActive=true;p.pendingReturn=false;changed=true;}
+        if(changed){this.game?.enforceNoAIBuffs();this.changed(notice||'掉线席位由 AI 代打；恢复后在下一次发球时归还。');}return changed;
       }
-      removePlayer(pid){if(this.role!=='host'||pid==='H'||this.active||this.players.get(pid)?.connected)return;this.players.delete(pid);this.disposeLink(pid);this.invitations.delete(pid);this.clearReady();this.changed('已释放该席位，可以邀请新玩家。');}
-      presence(visible){
-        if(!this.role)return;
-        if(this.role==='host'){if(this.mine)this.mine.visible=visible;if(!visible)this.freeze('房主页面不在前台，比赛已冻结。');this.changed();}
-        else{this.sendHost({t:'presence',visible});if(!visible&&this.active)this.game?.localSafetyPause('当前页面已离开前台，等待房主恢复。');}
+      restoreDevice(id){
+        const n=this.nodes.get(id);if(!n?.visible)return;for(const p of this.players.values())if(p.device===id&&p.botActive){if(this.active)p.pendingReturn=true;else p.botActive=false;}
       }
+      roundBoundary(){if(this.role!=='host')return;let changed=false;for(const p of this.players.values())if(p.pendingReturn){const n=this.nodes.get(p.device);if(n?.connected&&n.visible){p.botActive=false;p.pendingReturn=false;changed=true;}}
+        if(changed)this.changed('已在新回合将球拍归还原玩家。');}
+      linkLost(id,reason,voluntary=false){
+        const n=this.nodes.get(id);this.meshReports.get(this.localId)?.delete(id);
+        if(this.role==='host'&&n){n.connected=false;n.synced=false;n.ready=false;n.lostAt=performance.now();if(n.count){if(this.aiFill)this.replaceWithBots(id);else if(this.active)this.freeze(n.name+' 掉线。');}
+          if(voluntary&&!this.active){for(const [pid,p] of this.players)if(p.device===id)this.players.delete(pid);this.nodes.delete(id);this.voters=this.voters.filter(v=>v!==id);this.pendingCheckpoint=null;this.fillBots();this.clearReady();}
+          this.changed(reason);
+        }else if(id===this.hostId&&this.role==='client'){this.game?.localSafetyPause('房主连接中断，正在等待备用链路选举…');this.lastAuthorityAt=Math.min(this.lastAuthorityAt,performance.now()-TEAM_NET.election+700);this.notice=reason;this.emit();}
+        this.reportMesh();
+      }
+      removePlayer(id){if(this.role!=='host'||this.active||id===this.localId||this.nodes.get(id)?.connected)return;
+        for(const [pid,p] of this.players)if(p.device===id)this.players.delete(pid);this.nodes.delete(id);this.voters=this.voters.filter(v=>v!==id);this.pendingCheckpoint=null;this.disposeLink(id);this.invitations.delete(id);this.fillBots();this.clearReady();this.changed('已释放离线设备。');}
+      presence(visible){if(!this.role)return;const n=this.localNode;if(n)n.visible=visible;
+        if(this.role==='host'){if(!visible&&this.active)this.freeze('房主页面在后台，比赛暂停；页面恢复后继续。');this.changed();}
+        else this.sendHost({t:'presence',visible});}
+      prospectiveLease(){if(!this.autoMigration)return true;const ids=[...this.nodes.values()].filter(n=>n.connected&&n.synced).map(n=>n.id),now=performance.now();return ids.filter(id=>id===this.localId||now-(this.heartbeatAcks.get(id)??-Infinity)<TEAM_NET.lease).length>=Math.floor(ids.length/2)+1;}
+      hasLease(now=performance.now()){
+        if(!this.role)return true;if(this.role!=='host')return false;
+        if(!this.autoMigration)return true;
+        const alive=this.electorate.filter(id=>id===this.localId||now-(this.heartbeatAcks.get(id)||-Infinity)<TEAM_NET.lease).length;
+        const valid=alive>=this.quorum;if(valid)this.leaseEstablished=true;return valid;
+      }
+      publishCheckpoint(){
+        if(this.role!=='host'||this.pendingCheckpoint||!this.hasLease())return;
+        const cp={id:++this.cpCounter,term:this.term,roster:cloneJSON(this.roster()),s:this.game?.matchId?this.game.snapshotD4():null};
+        this.pendingCheckpoint={cp,acks:new Set([this.localId]),at:performance.now()};this.broadcast({t:'checkpoint',cp});
+        const tokens=Object.fromEntries([...this.nodes].filter(([,n])=>isId(n.token)).map(([id,n])=>[id,n.token]));
+        for(const n of this.nodes.values())if(n.id!==this.localId&&n.count>0)this.sendNode(n.id,{t:'secrets',tokens});this.ackCheckpoint(this.localId,{id:cp.id});
+      }
+      receiveCheckpoint(from,m){const cp=m.cp;if(!cp||cp.term!==this.term||!Number.isSafeInteger(cp.id)||cp.id<=0||!this.validateRoster(cp.roster)||cp.s&&!validD4Snapshot(cp.s))return;
+        if(this.committed&&cp.id<this.committed.id)return;this.pendingCommits.set(cp.id,cloneJSON(cp));while(this.pendingCommits.size>5)this.pendingCommits.delete(this.pendingCommits.keys().next().value);
+        this.sendHost({t:'checkpoint_ack',id:cp.id});}
+      ackCheckpoint(from,m){const pending=this.pendingCheckpoint;if(!pending||pending.cp.id!==m.id||!this.electorate.includes(from))return;pending.acks.add(from);
+        if(pending.acks.size>=this.quorum){this.committed=cloneJSON(pending.cp);this.pendingCheckpoint=null;this.broadcast({t:'checkpoint_commit',cp:this.committed});}}
+      commitCheckpoint(m){const cp=m.cp;if(!cp||cp.term!==this.term||!Number.isSafeInteger(cp.id)||!this.validateRoster(cp.roster)||cp.s&&!validD4Snapshot(cp.s)||this.committed&&cp.id<this.committed.id)return;
+        this.committed=cloneJSON(cp);this.cpCounter=Math.max(this.cpCounter,cp.id);this.pendingCommits.delete(cp.id);}
       tick(){
-        const now=performance.now();if(!this.role)return;
+        if(!this.role||this.closed)return;const now=performance.now();
         if(this.role==='host'){
-          let changed=false;
-          for(const [pid,link] of this.links){
-            const p=this.players.get(pid);if(!p){if(link.connected&&!link.authed&&now-link.createdAt>25000)this.disposeLink(pid);continue;}
-            if(p.connected&&link.authed&&now-link.lastReceiveAt>D4.silentTimeout){p.connected=false;p.ready=false;p.synced=false;p.lostAt=now;this.freeze(p.name+' 无响应，比赛已冻结。');changed=true;}
-            else if(!p.connected&&link.authed&&link.connected&&now-link.lastReceiveAt<2000){p.connected=true;p.synced=true;p.lostAt=0;changed=true;}
-            if(p.lostAt&&now-p.lostAt>D4.reconnectWindow){
-              if(this.active)this.abort(p.name+' 未能在 30 秒内恢复，本局中断。');
-              this.players.delete(pid);this.disposeLink(pid);this.invitations.delete(pid);this.clearReady();changed=true;
-            }
-          }
-          if(this.swap&&now-this.swap.at>15000){this.swap=null;changed=true;}
-          if(this.barrier&&now-this.barrier.at>10000)this.freeze('开局同步超时，请检查四名玩家的连接后重试。');
-          if(changed||now-this.lastRosterAt>2000){this.lastRosterAt=now;this.changed();}
-        }else{
-          const link=this.links.get('H');
-          const staleState=this.game&&[Phase.COUNTDOWN,Phase.PLAYING].includes(this.game.phase)&&this.game.lastD4SnapshotAt>0&&now-this.game.lastD4SnapshotAt>D4.silentTimeout;
-          if(link?.authed&&this.active&&(now-link.lastReceiveAt>D4.silentTimeout||staleState)){
-            if(!this.unresponsiveSince){this.unresponsiveSince=now;this.freeze('房主无响应，比赛已冻结。');this.emit();}
-            else if(now-this.unresponsiveSince>D4.reconnectWindow){this.status='ended';this.game?.abortD4('房主长时间无响应，本局中断。');this.notice='房主未能恢复。可以尝试重新连接原房间。';this.emit();}
-          }else if(link?.connected&&now-link.lastReceiveAt<2000)this.unresponsiveSince=0;
+          if(now-this.lastHeartbeat>=TEAM_NET.heartbeat){this.lastHeartbeat=now;this.broadcast({t:'heartbeat',serial:now});}
+          if(this.active&&!this.hasLease(now)){if(this.leaseEstablished&&[Phase.COUNTDOWN,Phase.PLAYING].includes(this.game.phase))this.freeze('失去多数设备确认，比赛冻结以防出现两个房主。');}
+          for(const [id,l] of this.links){const n=this.nodes.get(id);if(!n)continue;
+            if(n.connected&&l.authed&&(!l.connected||now-l.lastReceiveAt>D4.silentTimeout)){this.linkLost(id,n.name+' 暂时失联。');}
+            else if(!n.connected&&l.authed&&l.connected&&now-l.lastReceiveAt<1500){n.connected=true;n.synced=true;n.lostAt=0;this.restoreDevice(id);this.changed(n.name+' 已恢复连接。');}}
+          if(this.barrier&&now-this.barrier.at>10000)this.freeze('状态同步超时，请确认参赛设备连接后继续。');
+          if(this.swap&&now-this.swap.at>15000){this.swap=null;this.changed('换位请求已超时。');}
+          if(now-this.lastCheckpoint>=TEAM_NET.checkpoint){this.lastCheckpoint=now;if(this.pendingCheckpoint&&now-this.pendingCheckpoint.at>3000)this.pendingCheckpoint=null;this.publishCheckpoint();}
+          if(now-this.lastRosterAt>2000){this.lastRosterAt=now;this.scheduleMesh();if(!this.active&&this.meshComplete()&&this.hasLease()){
+              const ids=[...this.nodes.values()].filter(n=>n.connected&&n.synced).map(n=>n.id).sort((a,b)=>nodeOrder(a)-nodeOrder(b));
+              if(ids.length&&JSON.stringify(ids)!==JSON.stringify(this.voters)){this.setVoters(ids);this.pendingCheckpoint=null;this.publishCheckpoint();}}
+            this.changed();}
+          if(this.autoResumeAt&&now>=this.autoResumeAt&&this.canResume){this.autoResumeAt=0;this.resume();}
+        }else if(this.autoMigration&&now-this.lastAuthorityAt>TEAM_NET.election){this.maybeElect(now);}
+        else if(!this.autoMigration&&this.active&&now-this.lastAuthorityAt>D4.silentTimeout&&this.game.phase!==Phase.PAUSED)this.game.localSafetyPause('房主无响应；自动迁移未开启。');
+        if(this.futureAuthority)this.tryAuthority();
+      }
+      maybeElect(now){
+        if(!this.committed||!this.electorate.includes(this.localId)){this.notice='没有已提交的迁移检查点或投票资格，已安全冻结。';return;}
+        if(!this.migrating){this.migrating=true;this.game?.localSafetyPause('正在通过备用链路选举新房主…');this.electionAt=0;this.emit();}
+        const eligible=this.electorate.filter(id=>id!==this.hostId&&this.nodes.get(id)?.count>0&&this.nodes.get(id)?.visible&&(id===this.localId||this.links.get(id)?.authed&&this.links.get(id)?.connected)).sort((a,b)=>nodeOrder(a)-nodeOrder(b));
+        if(!eligible.includes(this.localId))return;
+        if(!this.electionAt)this.electionAt=now+250+eligible.indexOf(this.localId)*550;
+        if(now<this.electionAt)return;this.electionAt=now+2600+eligible.indexOf(this.localId)*300;
+        this.requestElection();
+      }
+      requestElection(){
+        if(!this.committed||!this.localNode?.count||!this.electorate.includes(this.localId))return false;
+        this.term=Math.max(this.term,this.voteTerm)+1;this.voteTerm=this.term;this.votedFor=this.localId;this.votes=new Map();this.storeVote(this.localId,{term:this.term,candidate:this.localId});
+        this.broadcast({t:'vote_request',candidate:this.localId,commit:this.committed.id});this.broadcast({t:'vote',candidate:this.localId});this.tryWin();return true;
+      }
+      storeVote(from,m){const key=m.term+':'+m.candidate;if(!this.votes.has(key))this.votes.set(key,new Set());this.votes.get(key).add(from);}
+      receiveElection(from,m){
+        if(m.t==='handoff'){this.receiveHandoff(from,m);return;}
+        if(m.t==='handoff_ack'){if(this.transfer&&m.id===this.transfer.id&&from===this.transfer.target){this.transfer.resolve?.(true);this.transfer=null;}return;}
+        if(!this.autoMigration||!this.electorate.includes(from)||!Number.isSafeInteger(m.term)||m.term<1||m.term<this.term)return;
+        if(m.t==='vote_request'){
+          if(m.candidate!==from||!this.nodes.get(from)?.count||!this.committed)return;
+          if(m.term>this.term){this.term=m.term;if(this.role==='host'){this.role='client';this.game?.localSafetyPause('检测到更高任期，旧房主已停止裁决。');}this.pendingCheckpoint=null;}
+          if(!this.electorate.includes(this.localId))return;
+          if(this.voteTerm===m.term&&this.votedFor!==from)return;
+          // A candidate missing the latest committed checkpoint must first catch up.
+          if(m.commit<this.committed.id){this.sendNode(from,{t:'vote',candidate:null,newer:this.committed});return;}
+          if(performance.now()-this.lastAuthorityAt<TEAM_NET.election&&this.hostId!==this.localId)return;
+          this.voteTerm=m.term;this.votedFor=from;this.storeVote(this.localId,{term:m.term,candidate:from});this.broadcast({t:'vote',candidate:from});return;
         }
-      }
-      sendState(s){
-        const now=performance.now();for(const [pid,link] of this.links){
-          const p=this.players.get(pid);if(!link.authed||!p?.connected||!p.synced)continue;
-          const hz=now<link.lowRateUntil?30:60;if(now-link.lastStateAt<1000/hz-2)continue;
-          if(this.sendTo(link,{t:'state',s},true)){link.lastStateAt=now;link.sentStates++;}
+        if(m.t==='vote'){
+          if(m.newer&&m.candidate===null){const cp=m.newer;if(cp.id>this.committed?.id&&this.validateRoster(cp.roster)&&(!cp.s||validD4Snapshot(cp.s))){this.committed=cloneJSON(cp);this.electionAt=performance.now()+250;}return;}
+          if(!this.electorate.includes(m.candidate))return;this.storeVote(from,m);this.tryWin();this.tryAuthority();return;
         }
+        if(m.t==='authority'&&m.candidate===from){this.futureAuthority={from,m};this.tryAuthority();}
       }
-      saveRecovery(){
-        const data={rid:this.id,pid:this.localId,token:this.token,code:this.code,namespace:this.options.namespace,transport:this.transport};
-        try{sessionStorage.setItem('pong84.doubles.recovery',JSON.stringify(data));}catch{}
+      tryWin(){const votes=this.votes.get(this.term+':'+this.localId);if(this.votedFor!==this.localId||!votes||votes.size<this.quorum||this.role==='host')return;
+        const cp=this.committed;if(!cp)return;this.adoptAuthority(this.localId,this.term,cp,false);
+        this.broadcast({t:'authority',candidate:this.localId,cp});this.changed('房主已自动迁移；正在校验掉线席位。');this.publishCheckpoint();
       }
-      loadRecovery(rid=null,code=null){
-        let data=null;try{data=safeParseJSON(sessionStorage.getItem('pong84.doubles.recovery'),null);}catch{}
-        return data&&isId(data.token)&&((rid&&data.rid===rid)||(code&&data.code===code&&data.namespace===this.options.namespace))?data:null;
+      tryAuthority(){const f=this.futureAuthority;if(!f)return;const {from,m}=f,votes=this.votes.get(m.term+':'+from);
+        if(!votes||votes.size<this.quorum||!m.cp||!this.validateRoster(m.cp.roster)||m.cp.s&&!validD4Snapshot(m.cp.s))return;
+        this.futureAuthority=null;this.adoptAuthority(from,m.term,m.cp,false);this.sendHost({t:'synced',visible:!document.hidden});}
+      adoptAuthority(id,term,cp,planned=false,newVoters=null){
+        const previousHost=this.hostId,local=this.localId,secrets=new Map([...this.nodes].map(([id,n])=>[id,n.token]));
+        this.applyRoster(cp.roster,true);this.localId=local;this.hostId=id;this.term=term;this.role=local===id?'host':'client';
+        for(const [id,t] of secrets)if(this.nodes.has(id)&&isId(t))this.nodes.get(id).token=t;
+        if(newVoters)this.voters=[...newVoters];this.revision++;this.cpCounter=Math.max(cp.id,this.cpCounter);this.pendingCheckpoint=null;
+        this.committed=cloneJSON(cp);this.pendingCommits.clear();this.migrating=false;this.electionAt=0;this.lastAuthorityAt=performance.now();
+        this.heartbeatAcks.clear();this.heartbeatAcks.set(this.localId,performance.now());this.leaseEstablished=false;
+        this.hostHistory.push({from:previousHost,to:id,term,planned,checkpoint:cp.id});this.inputByPlayer.clear();this.barrier=null;this.swap=null;
+        if(cp.s){this.game.restoreAuthorityState(cp.s,term);this.status=cp.s.phase===Phase.ENDED?'ended':'paused';}else {this.status='lobby';this.game.clearD4Preview();}
+        if(this.role==='host'){
+          for(const n of this.nodes.values()){n.connected=n.id===local||!!this.links.get(n.id)?.authed&&!!this.links.get(n.id)?.connected;n.synced=n.connected;if(!n.connected){n.lostAt=performance.now();this.replaceWithBots(n.id);}}
+          this.game?.enforceNoAIBuffs();if(cp.s&&cp.s.phase!==Phase.ENDED)this.autoResumeAt=performance.now()+1200;
+          if(this.transport==='cloud')this.publishCloudEntry().catch(e=>{this.notice='比赛已迁移，但新房间入口创建失败：'+e.message;this.emit();});
+          this.broadcast({t:'heartbeat',serial:performance.now()});
+        }
+        this.notice=planned?'主持权已移交，比分与比赛状态已恢复。':'新房主已接管最近一次多数确认的比赛状态。';this.saveRecovery();this.game?.emitUi();this.emit();
       }
-      forgetRecovery(){try{sessionStorage.removeItem('pong84.doubles.recovery');}catch{}this.resumeSaved=null;this.token='';this.notice='已清除本标签页的重连记录。';this.emit();}
-      close(notify=true){
-        if(notify&&this.role==='host')this.broadcast({t:'closing'});
+      async handoff(target=null,leave=false){
+        if(this.role!=='host'||this.transfer)throw new Error('当前不能移交主持权。');
+        const candidates=[...this.nodes.values()].filter(n=>n.id!==this.localId&&n.count>0&&n.connected&&n.visible&&n.synced&&this.links.get(n.id)?.authed).sort((a,b)=>a.order-b.order);
+        const chosen=candidates.find(n=>n.id===target)||candidates[0];if(!chosen)throw new Error('没有在线的真人参赛设备可接任房主。');
+        if([...this.nodes.values()].some(n=>n.connected&&n.id!==chosen.id&&n.id!==this.localId&&!this.meshReports.get(chosen.id)?.has(n.id)))throw new Error('候选房主与其他设备的备用链路尚未就绪，请先重试连接。');
+        // Planned transfer is explicitly authorized by the old host, even in a 2-device room.
+        if(this.active)this.freeze('正在移交房主，比赛状态已冻结。');
+        const cp={id:++this.cpCounter,term:this.term,roster:cloneJSON(this.roster()),s:this.game?.matchId?this.game.snapshotD4():null};
+        const voters=this.electorate.filter(id=>!leave||id!==this.localId),tid=sessionId(),newTerm=this.term+1;
+        const oldId=this.localId;this.role='client';this.hostId=chosen.id;this.term=newTerm;this.lastAuthorityAt=performance.now();
+        if(leave){for(const p of cp.roster.players)if(p.device===oldId)p.botActive=cp.roster.aiFill;const n=cp.roster.nodes.find(n=>n.id===oldId);if(n){n.connected=false;n.synced=false;n.ready=false;}cp.roster.voters=voters;}
+        return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.transfer=null;reject(new Error('移交确认未到达。旧房主已停止裁决，请检查新房主页面；不要另开同一场比赛。'));},4500);
+          this.transfer={id:tid,target:chosen.id,resolve:()=>{clearTimeout(timer);resolve(true);}};
+          this.broadcast({t:'handoff',id:tid,previousHost:oldId,candidate:chosen.id,cp,voters,leave});
+          this.applyRoster({...cp.roster,hostId:chosen.id,term:newTerm},true);this.role='client';this.voters=voters;this.emit();});
+      }
+      receiveHandoff(from,m){
+        if(from!==this.hostId||m.previousHost!==from||m.term!==this.term+1||!this.nodes.get(m.candidate)?.count||!m.cp||!this.validateRoster(m.cp.roster)||m.cp.s&&!validD4Snapshot(m.cp.s)||
+          !Array.isArray(m.voters)||!m.voters.includes(m.candidate)||m.voters.some(id=>!this.nodes.has(id)))return;
+        this.adoptAuthority(m.candidate,m.term,m.cp,true,m.voters);
+        if(this.localId===m.candidate){this.sendNode(from,{t:'handoff_ack',id:m.id});this.changed('房主移交完成。');}
+      }
+      async leaveRoom(){
+        if(this.role==='host'&&[...this.nodes.values()].some(n=>n.id!==this.localId&&n.count>0&&n.connected))await this.handoff(null,true);
+        if(this.role==='client')this.sendHost({t:'leave'});this.close(false);this.game?.clearD4Preview();this.game?.emitUi();
+      }
+      sendState(s){if(this.role!=='host')return;const now=performance.now();for(const [id,l] of this.links){const n=this.nodes.get(id);if(!n?.synced||!n.connected||!l.authed||!l.connected)continue;
+          const hz=n.count===0?20:now<l.lowRateUntil?30:60;if(now-l.lastStateAt<1000/hz-2)continue;
+          if(this.sendTo(l,{t:'state',s},true)){l.lastStateAt=now;l.sentStates++;}}}
+      saveRecovery(){try{sessionStorage.setItem('pong84.teams.recovery',JSON.stringify({rid:this.id,pid:this.localId,token:this.token,code:this.code,namespace:this.options.namespace}));}catch{}}
+      loadRecovery(rid=null,code=null){let d;try{d=safeParseJSON(sessionStorage.getItem('pong84.teams.recovery'),null);}catch{}return d&&isId(d.token)&&(rid&&d.rid===rid||code&&d.code===code&&d.namespace===this.options.namespace)?d:null;}
+      forgetRecovery(){try{sessionStorage.removeItem('pong84.teams.recovery');}catch{}this.resumeSaved=null;this.token='';this.notice='已清除本标签页的恢复身份。';this.emit();}
+      close(notify=false){
         if(notify&&this.role==='client')this.sendHost({t:'leave'});
-        this.epoch++;clearInterval(this.timer);this.timer=null;
-        for(const key of Array.from(this.links.keys()))this.disposeLink(key);
-        try{this.peer?.destroy();}catch{}this.peer=null;this.players.clear();this.invitations.clear();this.barrier=null;this.swap=null;
-        this.role=null;this.localId=null;this.id='';this.code='';this.token='';this.revision=0;this.configRevision=1;
-        this.status='lobby';this.unresponsiveSince=0;this.closed=true;
+        this.epoch++;clearInterval(this.timer);this.timer=null;for(const id of [...this.links.keys()])this.disposeLink(id);
+        for(const peer of this.peers)try{peer.destroy();}catch{}this.peers.clear();this.listener=null;this.nodes.clear();this.players.clear();this.invitations.clear();this.meshJobs.clear();this.meshReports.clear();this.meshAttempts.clear();
+        this.role=null;this.localId=null;this.hostId='H';this.id='';this.code='';this.token='';this.status='lobby';this.revision=0;this.configRevision=1;this.term=1;
+        this.voters=[];this.votes.clear();this.voteTerm=0;this.votedFor=null;this.electionAt=0;this.committed=null;this.cpCounter=0;this.pendingCheckpoint=null;this.pendingCommits.clear();
+        this.heartbeatAcks.clear();this.leaseEstablished=false;this.lastAuthorityAt=performance.now();this.barrier=null;this.swap=null;this.migrating=false;this.autoResumeAt=0;this.closed=true;this.futureAuthority=null;this.transfer=null;this.inputByPlayer.clear();this.resumeSaved=null;this.meshError='';this.hostHistory=[];this.lastState.clear();
       }
-      diagnostics(){return {role:this.role,transport:this.transport,room:this.code||this.id.slice(0,8),seat:this.mine?.seat||null,status:this.status,
-        players:Array.from(this.players.values(),p=>({id:p.id,seat:p.seat,name:p.name,ready:p.ready,connected:p.connected,visible:p.visible})),
-        links:Array.from(this.links,([id,l])=>({id,connected:l.connected,authenticated:l.authed,rtt:Math.round(l.rtt),route:l.route,
-          sent:l.sentStates,dropped:l.droppedStates,realtimeOrdered:l.rt?.dataChannel?.ordered,maxRetransmits:l.rt?.dataChannel?.maxRetransmits}))};}
+      diagnostics(){return {version:D4.version,role:this.role,localDevice:this.localId,host:this.hostId,term:this.term,room:this.code||this.id.slice(0,8),status:this.status,formation:this.formation,
+        aiFill:this.aiFill,autoMigration:this.autoMigration,voters:[...this.voters],quorum:this.quorum,checkpoint:this.committed?.id||0,mesh:this.meshSummary(),
+        players:[...this.players.values()].map(p=>({id:p.id,name:p.name,seat:p.seat,device:p.device,index:p.index,bot:this.isBot(p),pendingReturn:p.pendingReturn})),
+        nodes:[...this.nodes.values()].map(({token,...n})=>n),history:[...this.hostHistory],links:[...this.links].map(([id,l])=>({id,connected:l.connected,authenticated:l.authed,kind:l.kind,rtt:Math.round(l.rtt),route:l.route,sent:l.sentStates,dropped:l.droppedStates,ordered:l.rt?.dataChannel?.ordered,maxRetransmits:l.rt?.dataChannel?.maxRetransmits}))};}
     }
 
+    // Team simulation stays authoritative on exactly one elected device. Graphics
+    // and ASCII consume the same state; neither renderer participates in physics.
     function validD4Snapshot(s) {
       if(!s||!isId(s.matchId)||!Number.isSafeInteger(s.seq)||s.seq<0||!Number.isSafeInteger(s.round)||s.round<0||
-        !Number.isSafeInteger(s.event)||!['countdown','playing','paused','ended'].includes(s.phase)||!s.ball||!s.match||
-        !Array.isArray(s.paddles)||s.paddles.length!==4)return false;
-      const b=s.ball;
-      if(![s.time,s.countdown,s.respawn,b.x,b.y,b.vx,b.vy,b.r,b.spin,b.speed].every(Number.isFinite)||
-        Math.abs(b.x)>3000||Math.abs(b.y)>2000||Math.abs(b.vx)>5000||Math.abs(b.vy)>5000||b.r<1||b.r>24||s.countdown<0||s.countdown>5)return false;
+        !Number.isSafeInteger(s.term)||s.term<1||!Number.isSafeInteger(s.event)||!['split','depth'].includes(s.formation)||
+        !['countdown','playing','paused','ended'].includes(s.phase)||!s.ball||!s.match||!Array.isArray(s.paddles)||s.paddles.length!==4)return false;
+      const b=s.ball,a=s.aux;
+      if(![s.time,s.countdown,s.respawn,s.curve,b.x,b.y,b.vx,b.vy,b.r,b.spin,b.speed,b.rallySpeed].every(Number.isFinite)||
+        s.time<0||s.countdown<0||s.countdown>5||s.respawn<0||s.respawn>3||s.curve<0||s.curve>10||
+        Math.abs(b.x)>3000||Math.abs(b.y)>2000||Math.abs(b.vx)>5000||Math.abs(b.vy)>5000||b.r<1||b.r>24||Math.abs(b.spin)>5||b.speed<0||b.speed>4000)return false;
       if(![s.match.leftScore,s.match.rightScore].every(x=>Number.isInteger(x)&&x>=0&&x<=99))return false;
+      if(![s.match.leftStreak,s.match.rightStreak].every(x=>Number.isInteger(x)&&x>=0&&x<=3))return false;
       const ids=new Set();for(const p of s.paddles){if(!D4.seats.includes(p.id)||ids.has(p.id)||!Number.isFinite(p.y)||!Number.isFinite(p.h)||p.h<40||p.h>160)return false;
-        const [lo,hi]=seatZone(p.id);if(p.y<lo-.01||p.y+p.h>hi+.01)return false;ids.add(p.id);}
+        const [lo,hi]=seatZone(p.id,s.formation);if(p.y<lo-.01||p.y+p.h>hi+.01)return false;ids.add(p.id);}
       if(s.serve!==null&&!D4.seats.includes(s.serve))return false;
       if(s.effect&&(!Object.hasOwn(POWERUPS,s.effect.type)||!Number.isFinite(s.effect.remaining)||s.effect.remaining<0||s.effect.remaining>10||
         (s.effect.type==='long'&&!D4.seats.includes(s.effect.target))))return false;
+      if(!a||![a.elapsed,a.effectCooldown,a.curveChange,a.aiServe].every(Number.isFinite)||a.elapsed<0||a.effectCooldown<0||a.effectCooldown>20||
+        a.curveChange<-.1||a.curveChange>2||a.aiServe<0||a.aiServe>3||![1,-1].includes(a.nextServeDir)||
+        ![0,1].includes(a.serveTurns?.left)||![0,1].includes(a.serveTurns?.right)||a.lastHit!==null&&!D4.seats.includes(a.lastHit))return false;
+      if(a.brains){for(const [seat,v] of Object.entries(a.brains)){if(!D4.seats.includes(seat)||!v||![v.wait,v.target].every(Number.isFinite)||v.wait<0||v.wait>1||v.target<0||v.target>540)return false;}}
       return true;
     }
     class DoublesGame extends PongGame {
       constructor(canvas,ctx,audio,input,online,room){
         super(canvas,ctx,audio,input,online);this.room=room;room.game=this;this.roundId=0;this.eventId=0;this.serveSlot=null;
         this.serveTurns={left:0,right:0};this.pauseReason='';this.samples=[];this.pendingInputs=[];this.clientSafety=false;
-        this.localInputElapsed=0;this.simTime=0;this.lastD4SnapshotAt=0;this.clientBarrier=null;
+        this.localInputElapsed=0;this.simTime=0;this.lastD4SnapshotAt=0;this.clientBarrier=null;this.lastHitSeat=null;this.botBrains={};this.snapshotTerm=0;
       }
       isDoubles(){return this.settings?.mode==='doubles';}
       isOnline(){return this.isDoubles()||super.isOnline();}
       isHost(){return this.isDoubles()?this.room?.role==='host':super.isHost();}
       isClient(){return this.isDoubles()?this.room?.role==='client':super.isClient();}
       getPaddles(){return this.isDoubles()?this.ensureD4Pads():[this.left,this.right];}
-      ensureD4Pads(){if(!this.d4Pads)this.d4Pads=D4.seats.map(id=>{const z=seatZone(id);return {id,side:seatSide(id),x:seatSide(id)==='left'?30:918,y:(z[0]+z[1]-D4.height)/2,
-        width:12,height:D4.height,baseHeight:D4.height,speed:PC_PADDLE_SPEED,minY:z[0],maxY:z[1]};});return this.d4Pads;}
-      localSeat(){return this.room?.mine?.seat||null;}
-      padFor(seat){return this.ensureD4Pads().find(p=>p.id===seat)||null;}
-      applySettingsToEntities(){
-        super.applySettingsToEntities();if(this.isDoubles())for(const p of this.ensureD4Pads()){p.height=p.baseHeight=D4.height;p.y=clamp(p.y,p.minY,p.maxY-p.height);}
+      ensureD4Pads(){
+        const formation=this.room?.formation||'split';
+        if(!this.d4Pads)this.d4Pads=D4.seats.map(id=>({id,side:seatSide(id),x:0,y:0,width:12,height:D4.height,baseHeight:D4.height,speed:PC_PADDLE_SPEED,minY:0,maxY:540}));
+        if(this.padFormation!==formation){this.padFormation=formation;for(const p of this.d4Pads){const [lo,hi]=seatZone(p.id,formation);
+          p.minY=lo;p.maxY=hi;p.x=p.side==='left'?(formation==='depth'&&p.id==='A2'?220:30):(formation==='depth'&&p.id==='B2'?728:918);
+          p.y=(lo+hi-p.height)/2;}}
+        return this.d4Pads;
       }
+      configureFormation(formation,reset=false){if(this.room)this.room.formation=formation==='depth'?'depth':'split';this.ensureD4Pads();if(reset)for(const p of this.d4Pads){p.height=p.baseHeight;p.y=(p.minY+p.maxY-p.height)/2;}this.requestDraw();}
+      localPlayers(){return this.room?.localPlayers||[];}
+      localSeats(){return this.localPlayers().map(p=>p.seat);}
+      localSeat(){return this.localSeats()[0]||null;}
+      isLocalSeat(seat){return this.localSeats().includes(seat);}
+      padFor(seat){return this.ensureD4Pads().find(p=>p.id===seat)||null;}
+      isBotSeat(seat){return this.room?.isBot(this.room?.playerAt(seat))||false;}
+      teamHasAI(side){return !!this.room&&[...this.room.players.values()].some(p=>seatSide(p.seat)===side&&this.room.isBot(p));}
+      applySettingsToEntities(){super.applySettingsToEntities();if(this.isDoubles())for(const p of this.ensureD4Pads()){p.height=p.baseHeight=D4.height;p.y=clamp(p.y,p.minY,p.maxY-p.height);}}
       setSetting(key,value){
-        if(key==='mode'&&value!==this.settings.mode&&this.room?.role){this.room.close(true);this.phase=Phase.MENU;this.matchId='';this.serveSlot=null;}
+        if(key==='mode'&&value!==this.settings.mode&&this.room?.role)return; // Leave through the migration-aware room action.
         if(key==='score'&&this.isDoubles()&&this.room?.role){if(this.room.role!=='host'||this.room.active)return;this.room.changeScore(clamp(Number(value)||11,1,99));}
         super.setSetting(key,value);
       }
       clearD4Preview(){
-        if(!this.isDoubles())return;this.phase=Phase.MENU;this.matchId='';this.roundId=0;this.eventId=0;this.serveSlot=null;this.serveSide=null;
+        if(!this.isDoubles())return;this.phase=Phase.MENU;this.matchId='';this.roundId=0;this.eventId=0;this.serveSlot=this.serveSide=null;
         this.match={leftScore:0,rightScore:0,leftStreak:0,rightStreak:0,leftShield:false,rightShield:false,remaining:0};
-        this.effect=null;this.curveRemaining=0;this.respawnRemaining=0;this.samples=[];this.pendingInputs=[];this.clientSafety=false;this.pauseReason='';
-        this.trail.length=0;this.ball.x=WORLD.width/2;this.ball.y=WORLD.height/2;this.ball.vx=this.ball.vy=0;this.ball.radius=this.ball.baseRadius;
+        this.effect=null;this.curveRemaining=0;this.respawnRemaining=0;this.samples=[];this.pendingInputs=[];this.clientSafety=false;this.pauseReason='';this.lastHitSeat=null;
+        this.trail.length=0;this.ball.x=480;this.ball.y=270;this.ball.vx=this.ball.vy=0;this.ball.radius=this.ball.baseRadius;
         this.applySettingsToEntities();for(const p of this.ensureD4Pads())p.y=(p.minY+p.maxY-p.height)/2;
       }
       resetD4(){
-        this.matchId=sessionId();this.roundId=0;this.eventId=0;this.simTime=0;this.stateSeq=0;this.inputSeq=0;this.lastSnapshotSeq=-1;
+        this.matchId=sessionId();this.roundId=0;this.eventId=0;this.simTime=0;this.stateSeq=0;this.inputSeq=0;this.lastSnapshotSeq=-1;this.snapshotTerm=this.room.term;
         this.match={leftScore:0,rightScore:0,leftStreak:0,rightStreak:0,leftShield:false,rightShield:false,remaining:0};
         this.settings.score=this.room.score;this.cheat=false;this.cheatMul=1;this.effect=null;
         this.effectCooldown=randomRange(EFFECT_TIMING.firstMin,EFFECT_TIMING.firstMax);this.clearCurve();this.trail.length=0;
-        this.samples=[];this.pendingInputs=[];this.clientSafety=false;this.pauseReason='';this.respawnRemaining=0;this.serveSide=null;this.serveSlot=null;
-        this.networkAccumulator=0;this.networkInputAccumulator=0;this.localInputElapsed=0;this.elapsed=0;this.countdownMark=null;
-        this.serveTurns={left:Math.random()<.5?0:1,right:Math.random()<.5?0:1};
+        this.samples=[];this.pendingInputs=[];this.clientSafety=false;this.pauseReason='';this.respawnRemaining=0;this.serveSide=this.serveSlot=null;
+        this.networkAccumulator=0;this.networkInputAccumulator=0;this.localInputElapsed=0;this.elapsed=0;this.countdownMark=null;this.botBrains={};this.lastHitSeat=null;
+        this.serveTurns={left:Math.random()<.5?0:1,right:Math.random()<.5?0:1};this.room.inputByPlayer.clear();
         this.applySettingsToEntities();for(const p of this.d4Pads)p.y=(p.minY+p.maxY-p.height)/2;
-        for(const l of this.room.links.values()){l.remoteInputSeq=-1;l.inputAck=-1;l.remoteInput=0;l.remoteTarget=null;l.lastInputAt=0;}
         this.prepareServe(Math.random()<.5?'left':'right');this.graphics?.clearMotion?.();
       }
       prepareServe(side){
         if(!this.isDoubles())return super.prepareServe(side);
-        this.clearEffect(false);this.clearCurve();this.serveSide=side==='right'?'right':'left';
+        this.room?.roundBoundary();this.clearEffect(false);this.clearCurve();this.serveSide=side==='right'?'right':'left';
         const n=this.serveTurns[this.serveSide]||0;this.serveSlot=(this.serveSide==='left'?'A':'B')+(n+1);this.serveTurns[this.serveSide]=1-n;
         this.roundId++;this.eventId++;this.ball.radius=this.ball.baseRadius;this.ball.rallySpeed=this.ball.baseSpeed;
-        this.ball.speed=this.ball.baseSpeed;this.ball.spin=0;this.ball.vx=this.ball.vy=0;this.trail.length=0;this.positionServeBall();this.emitUi();
+        this.ball.speed=this.ball.baseSpeed;this.ball.spin=0;this.ball.vx=this.ball.vy=0;this.lastHitSeat=null;this.aiServeRemaining=randomRange(.85,1.3);
+        this.trail.length=0;this.positionServeBall();this.enforceNoAIBuffs();this.emitUi();
       }
       positionServeBall(){
         if(!this.isDoubles())return super.positionServeBall();if(!this.serveSlot)return;
         const p=this.padFor(this.serveSlot);if(!p)return;
-        this.ball.x=p.side==='left'?p.x+p.width+this.ball.radius+12:p.x-this.ball.radius-12;
-        this.ball.y=p.y+p.height/2;this.ball.vx=this.ball.vy=0;
+        this.ball.x=p.side==='left'?p.x+p.width+this.ball.radius+12:p.x-this.ball.radius-12;this.ball.y=p.y+p.height/2;this.ball.vx=this.ball.vy=0;
       }
       launchServe(seat){
         if(!this.isDoubles())return super.launchServe(seat);
-        if(!this.isHost()||this.phase!==Phase.PLAYING||!this.serveSlot||seat!==this.serveSlot||this.respawnRemaining>0)return false;
-        const ok=super.launchServe(seatSide(seat));if(ok){this.serveSlot=null;this.eventId++;this.emitUi();}return ok;
+        if(!this.isHost()||!this.room.hasLease()||this.phase!==Phase.PLAYING||!this.serveSlot||seat!==this.serveSlot||this.respawnRemaining>0)return false;
+        this.lastHitSeat=seat;const ok=super.launchServe(seatSide(seat));if(ok){this.serveSlot=null;this.eventId++;this.syncBallEffect();this.emitUi();}return ok;
       }
       requestServe(source={}){
         if(!this.isDoubles())return super.requestServe(source);
-        if(this.phase!==Phase.PLAYING||!this.serveSlot||this.serveSlot!==this.localSeat()||this.respawnRemaining>0)return false;
-        return this.isClient()?this.room.sendHost({t:'serve',matchId:this.matchId,round:this.roundId}):this.launchServe(this.localSeat());
+        const list=this.localPlayers();if(!list.length||this.room.migrating||this.phase!==Phase.PLAYING||!this.serveSlot||this.respawnRemaining>0)return false;
+        const index=list.length===1?0:source.type==='touch'?(source.prop==='right'?1:0):(source.key==='Enter'?1:0);
+        const player=list[index];if(!player||player.seat!==this.serveSlot||!this.room.owns(this.room.localId,player.seat))return false;
+        return this.isClient()?this.room.sendHost({t:'serve',matchId:this.matchId,round:this.roundId,seat:player.seat}):this.launchServe(player.seat);
       }
-      setPaused(value){if(!this.isDoubles())return super.setPaused(value);if(value)this.room.freeze('玩家请求暂停。');else if(this.isHost())this.room.resume();}
+      setPaused(value){if(!this.isDoubles())return super.setPaused(value);if(this.room.isSpectator)return;if(value)this.room.freeze('玩家请求暂停。');else if(this.isHost())this.room.resume();}
       localSafetyPause(reason){if(!this.isDoubles())return;this.clientSafety=true;this.pauseReason=reason;this.phase=Phase.PAUSED;this.accumulator=0;
-        this.input.keys.clear();this.input.clearTouches(true);this.samples=[];this.emitUi();}
+        this.input.keys.clear();this.input.clearTouches(true);this.samples=[];this.pendingInputs=[];this.emitUi();}
       abortD4(message){this.phase=Phase.ENDED;this.pauseReason=message;this.clientSafety=false;this.onCountdownVisual?.('',false);this.emitUi();this.onEnd?.(message,null);}
       endGame(message,leftWins=null,fromNetwork=false){
         if(!this.isDoubles())return super.endGame(message,leftWins,fromNetwork);
-        this.phase=Phase.ENDED;this.eventId++;const team=leftWins===true?'左队 A':leftWins===false?'右队 B':null;
-        const text=team?team+' 获胜！':message;
-        if(leftWins!==null&&(seatSide(this.localSeat())==='left')===leftWins)this.audio.win();else this.audio.lose();
+        this.phase=Phase.ENDED;this.eventId++;const team=leftWins===true?'左队 A':leftWins===false?'右队 B':null,text=team?team+' 获胜！':message;
+        if(!this.room.isSpectator&&leftWins!==null&&(seatSide(this.localSeat())==='left')===leftWins)this.audio.win();else this.audio.lose();
         if(this.isHost()&&!fromNetwork)this.room.finish(text);this.emitUi();this.onEnd?.(text,leftWins);
       }
-      quitToMenu(){if(this.isDoubles()){this.room.close(true);this.matchId='';this.serveSlot=null;this.samples=[];this.pendingInputs=[];this.clientSafety=false;}super.quitToMenu();}
+      quitToMenu(){if(this.isDoubles()&&this.room?.role){this.room.leaveRoom().catch(e=>{this.room.notice=e.message;this.room.emit();});return;}super.quitToMenu();}
       spawnEffect(type=choice(Object.keys(POWERUPS))){
         if(!this.isDoubles()||type!=='long')return super.spawnEffect(type);
-        if(this.effect)this.clearEffect(false);const p=choice(this.ensureD4Pads());
-        this.effect={type:'long',target:p.id,remaining:POWERUPS.long.duration,applied:true};p.height=Math.min(p.maxY-p.minY,p.baseHeight*1.5);
-        p.y=clamp(p.y,p.minY,p.maxY-p.height);this.audio.powerup();this.eventId++;this.emitUi();return true;
+        const eligible=this.ensureD4Pads().filter(p=>!this.isBotSeat(p.id));
+        if(!eligible.length){this.effectCooldown=randomRange(EFFECT_TIMING.gapMin,EFFECT_TIMING.gapMax);return false;}
+        if(this.effect)this.clearEffect(false);const p=choice(eligible);this.effect={type:'long',target:p.id,remaining:POWERUPS.long.duration,applied:true};
+        p.height=Math.min(p.maxY-p.minY,p.baseHeight*1.5);p.y=clamp(p.y,p.minY,p.maxY-p.height);this.audio.powerup();this.eventId++;this.emitUi();return true;
+      }
+      syncBallEffect(){
+        if(!this.isDoubles())return super.syncBallEffect();const b=this.ball,type=this.effect?.type;
+        const fromBot=this.lastHitSeat&&this.isBotSeat(this.lastHitSeat),recipient=b.vx<0?'left':'right';
+        let applied=!!type;
+        if((type==='speed'||type==='small')&&fromBot)applied=false;
+        // A team containing a CPU never receives an easier incoming ball or a shared shield.
+        if((type==='slow'||type==='big')&&this.teamHasAI(recipient))applied=false;
+        if(type==='long')applied=!this.isBotSeat(this.effect.target);
+        let speed=b.rallySpeed||b.baseSpeed;if(fromBot)speed=Math.min(speed,BALL_TUNING.baseSpeed);b.radius=b.baseRadius;
+        if(applied){if(type==='speed')speed*=1.5;else if(type==='slow')speed*=.58;else if(type==='big')b.radius=b.baseRadius*2;else if(type==='small')b.radius=b.baseRadius*.55;}
+        b.speed=clamp(speed,BALL_TUNING.minEffectSpeed,b.maxSpeed);b.y=clamp(b.y,b.radius,540-b.radius);this.normalizeBallVelocityToSpeed();if(this.effect)this.effect.applied=applied;
+      }
+      enforceNoAIBuffs(){
+        if(!this.isDoubles()||!this.room)return;
+        for(const p of this.ensureD4Pads())if(this.isBotSeat(p.id)){p.height=p.baseHeight;p.y=clamp(p.y,p.minY,p.maxY-p.height);}
+        for(const side of ['left','right'])if(this.teamHasAI(side)){this.match[side+'Shield']=false;this.match[side+'Streak']=0;}
+        if(this.effect?.type==='long'&&this.isBotSeat(this.effect.target))this.clearEffect(false);
+        if(this.lastHitSeat&&this.isBotSeat(this.lastHitSeat)){this.ball.spin=0;this.clearCurve();this.ball.rallySpeed=Math.min(this.ball.rallySpeed||1200,1200);}
+        this.syncBallEffect();
       }
       clearEffect(sound=true){
         if(!this.isDoubles()||this.effect?.type!=='long')return super.clearEffect(sound);
         this.effect=null;this.effectCooldown=randomRange(EFFECT_TIMING.gapMin,EFFECT_TIMING.gapMax);
-        for(const p of this.ensureD4Pads()){p.height=p.baseHeight;p.y=clamp(p.y,p.minY,p.maxY-p.height);}
-        this.syncBallEffect();if(sound)this.audio.powerupEnd();this.emitUi();
+        for(const p of this.ensureD4Pads()){p.height=p.baseHeight;p.y=clamp(p.y,p.minY,p.maxY-p.height);}this.syncBallEffect();if(sound)this.audio.powerupEnd();this.emitUi();
       }
+      resolvePaddle(p,isLeft){
+        if(!this.isDoubles())return super.resolvePaddle(p,isLeft);const b=this.ball;
+        if(isLeft?b.vx>=0:b.vx<=0)return false;
+        if(b.x+b.radius<p.x||b.x-b.radius>p.x+p.width||b.y+b.radius<p.y||b.y-b.radius>p.y+p.height)return false;
+        const ai=this.isBotSeat(p.id),hit=clamp((b.y-p.y-p.height/2)/(p.height/2),-1,1),angle=hit*Math.PI/3;
+        this.lastHitSeat=p.id;b.rallySpeed=ai?Math.min(b.rallySpeed||1200,1200):Math.min((b.rallySpeed||b.baseSpeed)+BALL_TUNING.hitAcceleration,b.maxSpeed);
+        b.vx=Math.cos(angle)*(isLeft?1:-1);b.vy=Math.sin(angle);this.syncBallEffect();b.spin=ai?0:hit*.92*Math.abs(hit);
+        if(ai)this.clearCurve();else{if(Math.abs(b.spin)>.15){b.vx*=1.12;this.audio.spin();}this.tryStartCurve(isLeft);}
+        const mag=Math.hypot(b.vx,b.vy);if(mag>b.maxSpeed){b.vx*=b.maxSpeed/mag;b.vy*=b.maxSpeed/mag;}
+        b.x=isLeft?p.x+p.width+b.radius+.5:p.x-b.radius-.5;this.audio.hit();this.emitUi();return true;
+      }
+      updateCurve(dt){if(this.isDoubles()&&this.lastHitSeat&&this.isBotSeat(this.lastHitSeat)){this.clearCurve();return;}super.updateCurve(dt);}
       scorePoint(side){if(!this.isDoubles())return super.scorePoint(side);if(this.respawnRemaining>0||this.phase!==Phase.PLAYING)return;
-        this.eventId++;this.serveSlot=null;this.serveSide=null;super.scorePoint(side);this.emitUi();}
-      normalizedTarget(){const t=this.input.targetFor('local');return Number.isFinite(t)?clamp(t/WORLD.height,0,1):null;}
-      moveD4Pad(p,dir,target,dt){
-        if(!p)return;
-        if(Number.isFinite(target)){const destination=p.minY+clamp(target,0,1)*(p.maxY-p.minY-p.height);
-          p.y+=clamp(destination-p.y,-p.speed*dt,p.speed*dt);
-        }else p.y+=clamp(dir||0,-1,1)*p.speed*dt;
-        p.y=clamp(p.y,p.minY,p.maxY-p.height);
+        this.enforceNoAIBuffs();this.eventId++;this.serveSlot=this.serveSide=null;super.scorePoint(side);this.enforceNoAIBuffs();this.emitUi();}
+      localInput(player){
+        const dual=this.localPlayers().length===2,index=player.index;
+        const dir=dual?(index===0?this.input.leftDir(false):this.input.rightDir()):this.input.onlineLocalDir();
+        const raw=this.input.targetFor(dual?(index===0?'left':'right'):'local');return {dir,target:Number.isFinite(raw)?clamp(raw/540,0,1):null};
       }
-      moveD4(dt){
-        const now=performance.now();for(const p of this.room.players.values()){
-          const pad=this.padFor(p.seat);if(p.id===this.room.localId)this.moveD4Pad(pad,this.input.onlineLocalDir(),this.normalizedTarget(),dt);
-          else{const l=this.room.links.get(p.id);const fresh=l&&p.connected&&p.visible&&now-l.lastInputAt<D4.inputTimeout;
-            this.moveD4Pad(pad,fresh?l.remoteInput:0,fresh?l.remoteTarget:null,dt);if(fresh)l.inputAck=l.remoteInputSeq;}
-        }
+      moveD4Pad(p,dir,target,dt){if(!p)return;if(Number.isFinite(target)){const dest=p.minY+clamp(target,0,1)*(p.maxY-p.minY-p.height);p.y+=clamp(dest-p.y,-p.speed*dt,p.speed*dt);}else p.y+=clamp(dir||0,-1,1)*p.speed*dt;p.y=clamp(p.y,p.minY,p.maxY-p.height);}
+      moveBot(p,dt){
+        const brain=this.botBrains[p.id]||(this.botBrains[p.id]={wait:0,target:(p.minY+p.maxY)/2});brain.wait=Math.max(0,brain.wait-dt);
+        if(!brain.wait){const b=this.ball,toward=p.side==='left'?b.vx<0:b.vx>0;
+          let target=(p.minY+p.maxY)/2;if(toward){const lead=clamp((p.x-b.x)/b.vx,0,.45)*.42;target=b.y+b.vy*lead;
+            target=((target%1080)+1080)%1080;if(target>540)target=1080-target;target+=randomRange(-18,18);}
+          brain.target=clamp(target,p.minY+p.height/2,p.maxY-p.height/2);brain.wait=randomRange(.13,.21);}
+        const delta=brain.target-(p.y+p.height/2);if(Math.abs(delta)>9)p.y+=clamp(delta,-375*dt,375*dt);p.y=clamp(p.y,p.minY,p.maxY-p.height);
+      }
+      moveD4(dt){const now=performance.now();for(const p of this.room.players.values()){const pad=this.padFor(p.seat);
+        if(this.room.isBot(p)){this.moveBot(pad,dt);continue;}
+        if(p.device===this.room.localId){const {dir,target}=this.localInput(p);this.moveD4Pad(pad,dir,target,dt);}
+        else{const data=this.room.inputByPlayer.get(p.id),node=this.room.nodes.get(p.device),fresh=data&&node?.connected&&node.visible&&now-data.at<D4.inputTimeout;
+          this.moveD4Pad(pad,fresh?data.dir:0,fresh?data.target:null,dt);if(fresh)data.ack=data.seq;}}
       }
       sendD4Input(force=false){
-        if(!this.isClient()||this.phase!==Phase.PLAYING)return false;
-        const dir=this.input.onlineLocalDir(),target=this.normalizedTarget();
-        if(!force&&this.networkInputAccumulator<1/NETWORK_INPUT_HZ)return false;
-        this.networkInputAccumulator=0;
-        const seq=++this.inputSeq;
-        const ok=this.room.sendHost({t:'input',matchId:this.matchId,round:this.roundId,seq,dir,target},true);
-        if(ok){this.pendingInputs.push({seq,dir,target,dt:Math.min(.08,this.localInputElapsed)});if(this.pendingInputs.length>90)this.pendingInputs.shift();}
-        this.localInputElapsed=0;return ok;
+        if(!this.isClient()||this.phase!==Phase.PLAYING||this.clientSafety||this.room.migrating||this.room.isSpectator)return false;
+        if(!force&&this.networkInputAccumulator<1/NETWORK_INPUT_HZ)return false;this.networkInputAccumulator=0;
+        const inputs=this.localPlayers().filter(p=>!this.room.isBot(p)).map(p=>({id:p.id,seq:++this.inputSeq,...this.localInput(p)}));
+        const ok=this.room.sendHost({t:'input',matchId:this.matchId,round:this.roundId,inputs},true);
+        if(ok)for(const entry of inputs)this.pendingInputs.push({...entry,dt:Math.min(.08,this.localInputElapsed)});
+        while(this.pendingInputs.length>180)this.pendingInputs.shift();this.localInputElapsed=0;return ok;
       }
       step(dt){
         if(!this.isDoubles())return super.step(dt);
+        if(this.isHost()&&!this.room.hasLease()){if([Phase.PLAYING,Phase.COUNTDOWN].includes(this.phase))this.room.freeze('多数确认暂时丢失，比赛冻结。');return;}
         this.elapsed+=dt;this.stepToasts(dt);
         if(this.phase===Phase.COUNTDOWN){
           if(this.isHost()){this.simTime+=dt;super.stepCountdown(dt);this.sendNetworkIfNeeded(dt);}
-          else if(this.isClient()){
-            this.countdownRemaining=Math.max(.001,this.countdownRemaining-dt);
-            const mark=this.countdownRemaining>.65?String(clamp(Math.ceil(this.countdownRemaining-.55),1,3)):'GO';
-            if(mark!==this.countdownMark){this.countdownMark=mark;this.onCountdownVisual?.(mark,true);this.audio.countdown();}
-          }return;
+          else if(this.isClient()){this.countdownRemaining=Math.max(.001,this.countdownRemaining-dt);const mark=this.countdownRemaining>.65?String(clamp(Math.ceil(this.countdownRemaining-.55),1,3)):'GO';if(mark!==this.countdownMark){this.countdownMark=mark;this.onCountdownVisual?.(mark,true);this.audio.countdown();}}
+          return;
         }
         if(this.phase!==Phase.PLAYING)return;
         if(this.isClient()){
-          this.moveD4Pad(this.padFor(this.localSeat()),this.input.onlineLocalDir(),this.normalizedTarget(),dt);
-          this.localInputElapsed+=dt;this.networkInputAccumulator+=dt;this.sendD4Input();return;
+          if(!this.room.isSpectator&&!this.clientSafety){for(const p of this.localPlayers())if(!this.room.isBot(p)){const input=this.localInput(p);this.moveD4Pad(this.padFor(p.seat),input.dir,input.target,dt);}this.localInputElapsed+=dt;this.networkInputAccumulator+=dt;this.sendD4Input();}return;
         }
-        if(!this.isHost())return;
-        this.simTime+=dt;this.moveD4(dt);
+        if(!this.isHost())return;this.simTime+=dt;this.moveD4(dt);
         if(this.respawnRemaining>0){this.respawnRemaining=Math.max(0,this.respawnRemaining-dt);if(!this.respawnRemaining)this.prepareServe(this.nextServeDir>0?'left':'right');this.sendNetworkIfNeeded(dt);return;}
-        if(this.serveSlot){this.positionServeBall();this.sendNetworkIfNeeded(dt);return;}
+        if(this.serveSlot){this.positionServeBall();if(this.isBotSeat(this.serveSlot)){this.aiServeRemaining=Math.max(0,this.aiServeRemaining-dt);if(!this.aiServeRemaining)this.launchServe(this.serveSlot);}this.sendNetworkIfNeeded(dt);return;}
         this.updateEffect(dt);this.updateCurve(dt);this.sweepD4Ball(dt);this.resolveScore();this.sendNetworkIfNeeded(dt);
       }
       // Swept point against radius-expanded rectangles, plus chronological wall
@@ -4068,11 +4274,11 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
           b.x+=b.vx*time;b.y+=b.vy*time;remain=Math.max(0,remain-time);
           if(type==='wall'){b.y=clamp(b.y,b.radius,WORLD.height-b.radius);b.vy*=-1;this.eventId++;}
           else{
-            // Place the contact inside the broadphase by epsilon; the inherited
+            // Place the contact inside the broadphase by epsilon; the per-player
             // response retains rally speed, spin, effects and existing audio.
             b.x=paddle.side==='left'?paddle.x+paddle.width+b.radius-.00001:paddle.x-b.radius+.00001;
             b.y=clamp(b.y,paddle.y-b.radius+.00001,paddle.y+paddle.height+b.radius-.00001);
-            super.resolvePaddle(paddle,paddle.side==='left');this.eventId++;
+            this.resolvePaddle(paddle,paddle.side==='left');this.eventId++;
           }
           if(time<1e-8)remain=Math.max(0,remain-1e-8);
         }
@@ -4080,51 +4286,54 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       }
       sendNetworkIfNeeded(dt){if(!this.isDoubles())return super.sendNetworkIfNeeded(dt);if(!this.isHost())return;
         this.networkAccumulator+=dt;if(this.networkAccumulator>=1/NETWORK_STATE_HZ){this.networkAccumulator%=1/NETWORK_STATE_HZ;this.room.sendState(this.snapshotD4());}}
-      snapshotD4(){return {matchId:this.matchId,seq:++this.stateSeq,round:this.roundId,event:this.eventId,time:this.simTime,
-        phase:this.phase,countdown:Math.max(0,this.countdownRemaining),respawn:Math.max(0,this.respawnRemaining),serve:this.serveSlot,
-        pauseReason:this.pauseReason,ball:{x:this.ball.x,y:this.ball.y,vx:this.ball.vx,vy:this.ball.vy,r:this.ball.radius,spin:this.ball.spin,speed:this.ball.speed},
-        paddles:this.ensureD4Pads().map(p=>({id:p.id,y:p.y,h:p.height})),match:{...this.match},effect:this.effect?{...this.effect}:null,curve:this.curveRemaining,
-        acks:Object.fromEntries(Array.from(this.room.links,([id,l])=>[id,l.inputAck]))};}
+      snapshotD4(){return {matchId:this.matchId,term:this.room.term,formation:this.room.formation,seq:++this.stateSeq,round:this.roundId,event:this.eventId,time:this.simTime,
+        phase:this.phase,countdown:clamp(this.countdownRemaining||0,0,5),respawn:Math.max(0,this.respawnRemaining),serve:this.serveSlot,
+        pauseReason:this.pauseReason,ball:{x:this.ball.x,y:this.ball.y,vx:this.ball.vx,vy:this.ball.vy,r:this.ball.radius,spin:this.ball.spin,speed:this.ball.speed,rallySpeed:this.ball.rallySpeed||1200},
+        paddles:this.ensureD4Pads().map(p=>({id:p.id,y:p.y,h:p.height})),match:{...this.match},effect:this.effect?{...this.effect}:null,curve:Math.max(0,this.curveRemaining),
+        acks:Object.fromEntries([...this.room.inputByPlayer].map(([id,v])=>[id,v.ack??-1])),
+        aux:{elapsed:this.elapsed,effectCooldown:Math.max(0,this.effectCooldown),curveChange:Math.max(0,this.curveChangeRemaining),
+          aiServe:Math.max(0,this.aiServeRemaining),nextServeDir:this.nextServeDir||1,serveTurns:{...this.serveTurns},lastHit:this.lastHitSeat,brains:cloneJSON(this.botBrains)}};}
+      restoreAuthorityState(s,term){
+        if(!validD4Snapshot(s))return false;
+        this.lastSnapshotSeq=-1;this.snapshotTerm=0;this.pendingInputs=[];this.inputSeq=0;this.samples=[];
+        const restored=cloneJSON(s);restored.term=term;restored.phase=s.phase===Phase.ENDED?Phase.ENDED:Phase.PAUSED;
+        this.applyD4(restored,true);this.stateSeq=s.seq;this.clientSafety=false;this.pauseReason='房主迁移后正在同步比赛状态。';
+        const a=s.aux;this.elapsed=a.elapsed;this.effectCooldown=a.effectCooldown;this.curveChangeRemaining=a.curveChange;this.aiServeRemaining=a.aiServe;
+        this.serveTurns={...a.serveTurns};this.nextServeDir=a.nextServeDir;this.lastHitSeat=a.lastHit;this.botBrains=cloneJSON(a.brains||{});
+        this.networkAccumulator=this.networkInputAccumulator=this.localInputElapsed=this.accumulator=0;this.lastTs=performance.now();this.trail.length=0;this.graphics?.clearMotion?.();return true;
+      }
       applyD4(s,force=false){
-        if(!this.isDoubles()||!validD4Snapshot(s))return false;
-        if(!force&&(s.matchId!==this.matchId||s.seq<=this.lastSnapshotSeq||this.clientSafety||[Phase.MENU,Phase.ENDED].includes(this.phase)))return false;
-        // Reliable freeze/release can arrive after an RT packet but may never roll
-        // the same match back to an older snapshot sequence.
-        if(force&&s.matchId===this.matchId&&s.seq<this.lastSnapshotSeq)return false;
-        const fresh=s.matchId!==this.matchId;
+        if(!this.isDoubles()||!validD4Snapshot(s)||s.term!==this.room.term)return false;
+        if(!force&&(s.matchId!==this.matchId||s.seq<=this.lastSnapshotSeq&&s.term===this.snapshotTerm||this.clientSafety||[Phase.MENU,Phase.ENDED].includes(this.phase)))return false;
+        if(force&&s.matchId===this.matchId&&s.term===this.snapshotTerm&&s.seq<this.lastSnapshotSeq)return false;
+        const fresh=s.matchId!==this.matchId||s.term!==this.snapshotTerm;
         const changed=force||this.phase!==s.phase||this.serveSlot!==s.serve||this.roundId!==s.round||this.effect?.type!==s.effect?.type||
           this.match.leftScore!==s.match.leftScore||this.match.rightScore!==s.match.rightScore||this.match.leftShield!==s.match.leftShield||this.match.rightShield!==s.match.rightShield;
         if(fresh){this.pendingInputs=[];this.inputSeq=0;this.samples=[];this.graphics?.clearMotion?.();this.trail.length=0;}
-        this.matchId=s.matchId;this.lastSnapshotSeq=s.seq;this.roundId=s.round;this.eventId=s.event;
+        this.room.formation=s.formation;this.ensureD4Pads();this.matchId=s.matchId;this.lastSnapshotSeq=s.seq;this.snapshotTerm=s.term;this.roundId=s.round;this.eventId=s.event;
         this.simTime=s.time;this.phase=s.phase;this.countdownRemaining=s.countdown;this.respawnRemaining=s.respawn;this.serveSlot=s.serve;this.serveSide=s.serve?seatSide(s.serve):null;
-        this.pauseReason=String(s.pauseReason||'').slice(0,180);this.match={...s.match};this.effect=s.effect?{...s.effect}:null;this.curveRemaining=Math.max(0,s.curve||0);
+        this.pauseReason=String(s.pauseReason||'').slice(0,180);this.match={...s.match};this.effect=s.effect?{...s.effect}:null;this.curveRemaining=s.curve;
+        const aux=s.aux;this.serveTurns={...aux.serveTurns};this.nextServeDir=aux.nextServeDir;this.lastHitSeat=aux.lastHit;
         if(force){this.clientSafety=false;this.samples=[];this.lastTs=performance.now();this.accumulator=0;this.pendingInputs=[];this.localInputElapsed=0;}
-        const own=this.localSeat(),ack=s.acks?.[this.room.localId];
-        if(Number.isSafeInteger(ack))this.pendingInputs=this.pendingInputs.filter(x=>x.seq>ack);
+        const own=new Map(this.localPlayers().filter(p=>!this.room.isBot(p)).map(p=>[p.seat,p.id]));
+        this.pendingInputs=this.pendingInputs.filter(x=>!Number.isSafeInteger(s.acks?.[x.id])||x.seq>s.acks[x.id]);
         for(const item of s.paddles){const p=this.padFor(item.id);p.height=item.h;
-          if(force||item.id!==own)p.y=item.y;
-          else {const predicted={...p,y:item.y};for(const input of this.pendingInputs)this.moveD4Pad(predicted,input.dir,input.target,input.dt);
-            const error=predicted.y-p.y;p.y=Math.abs(error)>80?predicted.y:p.y+error*.20;}
-          p.y=clamp(p.y,p.minY,p.maxY-p.height);
-        }
-        const now=performance.now();this.lastD4SnapshotAt=now;
-        this.samples.push({at:now,s});if(this.samples.length>12)this.samples.shift();
-        if(force||this.samples.length===1||this.phase!==Phase.PLAYING){Object.assign(this.ball,{...s.ball,radius:s.ball.r});}
-        if(this.phase!==Phase.COUNTDOWN)this.onCountdownVisual?.('',false);
-        if(changed)this.emitUi();else this.requestDraw();return true;
+          if(force||!own.has(item.id))p.y=item.y;
+          else{const predicted={...p,y:item.y};for(const input of this.pendingInputs)if(input.id===own.get(item.id))this.moveD4Pad(predicted,input.dir,input.target,input.dt);const error=predicted.y-p.y;p.y=Math.abs(error)>80?predicted.y:p.y+error*.20;}
+          p.y=clamp(p.y,p.minY,p.maxY-p.height);}
+        const now=performance.now();this.lastD4SnapshotAt=now;this.samples.push({at:now,s});if(this.samples.length>12)this.samples.shift();
+        if(force||this.samples.length===1||this.phase!==Phase.PLAYING)Object.assign(this.ball,{...s.ball,radius:s.ball.r});
+        if(this.phase!==Phase.COUNTDOWN)this.onCountdownVisual?.('',false);if(changed)this.emitUi();else this.requestDraw();return true;
       }
       renderD4Client(){
         if(!this.isClient()||this.phase!==Phase.PLAYING||this.clientSafety||!this.samples.length)return;
-        const now=performance.now(),display=now-34,arr=this.samples;let a=arr[0],b=a;
-        for(let i=1;i<arr.length;i++){b=arr[i];if(b.at>=display)break;a=b;}
-        let t=b.at>a.at?clamp((display-a.at)/(b.at-a.at),0,1):1;
-        // Do not interpolate through a score, serve or contact discontinuity.
-        if(a.s.round!==b.s.round||a.s.event!==b.s.event){a=b;t=1;}
-        const lerp=(x,y)=>x+(y-x)*t,own=this.localSeat();
-        for(let i=0;i<b.s.paddles.length;i++){const pb=b.s.paddles[i],pa=a.s.paddles.find(p=>p.id===pb.id)||pb,p=this.padFor(pb.id);if(pb.id!==own)p.y=clamp(lerp(pa.y,pb.y),p.minY,p.maxY-p.height);}
-        const ba=a.s.ball,bb=b.s.ball;
-        this.ball.x=lerp(ba.x,bb.x);this.ball.y=lerp(ba.y,bb.y);this.ball.vx=bb.vx;this.ball.vy=bb.vy;this.ball.radius=bb.r;this.ball.spin=bb.spin;this.ball.speed=bb.speed;
-        if(this.serveSlot===own)this.positionServeBall();
+        const now=performance.now(),display=now-(this.room.isSpectator?75:34),arr=this.samples;let a=arr[0],b=a;
+        for(let i=1;i<arr.length;i++){b=arr[i];if(b.at>=display)break;a=b;}let t=b.at>a.at?clamp((display-a.at)/(b.at-a.at),0,1):1;
+        if(a.s.round!==b.s.round||a.s.event!==b.s.event){a=b;t=1;}const lerp=(x,y)=>x+(y-x)*t;
+        for(const pb of b.s.paddles){const pa=a.s.paddles.find(p=>p.id===pb.id)||pb,p=this.padFor(pb.id);
+          if(!this.isLocalSeat(pb.id)||this.isBotSeat(pb.id))p.y=clamp(lerp(pa.y,pb.y),p.minY,p.maxY-p.height);}
+        const ba=a.s.ball,bb=b.s.ball;Object.assign(this.ball,{x:lerp(ba.x,bb.x),y:lerp(ba.y,bb.y),vx:bb.vx,vy:bb.vy,radius:bb.r,spin:bb.spin,speed:bb.speed,rallySpeed:bb.rallySpeed});
+        if(this.isLocalSeat(this.serveSlot)&&!this.isBotSeat(this.serveSlot))this.positionServeBall();
         if(this.settings.renderMode!=='ascii'&&!this.serveSlot&&this.respawnRemaining<=0&&now-(this.clientTrailAt||0)>8){this.clientTrailAt=now;this.trail.push({x:this.ball.x,y:this.ball.y,r:this.ball.radius});if(this.trail.length>18)this.trail.shift();}
       }
       render(){if(this.isDoubles())this.renderD4Client();super.render();}
@@ -4132,183 +4341,134 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
 
     class DoublesUI extends UIController {
       constructor(game,online,audio){
-        super(game,online,audio);this.d4Busy=false;this.d4Error='';this.d4JoinVisible=false;this.d4Response='';
+        super(game,online,audio);this.d4Busy=false;this.d4Error='';this.d4JoinVisible=false;this.d4Response='';this.roomToolsOpen=false;
         const by=id=>document.getElementById(id),r=game.room;
         try{by('d4Name').value=cleanName(localStorage.getItem('pong84.doubles.name')||'玩家');}catch{}
-        r.onChange=()=>{this.update();this.game.requestDraw();};
-        by('d4Create').addEventListener('click',()=>this.d4Action(async()=>{
-          this.game.phase=Phase.MENU;this.game.matchId='';const opts=this.networkOptions(),name=by('d4Name').value;
-          if(this.transportMode==='manual')r.createManual(name,opts,game.settings.score);else await r.createCloud(name,opts,game.settings.score);
-          this.d4JoinVisible=false;
-        }));
-        by('d4Join').addEventListener('click',()=>{this.d4JoinVisible=true;this.d4Error='';this.updateD4();});
-        by('d4JoinAction').addEventListener('click',()=>this.d4Action(async()=>{
-          this.audio.ensure();const name=by('d4Name').value;
-          if(this.transportMode==='manual'){
-            this.d4Response=await r.acceptInvite(by('d4InviteInput').value,name,this.networkOptions());by('d4AnswerOutput').value=this.d4Response;
-          }else await r.joinCloud(by('d4CloudInput').value,name,this.networkOptions());
-        }));
-        by('d4Ready').addEventListener('click',()=>{this.audio.ensure();r.setReady(!r.mine?.ready);});
-        by('d4Start').addEventListener('click',()=>{this.audio.ensure();r.startMatch();});
-        by('d4Leave').addEventListener('click',()=>{game.quitToMenu();this.d4JoinVisible=false;this.d4Response='';this.d4Error='';this.menuTitle.textContent='开始一局';this.update();});
+        r.onChange=()=>{this.update();game.requestDraw();};
+        const preferences=()=>r.configureTeam({count:Number(by('d4CountSelect').value),name2:by('d4Name2').value,formation:by('d4Formation').value,aiFill:by('d4AI').checked,migration:by('d4Migration').checked});
+        by('d4Create').addEventListener('click',()=>this.d4Action(async()=>{preferences();game.phase=Phase.MENU;game.matchId='';this.audio.ensure();
+          if(this.transportMode==='manual')r.createManual(by('d4Name').value,this.networkOptions(),game.settings.score);else await r.createCloud(by('d4Name').value,this.networkOptions(),game.settings.score);this.d4JoinVisible=false;}));
+        by('d4Join').addEventListener('click',()=>{this.d4JoinVisible=true;this.d4Error='';this.update();});
+        by('d4JoinAction').addEventListener('click',()=>this.d4Action(async()=>{preferences();this.audio.ensure();
+          if(this.transportMode==='manual'){this.d4Response=await r.acceptInvite(by('d4InviteInput').value,by('d4Name').value,this.networkOptions());by('d4AnswerOutput').value=this.d4Response;}
+          else await r.joinCloud(by('d4CloudInput').value,by('d4Name').value,this.networkOptions());}));
+        by('d4CountSelect').addEventListener('change',()=>{const count=Number(by('d4CountSelect').value);this.d4Action(async()=>{if(r.role)r.changeParticipation(count);else preferences();});});
+        for(const id of ['d4Formation','d4AI','d4Migration'])by(id).addEventListener('change',()=>{const options={formation:by('d4Formation').value,aiFill:by('d4AI').checked,migration:by('d4Migration').checked};this.d4Action(async()=>{if(r.role)r.changeRules(options);else preferences();});});
+        const nameChanged=()=>{r.setName(by('d4Name').value,by('d4Name2').value);try{localStorage.setItem('pong84.doubles.name',cleanName(by('d4Name').value));}catch{}this.update();};
+        by('d4Name').addEventListener('change',nameChanged);by('d4Name2').addEventListener('change',nameChanged);
+        by('d4Ready').addEventListener('click',()=>{this.audio.ensure();r.setReady(!r.localNode?.ready);});
+        by('d4Start').addEventListener('click',()=>{this.audio.ensure();this.roomToolsOpen=false;r.startMatch();});
+        by('d4Leave').addEventListener('click',()=>this.exitTeamRoom());
+        for(const id of ['returnMenuBtn','disconnectBtn','quitBtn'])by(id)?.addEventListener('click',e=>{if(!game.isDoubles()||!r.role)return;e.preventDefault();e.stopImmediatePropagation();this.exitTeamRoom();},true);
         by('d4Reconnect').addEventListener('click',()=>this.d4Action(()=>r.reconnect()));
-        by('d4Forget').addEventListener('click',()=>{r.forgetRecovery();this.d4Error='';this.updateD4();});
-        by('d4Name').addEventListener('change',()=>{const value=cleanName(by('d4Name').value);by('d4Name').value=value;r.setName(value);try{localStorage.setItem('pong84.doubles.name',value);}catch{}});
+        by('d4Forget').addEventListener('click',()=>{r.forgetRecovery();this.update();});
+        by('d4Handoff').addEventListener('click',()=>this.d4Action(()=>r.handoff()));
+        by('d4MeshRetry').addEventListener('click',()=>r.retryMesh());
+        by('d4ToolsToggle').addEventListener('click',()=>{this.roomToolsOpen=!this.roomToolsOpen;this.update();});
         by('d4SwapYes').addEventListener('click',()=>r.answerSwap(true));by('d4SwapNo').addEventListener('click',()=>r.answerSwap(false));
         by('d4CloudInput').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,4);});
-        for(const seat of D4.seats)by('d4Seat'+seat).addEventListener('click',()=>r.chooseSeat(seat));
-        for(const pid of D4.ports){
-          by('d4Gen'+pid).addEventListener('click',()=>this.d4Action(async()=>{await r.createInvite(pid);},false));
-          by('d4Confirm'+pid).addEventListener('click',()=>this.d4Action(async()=>{await r.acceptAnswer(pid,by('d4In'+pid).value);},false));
+        for(const seat of D4.seats)by('d4Seat'+seat).addEventListener('click',()=>r.chooseSeat(seat,0));
+        for(const pid of ROOM_NODES){
+          by('d4Gen'+pid).addEventListener('click',()=>this.d4Action(()=>r.createInvite(pid),false));
+          by('d4Confirm'+pid).addEventListener('click',()=>this.d4Action(()=>r.acceptAnswer(pid,by('d4In'+pid).value),false));
           by('d4Release'+pid).addEventListener('click',()=>r.removePlayer(pid));
-          this.bindD4File('d4Out'+pid,'d4In'+pid,'d4Copy'+pid,'d4Save'+pid,'d4Import'+pid,'d4File'+pid,()=>`pong84-doubles-${pid}-invite.txt`);
+          this.bindD4File('d4Out'+pid,'d4In'+pid,'d4Copy'+pid,'d4Save'+pid,'d4Import'+pid,'d4File'+pid,()=>`pong84-team-${pid}-invite.txt`);
         }
-        this.bindD4File('d4AnswerOutput','d4InviteInput','d4AnswerCopy','d4AnswerSave','d4InviteImport','d4InviteFile',()=>`pong84-doubles-answer.txt`);
-        by('d4CopyRoom').addEventListener('click',()=>this.d4Action(async()=>{const field=by('d4RoomCode');const ok=await copyField(field);this.d4Error=ok?'房间码已复制。':'请手动复制已选中的房间码。';},false));
-        window.addEventListener('keydown',e=>{
-          if(!game.isDoubles()||this.isTypingTarget(e.target)||e.repeat||e.ctrlKey||e.altKey||e.metaKey)return;
-          if(e.key==='p'||e.key==='P'){e.preventDefault();game.setPaused(game.phase!==Phase.PAUSED);}
-          if(['w','W','s','S','ArrowUp','ArrowDown'].includes(e.key))game.sendD4Input(true);
-        });
+        this.bindD4File('d4AnswerOutput','d4InviteInput','d4AnswerCopy','d4AnswerSave','d4InviteImport','d4InviteFile',()=>`pong84-team-answer.txt`);
+        by('d4CopyRoom').addEventListener('click',()=>this.d4Action(async()=>{this.d4Error=await copyField(by('d4RoomCode'))?'已复制当前入口短码。':'请选择并复制房间码。';},false));
+        window.addEventListener('keydown',e=>{if(!game.isDoubles()||this.isTypingTarget(e.target)||e.repeat||e.ctrlKey||e.altKey||e.metaKey)return;
+          if(e.key==='p'||e.key==='P'){e.preventDefault();game.setPaused(game.phase!==Phase.PAUSED);}if(['w','W','s','S','ArrowUp','ArrowDown'].includes(e.key))game.sendD4Input(true);});
         window.addEventListener('keyup',e=>{if(game.isDoubles()&&['w','W','s','S','ArrowUp','ArrowDown'].includes(e.key))game.sendD4Input(true);});
         this.d4Bound=true;this.update();
       }
-      async d4Action(action,lock=true){
-        if(lock&&this.d4Busy)return;this.d4Error='';if(lock)this.d4Busy=true;this.update();
-        try{await action();}catch(e){this.d4Error=e?.message||'操作失败，请检查连接设置。';}
-        finally{if(lock)this.d4Busy=false;this.update();}
-      }
-      bindD4File(outId,inId,copyId,saveId,importId,fileId,filename){
-        const by=id=>document.getElementById(id);
-        by(copyId).addEventListener('click',()=>this.d4Action(async()=>{const ok=await copyField(by(outId));this.d4Error=ok?'已复制完整连接码。':'请手动复制，或保存连接码文件。';},false));
+      async exitTeamRoom(){return this.d4Action(async()=>{await this.game.room.leaveRoom();this.d4JoinVisible=false;this.d4Response='';this.roomToolsOpen=false;this.menuTitle.textContent='开始一局';});}
+      async d4Action(action,lock=true){if(lock&&this.d4Busy)return;this.d4Error='';if(lock)this.d4Busy=true;this.update();try{await action();}catch(e){this.d4Error=e?.message||'操作失败。';}finally{if(lock)this.d4Busy=false;this.update();}}
+      bindD4File(outId,inId,copyId,saveId,importId,fileId,filename){const by=id=>document.getElementById(id);
+        by(copyId).addEventListener('click',()=>this.d4Action(async()=>{this.d4Error=await copyField(by(outId))?'已复制完整连接码。':'请手动复制，或保存文件。';},false));
         by(saveId).addEventListener('click',()=>{if(by(outId).value)downloadText(by(outId).value,filename());});
         by(importId).addEventListener('click',()=>{by(fileId).value='';by(fileId).click();});
-        by(fileId).addEventListener('change',()=>this.d4Action(async()=>{
-          const file=by(fileId).files?.[0];if(!file)return;if(file.size>D4.maxSignal)throw new Error('连接码文件不能超过 128 KB。');
-          const text=await file.text();unpackD4Signal(text,inId==='d4InviteInput'?'invite':'answer');by(inId).value=text.trim();this.d4Error='文件已读取，请点击确认按钮。';
-        },false));
+        by(fileId).addEventListener('change',()=>this.d4Action(async()=>{const f=by(fileId).files?.[0];if(!f)return;if(f.size>D4.maxSignal)throw new Error('连接码文件不能超过 128 KB。');
+          const text=await f.text();unpackD4Signal(text,inId==='d4InviteInput'?'invite':'answer');by(inId).value=text.trim();this.d4Error='已读取，请点击确认。';},false));}
+      selectTransport(mode){if(this.game.isDoubles()&&this.game.room?.role){if(mode!==this.transportMode){this.d4Error='请先退出房间再切换连接方式。';this.updateD4();}return;}
+        this.d4JoinVisible=false;this.d4Response='';this.d4Error='';super.selectTransport(mode);}
+      updateNetworkControls(){super.updateNetworkControls();if(!this.game.isDoubles()||!this.net)return;const r=this.game.room;
+        this.net.manualPanel.classList.add('hidden-section');this.net.cloudPanel.classList.add('hidden-section');this.net.networkFields.disabled=!!r?.role||!!this.d4Busy;
+        this.net.transportDescription.textContent=this.transportMode==='manual'?'每台设备交换一组邀请 / 回应。同机两人共用一条入口，观众使用独立入口；备用连接自动协商。':'使用同一房间码加入，支持同机组队和观众。开启迁移后会自动建立备用连接。';
+        if(this.disconnectBtn)this.disconnectBtn.style.display=r?.role&&[Phase.PLAYING,Phase.COUNTDOWN].includes(this.game.phase)?'inline-block':'none';this.renderDiagnostics();}
+      renderDiagnostics(info=null){if(!this.game.isDoubles())return super.renderDiagnostics(info);if(!this.game.room)return;
+        const r=this.game.room,diag=r.diagnostics();this.setText('networkReport',JSON.stringify(diag,null,2));this.setText('d4NetworkReport',JSON.stringify(diag,null,2)+(r.meshError?'\n备用链路错误：'+r.meshError:''));}
+      updateMenuSections(){super.updateMenuSections();const d=this.game.isDoubles(),r=this.game.room;
+        this.onlineSection.classList.toggle('hidden-section',!d&&this.game.settings.mode!=='online');if(d)this.startBtn.style.display='none';
+        this.scoreSection.querySelectorAll('button,input').forEach(e=>e.disabled=d&&!!r?.role&&(r.role!=='host'||r.active));}
+      updateTouchLayers(){if(!this.game.isDoubles())return super.updateTouchLayers();this.touchSingle.classList.remove('active');this.touchDual.classList.remove('active');
+        const g=this.game,count=g.localPlayers().length;
+        if(!IS_TOUCH||![Phase.COUNTDOWN,Phase.PLAYING].includes(g.phase)||!count||g.clientSafety){g.input.clearTouches(true);return;}
+        (count===2?this.touchDual:this.touchSingle).classList.add('active');}
+      syncImmersiveUi(){super.syncImmersiveUi();if(!this.game.isDoubles())return;const g=this.game,r=g.room;if(!r)return;
+        this.setText('fsLeftName','左队 A');this.setText('fsRightName','右队 B');this.setText('fsMatchMeta',r.isSpectator?'观众 / 只读':g.localSeats().join(' + ')||'组队大厅');
+        const b=document.getElementById('fsPauseBtn');b.hidden=r.isSpectator||![Phase.PLAYING,Phase.COUNTDOWN,Phase.PAUSED].includes(g.phase);b.disabled=g.phase===Phase.PAUSED&&!r.canResume;
+        this.setText('fsPauseBtn',g.phase===Phase.PAUSED?(g.isHost()?'同步继续 P':'等待房主'):'暂停 P');this.setText('fsStatus',g.phase===Phase.PAUSED?g.pauseReason:g.serveSlot?g.serveSlot+' 发球':r.isSpectator?'观战中 · 不控制球拍':'');}
+      updateHint(){if(!this.game.isDoubles())return super.updateHint();const g=this.game,r=g.room;if(!r)return;
+        this.hint.textContent=g.phase===Phase.PAUSED?g.pauseReason||'比赛暂停，等待同步。':r.isSpectator?'观战中 · 画质与全屏独立设置 · 无比赛控制权限':g.localSeats().length===2?
+          `玩家 1 ${g.localSeats()[0]}：W/S + 空格 · 玩家 2 ${g.localSeats()[1]}：↑/↓ + 回车 · 触屏左右分区`:
+          g.localSeat()?`${g.localSeat()} ${seatLabel(g.localSeat(),r.formation)} · W/S 或 ↑/↓ · 空格 / 回车发球`:'选择一人、同机两人或观众，创建或加入房间。';}
+      updateStatus(){if(!this.game.isDoubles())return super.updateStatus();const g=this.game;
+        this.setText('statusStrip',g.phase===Phase.PAUSED?g.pauseReason||'比赛冻结':g.phase===Phase.MENU?'组队大厅 · 配置后准备':g.phase===Phase.ENDED?'本局结束 · 可在原房间重新准备':
+          g.serveSlot?`${g.serveSlot} ${g.isBotSeat(g.serveSlot)?'AI':'玩家'} 发球`:g.respawnRemaining>0?'得分 · 等待下一球':g.effect?`${POWERUPS[g.effect.type].label}${g.effect.target?' · '+g.effect.target:''}${g.effect.applied===false?' · 当前方向不生效':''}`:'2 对 2 · 团队计分');}
+      updateLive(){super.updateLive();if(!this.game.isDoubles())return;const g=this.game,r=g.room;if(!r)return;const ps=g.localPlayers();
+        const able=i=>g.phase===Phase.PLAYING&&g.respawnRemaining<=0&&!!ps[i]&&g.serveSlot===ps[i].seat&&r.owns(r.localId,ps[i].seat);
+        const a=document.getElementById('serveBtn'),b=document.getElementById('serveRightBtn');a.disabled=!able(0);a.hidden=r.isSpectator;b.hidden=ps.length!==2;b.disabled=!able(1);
+        this.setText('serveBtn',ps.length===2?'玩家 1 发球 · 空格':'发球 · 空格');this.setText('serveRightBtn','玩家 2 发球 · 回车');
+        this.setText('liveNetwork',r.role?`房主 ${r.hostId} · 任期 ${r.term} · ${r.isSpectator?'观众':g.localSeats().join(' + ')}`:'尚未连接');
+        this.setText('playAdvice',r.isSpectator?'只读观战，不占比赛席位。晚加入的观众从下一局起进入迁移投票组。':r.formation==='depth'?'前排拦截，后排补防。己方出球穿过队友球拍。':'上下协防，球拍不能越过所属半区。');
+        this.setText('d4LiveRoster',D4.seats.map(s=>{const p=r.playerAt(s);return s+' '+(p?p.name+(r.isBot(p)?' [AI]':g.isLocalSeat(s)?' [你]':''):'空位');}).join('  ·  '));
       }
-      selectTransport(mode){
-        if(this.game.isDoubles()&&this.game.room.role){if(mode!==this.transportMode){this.d4Error='请先退出当前房间，再切换联机方式。';this.updateD4();}return;}
-        this.d4JoinVisible=false;this.d4Response='';this.d4Error='';super.selectTransport(mode);
-      }
-      updateNetworkControls(){
-        super.updateNetworkControls();if(!this.game.isDoubles()||!this.net)return;const r=this.game.room;
-        this.net.manualPanel.classList.add('hidden-section');this.net.cloudPanel.classList.add('hidden-section');
-        this.net.networkFields.disabled=!!r?.role||!!this.d4Busy;
-        this.net.transportDescription.textContent=this.transportMode==='manual'?'四人手动 P2P：房主分别与三名来宾交换邀请／回应；不需要信令服务器。':'四人房间码：三名来宾加入同一个 4 位房间，房主统一计算比赛。需外部信令服务。';
-        if(this.disconnectBtn)this.disconnectBtn.style.display=r?.role&&[Phase.PLAYING,Phase.COUNTDOWN].includes(this.game.phase)?'inline-block':'none';
-        this.renderDiagnostics();
-      }
-      renderDiagnostics(info=null){
-        if(!this.game.isDoubles())return super.renderDiagnostics(info);if(!this.net)return;
-        const r=this.game.room;if(!r)return;
-        const report=[`四人协议 v${D4.version} · ${location.protocol==='file:'?'本地 HTML':'静态网页'}`,
-          `房间：${r.role?(r.code||r.id.slice(0,8)):'未连接'} / 状态：${r.status}`,
-          ...Array.from(r.links,([id,l])=>`${id} ${l.connected?'通道已通':'未连接'} / ${l.authed?'身份已确认':'等待握手'} / ${Math.round(l.rtt)} ms / ${l.route}\n  Ctrl ${l.ctrl?.open?'open':'closed'} · RT ${l.rt?.open?'open':'closed'} · ordered=${l.rt?.dataChannel?.ordered??'-'} · maxRetransmits=${l.rt?.dataChannel?.maxRetransmits??'-'}\n  ICE ${l.pc?.iceConnectionState||l.ctrl?.peerConnection?.iceConnectionState||'-'} / 丢弃过期发送 ${l.droppedStates}`),
-          '重连令牌只保留在本标签页；诊断不显示令牌或 TURN 密码。'].join('\n');this.setText('networkReport',report);this.setText('d4NetworkReport',report);
-      }
-      updateMenuSections(){
-        super.updateMenuSections();const d=this.game.isDoubles(),r=this.game.room;
-        this.onlineSection.classList.toggle('hidden-section',!d&&this.game.settings.mode!=='online');
-        if(d)this.startBtn.style.display='none';
-        this.scoreSection.querySelectorAll('button,input').forEach(e=>e.disabled=d&&!!r?.role&&(r.role!=='host'||r.active));
-        const panel=document.getElementById('doublesPanel');if(panel)panel.hidden=!d||[Phase.PLAYING,Phase.COUNTDOWN].includes(this.game.phase);
-      }
-      syncImmersiveUi(){
-        super.syncImmersiveUi();if(!this.game.isDoubles())return;
-        this.setText('fsLeftName','左队 A');this.setText('fsRightName','右队 B');this.setText('fsMatchMeta','2 对 2 · '+(this.game.localSeat()?'你是 '+this.game.localSeat():'准备大厅'));
-        const button=document.getElementById('fsPauseBtn');button.hidden=![Phase.PLAYING,Phase.COUNTDOWN,Phase.PAUSED].includes(this.game.phase);
-        button.disabled=this.game.phase===Phase.PAUSED&&!this.game.room.canResume;
-        this.setText('fsPauseBtn',this.game.phase===Phase.PAUSED?(this.game.isHost()?'同步继续 P':'等待房主'):'暂停 P');
-      }
-      updateHint(){
-        if(!this.game.isDoubles())return super.updateHint();const g=this.game,seat=g.localSeat();
-        this.hint.textContent=g.phase===Phase.PAUSED?(g.pauseReason||'等待房主同步继续。'):g.phase===Phase.PLAYING&&g.serveSlot?
-          (g.serveSlot===seat?`${seat} 轮到你发球 · 空格 / 回车 / 松手`:`等待 ${g.serveSlot} 发球 · 你控制 ${seat||'未入座'}`):
-          seat?`${seat} ${seatLabel(seat)} · W/S 或 ↑/↓ · 触屏全区域控制自己的半区`:'四名真人，左右两队，上下分区守门。';
-      }
-      updateStatus(){
-        if(!this.game.isDoubles())return super.updateStatus();const g=this.game;
-        let text=g.phase===Phase.PAUSED?(g.pauseReason||'比赛已冻结'):g.phase===Phase.MENU?'双打准备大厅 · 四人全部准备后开始':g.phase===Phase.ENDED?'本局结束 · 留在房间可重新准备':g.serveSlot?`${g.serveSlot} 发球 · ${seatLabel(g.serveSlot)}`:g.respawnRemaining>0?'得分 · 等待下一球':
-          g.effect?`${POWERUPS[g.effect.type].label}${g.effect.target?' · '+g.effect.target:''} · ${Math.max(0,g.effect.remaining).toFixed(1)} 秒`:g.curveRemaining>0?'变轨球 · 协同防守':'双打进行中 · 团队计分';
-        this.setText('statusStrip',text);
-      }
-      updateLive(){
-        super.updateLive();if(!this.game.isDoubles())return;const g=this.game,r=g.room;
-        document.getElementById('serveBtn').disabled=!(g.phase===Phase.PLAYING&&g.serveSlot&&g.serveSlot===g.localSeat()&&g.respawnRemaining<=0);
-        document.getElementById('serveRightBtn').hidden=true;
-        this.setText('liveNetwork',r?.role==='host'?`房主 · ${Array.from(r.players.values()).filter(p=>p.connected).length}/4 人在线`:r?.mine?`席位 ${r.mine.seat} · ${Math.round(r.links.get('H')?.rtt||0)} ms`:'等待连接');
-        this.setText('playAdvice',`你控制 ${g.localSeat()||'尚未分配'}。上下分区不互穿，一人接球、全队得分。各端可独立选择图形或 ASCII。`);
-        this.setText('d4LiveRoster',r?D4.seats.map(seat=>{const p=Array.from(r.players.values()).find(p=>p.seat===seat);return `${seat} ${p?cleanName(p.name)+(p.id===r.localId?'（你）':''):'空位'}`;}).join('  ·  '):'');
-      }
-      update(){
-        super.update();const d=this.game.isDoubles(),r=this.game.room;
-        document.documentElement.classList.toggle('doubles-mode',d);document.documentElement.classList.toggle('d4-room-open',d&&!!r?.role);
+      update(){super.update();const d=this.game.isDoubles(),r=this.game.room;document.documentElement.classList.toggle('doubles-mode',d);document.documentElement.classList.toggle('d4-room-open',d&&!!r?.role);
         const live=document.getElementById('d4LiveRoster');if(live)live.hidden=!d;
-        if(d){
-          if(r?.role&&this.game.phase===Phase.MENU)this.menuTitle.textContent='四人准备大厅';
-          this.setText('modeBadge','四人双打'+(this.game.localSeat()?' · '+this.game.localSeat():''));
-          this.setText('playerLeftName','左队 A');this.setText('playerRightName','右队 B');
-          this.pauseBtn.style.display=[Phase.PLAYING,Phase.COUNTDOWN].includes(this.game.phase)?'inline-block':'none';
-          this.resumeBtn.disabled=!r?.canResume;this.resumeBtn.textContent=this.game.isHost()?'四人同步继续':'等待房主继续';
-          this.pause.querySelector('h2').textContent='比赛已冻结';this.pause.querySelector('p').textContent=this.game.pauseReason||'等待四名玩家恢复后，由房主继续。';
-        }else {this.resumeBtn.disabled=false;this.resumeBtn.textContent='继续游戏';this.pause.querySelector('h2').textContent='暂停一下。';this.pause.querySelector('p').textContent='计时、球和功能效果均已冻结。';}
-        if(d&&this.lastD4Phase!==this.game.phase&&[Phase.PAUSED,Phase.ENDED].includes(this.game.phase))document.querySelector('.console-column').scrollTop=0;
-        this.lastD4Phase=this.game.phase;this.updateD4();
-      }
+        if(d&&r){this.setText('modeBadge',(r.formation==='depth'?'前后双打':'上下双打')+(r.isSpectator?' · 观众':''));this.setText('playerLeftName','左队 A');this.setText('playerRightName','右队 B');
+          this.pauseBtn.style.display=!r.isSpectator&&[Phase.PLAYING,Phase.COUNTDOWN].includes(this.game.phase)?'inline-block':'none';this.resumeBtn.disabled=!r.canResume;this.resumeBtn.textContent=this.game.isHost()?'同步继续':'等待房主继续';
+          this.pause.querySelector('h2').textContent=r.migrating?'正在迁移房主':'比赛已冻结';this.pause.querySelector('p').textContent=this.game.pauseReason||'保持页面打开，等待状态同步。';
+        }else{document.getElementById('serveBtn').hidden=false;this.resumeBtn.disabled=false;this.resumeBtn.textContent='继续游戏';this.pause.querySelector('h2').textContent='暂停一下。';this.pause.querySelector('p').textContent='计时、球和功能效果均已冻结。';}
+        this.updateD4();}
       updateD4(){
         const by=id=>document.getElementById(id),g=this.game,r=g.room,panel=by('doublesPanel');if(!r||!panel)return;
-        document.querySelectorAll('[data-setting="score"]').forEach(b=>{b.classList.toggle('selected',Number(b.dataset.value)===g.settings.score);b.setAttribute('aria-pressed',String(Number(b.dataset.value)===g.settings.score));});
-        const d=g.isDoubles(),running=[Phase.PLAYING,Phase.COUNTDOWN].includes(g.phase);panel.hidden=!d||running;panel.inert=!d||running;
-        if(!d)return;
-        const host=r.role==='host',client=r.role==='client',manual=this.transportMode==='manual',joined=!!r.mine;
-        const healthy=!!r.links.get('H')?.connected&&!!r.mine?.connected&&!r.unresponsiveSince;
-        this.setText('d4Title',r.role?'双打房间 · '+(r.code||r.id.slice(0,6).toUpperCase()):'组队，守住半场。');
-        this.setText('d4Count',`${Array.from(r.players.values()).filter(p=>p.connected).length} / 4`);
-        by('d4Name').disabled=r.active||this.d4Busy;
-        by('d4Entry').hidden=!!r.role;by('d4Create').disabled=!!this.d4Busy;by('d4Join').disabled=!!this.d4Busy;
-        this.setText('d4Create',manual?'创建双打房间':'创建 4 位房间');this.setText('d4Join',manual?'粘贴邀请加入':'输入房间码');
-        by('d4JoinBox').hidden=host||(!this.d4JoinVisible&&!client)||(joined&&healthy);
-        by('d4ManualGuest').hidden=!manual;by('d4CloudGuest').hidden=manual;
-        by('d4AnswerGroup').hidden=!this.d4Response;
-        by('d4JoinAction').disabled=!!this.d4Busy||(manual&&healthy&&joined);
-        this.setText('d4JoinAction',manual?'生成回应码':'加入双打房间');
-        by('d4CloudRoom').hidden=!host||manual;by('d4RoomCode').value=r.code||'';
-        by('d4Slots').hidden=!r.role;by('d4RosterActions').hidden=!r.role;
-        by('d4Ready').hidden=r.active||!joined;by('d4Ready').disabled=!r.mine?.connected||!r.mine?.synced||!r.mine?.visible||!!this.d4Busy;
-        this.setText('d4Ready',r.mine?.ready?'已准备 · 取消':'准备好了');by('d4Ready').setAttribute('aria-pressed',String(!!r.mine?.ready));
-        by('d4Start').hidden=!host||r.active;by('d4Start').disabled=!r.canStart;
-        by('d4Leave').hidden=!r.role;this.setText('d4Leave',host?'关闭房间':'退出房间');
-        by('d4Reconnect').hidden=!client||manual||healthy;by('d4Reconnect').disabled=!!this.d4Busy;
-        by('d4ManualCards').hidden=!host||!manual;
-        for(const seat of D4.seats){const p=Array.from(r.players.values()).find(x=>x.seat===seat),el=by('d4Seat'+seat),mine=p?.id===r.localId;
-          el.disabled=!r.role||r.active||mine||!!r.swap;
-          el.classList.toggle('is-mine',mine);el.classList.toggle('is-ready',!!p?.ready);el.setAttribute('aria-label',seat+' '+seatLabel(seat)+' '+(p?cleanName(p.name):'空位')+(mine?'，你的位置':'，点击申请换位'));
-          this.setText('d4SeatName'+seat,p?cleanName(p.name)+(mine?' · 你':''):'等待加入');
-          this.setText('d4SeatState'+seat,!p?'空席位':!p.connected?'掉线 · 保留 30 秒':!p.visible?'页面在后台':!p.synced?'正在同步':p.ready?'已准备':r.active?'对局中':'未准备');
-          this.setText('d4SeatMeta'+seat,p?(p.id==='H'?'房主':`${Math.round(p.rtt||0)} ms · ${p.route==='relay'?'中继':p.route==='direct'?'直连':'探测中'}`):'点击选择位置');
-        }
-        const swap=r.swap,toMe=swap?.to===r.localId;by('d4Swap').hidden=!swap;
-        if(swap){const from=r.players.get(swap.from),to=r.players.get(swap.to);this.setText('d4SwapText',`${from?.name||'玩家'} 申请与 ${to?.name||'玩家'} 交换位置。${toMe?'是否同意？':'等待对方确认。'}`);}
-        by('d4SwapYes').hidden=!toMe;by('d4SwapNo').hidden=!toMe;
-        for(const pid of D4.ports){const p=r.players.get(pid),link=r.links.get(pid),inv=r.invitations.get(pid),connected=p?.connected&&link?.connected;
-          this.setText('d4CardState'+pid,p?(p.connected?`${p.seat} · ${p.name} · 已连接`:`${p.seat} · ${p.name} · 待重连`):link?.state==='connecting'?'正在连接':'独立连接名额');
-          by('d4Gen'+pid).disabled=!!connected||!!inv?.busy;this.setText('d4Gen'+pid,inv?.busy?'正在生成…':p?'生成重连邀请':inv?.output?'重新生成邀请':'生成邀请');
+        const running=[Phase.PLAYING,Phase.COUNTDOWN].includes(g.phase),d=g.isDoubles();panel.hidden=!d||running&&!this.roomToolsOpen;panel.inert=panel.hidden;
+        by('d4ToolsToggle').hidden=!d||!r.role||!running;this.setText('d4ToolsToggle',this.roomToolsOpen?'收起房间管理':'房间 / 邀请观众');if(!d)return;
+        const host=r.role==='host',client=r.role==='client',manual=this.transportMode==='manual',joined=!!r.localNode,healthy=r.connected;
+        if(r.role&&r.localNode)by('d4CountSelect').value=String(r.localNode.count);
+        if(r.role){by('d4Formation').value=r.formation;by('d4AI').checked=r.aiFill;by('d4Migration').checked=r.autoMigration;}
+        const count=Number(by('d4CountSelect').value);by('d4Name2Label').hidden=count!==2;
+        for(const id of ['d4Name','d4Name2','d4CountSelect'])by(id).disabled=r.active||!!this.d4Busy;
+        for(const id of ['d4Formation','d4AI','d4Migration'])by(id).disabled=!!r.role&&(!host||r.active)||!!this.d4Busy;
+        this.setText('d4Title',r.role?'组队房间 · '+(r.code||r.id.slice(0,6).toUpperCase()):'两道防线，一个团队。');
+        this.setText('d4Count',r.role?`${[...r.players.values()].filter(p=>!r.isBot(p)).length} 人 + ${[...r.players.values()].filter(p=>r.isBot(p)).length} AI`:'2 × 2');
+        by('d4Entry').hidden=!!r.role;by('d4Create').disabled=!!this.d4Busy||count===0;by('d4Join').disabled=!!this.d4Busy;
+        this.setText('d4Create',manual?'创建组队房间':'创建 4 位房间');this.setText('d4Join',manual?'粘贴邀请加入':'输入房间码');
+        by('d4JoinBox').hidden=host||(!this.d4JoinVisible&&!client)||(joined&&healthy);by('d4ManualGuest').hidden=!manual;by('d4CloudGuest').hidden=manual;by('d4AnswerGroup').hidden=!this.d4Response;
+        by('d4JoinAction').disabled=!!this.d4Busy||joined&&healthy;this.setText('d4JoinAction',manual?'生成回应码':count===0?'加入观战':'加入参赛');
+        by('d4CloudRoom').hidden=!r.role||manual;by('d4RoomCode').value=r.code||'';by('d4Slots').hidden=!r.role;by('d4SeatAdvice').hidden=!r.role||r.active||r.isSpectator;
+        by('d4RosterActions').hidden=!r.role;by('d4Ready').hidden=r.active||!joined||r.isSpectator;by('d4Ready').disabled=!r.localNode?.synced||!!this.d4Busy;
+        this.setText('d4Ready',r.localNode?.ready?'本机已准备 · 取消':count===2?'两人准备好了':'准备好了');by('d4Ready').setAttribute('aria-pressed',String(!!r.localNode?.ready));
+        by('d4Start').hidden=!host||r.active;by('d4Start').disabled=!r.canStart;by('d4Leave').hidden=!r.role;by('d4Leave').disabled=!!this.d4Busy;this.setText('d4Leave',host?'移交并退出':'退出房间');
+        by('d4Reconnect').hidden=!client||manual||healthy;by('d4Reconnect').disabled=!!this.d4Busy;by('d4ManualCards').hidden=!host||!manual;
+        for(const seat of D4.seats){const p=r.playerAt(seat),n=p?r.nodes.get(p.device):null,el=by('d4Seat'+seat),mine=g.isLocalSeat(seat),ai=r.isBot(p);
+          el.disabled=!joined||r.active||r.isSpectator||p?.id===r.mine?.id||!!r.swap;el.classList.toggle('is-mine',mine);el.classList.toggle('is-bot',ai);el.classList.toggle('is-ready',!!n?.ready||p?.kind==='bot');
+          this.setText('d4SeatLabel'+seat,seat+' / '+seatLabel(seat,r.formation));this.setText('d4SeatName'+seat,p?p.name+(mine?' · 你':''):'空位');
+          this.setText('d4SeatState'+seat,!p?'等待玩家':p.pendingReturn?'AI 代打 · 下次发球归还':ai?'AI · 无增益':!n?.connected?'掉线保留':!n.visible?'后台':!n.synced?'正在同步':n.ready?'已准备':r.active?'比赛中':'未准备');
+          this.setText('d4SeatMeta'+seat,p?.kind==='bot'?'375 移速上限 · 独立反应延迟':n?(n.id===r.hostId?'房主 · ':'')+n.id+(n.count===2?' · 同机玩家 '+(p.index+1):''):'点击选择');}
+        const specs=[...r.nodes.values()].filter(n=>n.count===0);by('d4Spectators').hidden=!r.role;this.setText('d4SpectatorNames',specs.length?specs.map(n=>n.name+(n.id===r.localId?'（你）':'')+(n.connected?'':' · 离线')).join(' / '):'0 / 4 · 可将房间码或独立邀请发给观众');
+        const swap=r.swap,toMe=swap&&r.players.get(swap.to)?.device===r.localId;by('d4Swap').hidden=!swap;if(swap)this.setText('d4SwapText',`${r.players.get(swap.from)?.name||'玩家'} 申请与 ${r.players.get(swap.to)?.name||'玩家'} 交换位置。`);by('d4SwapYes').hidden=!toMe;by('d4SwapNo').hidden=!toMe;
+        for(const pid of ROOM_NODES){const n=r.nodes.get(pid),l=r.links.get(pid),inv=r.invitations.get(pid),ok=n?.connected&&l?.connected;by('d4Card'+pid).hidden=pid===r.localId;
+          this.setText('d4CardState'+pid,n?(n.name+' · '+(n.count===0?'观众':n.count+' 人')+(ok?' · 在线':' · 离线')):'独立设备名额');
+          by('d4Gen'+pid).disabled=!!ok||!!inv?.busy;this.setText('d4Gen'+pid,inv?.busy?'正在生成…':n?'生成重连邀请':'生成邀请');
           if(inv?.output&&by('d4Out'+pid).value!==inv.output)by('d4Out'+pid).value=inv.output;
-          if(!inv&&!by('d4Out'+pid).matches(':focus'))by('d4Out'+pid).value='';
-          by('d4Exchange'+pid).hidden=!inv?.output||!!connected;
-          by('d4Confirm'+pid).disabled=!!connected||!!inv?.busy||!inv?.output;
-          by('d4Release'+pid).hidden=!p||p.connected||r.active;
-        }
-        this.setText('d4Notice',this.d4Error||r.notice||(manual?'先创建房间，再分别邀请三名玩家；四人准备后开始。':'创建房间后，将同一个房间码发给三名玩家。'));
-        this.setText('d4RuleSummary',`2 对 2 · 先得 ${r.role?r.score:g.settings.score} 分 · 失分队发球 · 队内交替 · 缺人冻结`);
-        if(!r.role)this.setText('menuTitle','开始一局');
-        const phasePaused=g.phase===Phase.PAUSED;
-        by('d4RecoveryHint').hidden=!phasePaused;
-        this.setText('d4RecoveryHint',manual?(host?'掉线时在对应来宾卡重新生成邀请；只重建该连接。四人恢复后点击“同步继续”。':'掉线时请房主在原来宾卡重新生成邀请，在下面粘贴新邀请并返回回应。不要关闭本标签页。'):'网络恢复后可点击“重新连接原房间”；席位保留 30 秒，由房主同步继续。');
-        // Do not keep keyboard focus inside a newly hidden lobby (space is serve).
-        if(running&&panel.contains(document.activeElement))this.fullscreenTarget.focus({preventScroll:true});
+          by('d4Exchange'+pid).hidden=!inv?.output||!!ok;by('d4Confirm'+pid).disabled=!!ok||!!inv?.busy||!inv?.output;by('d4Release'+pid).hidden=!n||n.connected||r.active;}
+        by('d4MeshBox').hidden=!r.role;const mesh=r.meshSummary();this.setText('d4MeshState',r.autoMigration?`备用链路 ${mesh.ready} / ${mesh.total} · 任期 ${r.term} · 已提交检查点 ${r.committed?.id||0}`:'自动迁移已关闭 · 房主失联将冻结');
+        const two=r.electorate.length===2;this.setText('d4MigrationHint',r.autoMigration?(two?'当前只有 2 台投票设备：突然掉线不会强行选主。赛前加入一位观众可提供第三票。':`迁移须取得原投票组 ${r.quorum} / ${r.electorate.length} 票；观众可投票但不能任房主。`)+(r.meshError?' 备用连接未就绪，请检查 TURN 或重试。':''):'仍可使用游戏内“移交房主”。跨设备移交前须已有可用备用链路。');
+        by('d4MeshRetry').hidden=!host||!r.autoMigration;by('d4Handoff').hidden=!host;by('d4Handoff').disabled=!!this.d4Busy||![...r.nodes.values()].some(n=>n.id!==r.localId&&n.count>0&&n.connected);
+        this.setText('d4Notice',this.d4Error||r.notice||'选择人数与阵型；房主创建后邀请玩家或观众。');
+        this.setText('d4RuleSummary',`${r.role?r.formation==='depth'?'前锋 + 后卫':'上下协防':by('d4Formation').value==='depth'?'前锋 + 后卫':'上下协防'} · 先得 ${r.role?r.score:g.settings.score} 分 · 队内轮流发球 · ${by('d4AI').checked?'AI 补位':'缺人暂停'}`);
+        if(running&&!this.roomToolsOpen&&panel.contains(document.activeElement))this.fullscreenTarget.focus({preventScroll:true});this.renderDiagnostics();
       }
     }
 
@@ -4322,7 +4482,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
     const game=new DoublesGame(canvas,ctx,audio,input,online,doubles);
     const ui=new DoublesUI(game,online,audio);
     const stopOnlineInput=()=>{
-      if(game.isDoubles()){if(game.isClient())doubles.sendHost({t:'input',matchId:game.matchId,round:game.roundId,seq:++game.inputSeq,dir:0,target:null},true);return;}
+      if(game.isDoubles()){game.sendD4Input(true);return;}
       if(game.isClient() && online.connected)online.sendRealtime({t:'input',matchId:game.matchId,seq:++game.inputSeq,dir:0,target:null});
     };
     window.addEventListener('blur',stopOnlineInput);
@@ -4375,8 +4535,8 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
     updateOrientationHint();
 
     window.PONG84 = Object.freeze({
-      version:'5.0.0',
-      diagnostics:()=>({ version:'5.0.0', phase:game.phase, renderer:game.settings.renderMode==='ascii'?'DOM ASCII':'Canvas 2D',
+      version:'6.0.0',
+      diagnostics:()=>({ version:'6.0.0', phase:game.phase, renderer:game.settings.renderMode==='ascii'?'DOM ASCII':'Canvas 2D',
         profile:game.settings.renderProfile, targetFps:game.targetRenderFps(), grid:[game.ascii.cols,game.ascii.rows],
         canvasInitialized:!!game.ctx, canvasSize:[game.canvas.width,game.canvas.height],graphicsQuality:game.settings.graphicsQuality,
         graphicalCaches:game.graphics?game.graphics.sprites.size+(game.graphics.background?1:0):0,

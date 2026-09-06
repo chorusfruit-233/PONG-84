@@ -1,0 +1,691 @@
+{
+  "transport": "Explicit in-memory message relay, not ICE / not public P2P",
+  "checks": [
+    {
+      "name": "2 + 2 occupy four independent seats on two devices",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Viewer has no player object",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "No Canvas context on all ASCII cold starts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "All rosters pass production validation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Cannot begin without human device readiness",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Full same-team allocation fails atomically",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Same-device controls can exchange front/back positions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Formation rule reaches clients and clears readiness",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Start after per-device readiness and standby mesh",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Barrier prepares and releases all independent pages",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Checkpoint committed with three-device voter group",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "W/S and arrows move same-device teammates independently",
+      "passed": true,
+      "detail": [
+        186,
+        274
+      ]
+    },
+    {
+      "name": "Two-player remote input uses two authenticated player IDs",
+      "passed": true,
+      "detail": {
+        "positions": [
+          274,
+          186
+        ],
+        "client": {
+          "phase": "playing",
+          "safety": false,
+          "players": [
+            {
+              "id": "G1:0",
+              "device": "G1",
+              "index": 0,
+              "name": "G1",
+              "seat": "B1",
+              "kind": "human",
+              "botActive": false,
+              "pendingReturn": false
+            },
+            {
+              "id": "G1:1",
+              "device": "G1",
+              "index": 1,
+              "name": "队友",
+              "seat": "B2",
+              "kind": "human",
+              "botActive": false,
+              "pendingReturn": false
+            }
+          ]
+        },
+        "inputs": [
+          [
+            "G1:0",
+            {
+              "seq": 1,
+              "dir": 1,
+              "target": null,
+              "at": 3319,
+              "ack": 1
+            }
+          ],
+          [
+            "G1:1",
+            {
+              "seq": 2,
+              "dir": -1,
+              "target": null,
+              "at": 3319,
+              "ack": 2
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "name": "Space does not serve the other local teammate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Enter serves local player 2 without restarting match",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Repeated serve ignored in ongoing rally",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Spectator cannot pause or forge player input",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Spectator cannot request a serve",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Spectator readiness does not gate gameplay",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Input guard: foreign",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Input guard: nan",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Input guard: term",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Input guard: round",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Input guard: clamp",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Input guard: stale",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Depth physics: front",
+      "passed": true,
+      "detail": {
+        "front": true,
+        "back": true,
+        "friendly": true,
+        "reject": true
+      }
+    },
+    {
+      "name": "Depth physics: back",
+      "passed": true,
+      "detail": {
+        "front": true,
+        "back": true,
+        "friendly": true,
+        "reject": true
+      }
+    },
+    {
+      "name": "Depth physics: friendly",
+      "passed": true,
+      "detail": {
+        "front": true,
+        "back": true,
+        "friendly": true,
+        "reject": true
+      }
+    },
+    {
+      "name": "Depth physics: reject",
+      "passed": true,
+      "detail": {
+        "front": true,
+        "back": true,
+        "friendly": true,
+        "reject": true
+      }
+    },
+    {
+      "name": "Authority checkpoint restores hidden timers and bot state",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Spectator can join after match start without restarting",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Late spectator not silently inserted into current electorate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Disconnect replaces both same-device teammates with AI",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AI no-benefit: noLong",
+      "passed": true,
+      "detail": {
+        "noLong": true,
+        "noShield": true,
+        "longTargets": [
+          "A1",
+          "A2"
+        ],
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
+        "speedCap": true
+      }
+    },
+    {
+      "name": "AI no-benefit: noShield",
+      "passed": true,
+      "detail": {
+        "noLong": true,
+        "noShield": true,
+        "longTargets": [
+          "A1",
+          "A2"
+        ],
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
+        "speedCap": true
+      }
+    },
+    {
+      "name": "AI no-benefit: longTargets",
+      "passed": true,
+      "detail": {
+        "noLong": true,
+        "noShield": true,
+        "longTargets": [
+          "A1",
+          "A2"
+        ],
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
+        "speedCap": true
+      }
+    },
+    {
+      "name": "AI no-benefit: noSpeed",
+      "passed": true,
+      "detail": {
+        "noLong": true,
+        "noShield": true,
+        "longTargets": [
+          "A1",
+          "A2"
+        ],
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
+        "speedCap": true
+      }
+    },
+    {
+      "name": "AI no-benefit: noSmall",
+      "passed": true,
+      "detail": {
+        "noLong": true,
+        "noShield": true,
+        "longTargets": [
+          "A1",
+          "A2"
+        ],
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
+        "speedCap": true
+      }
+    },
+    {
+      "name": "AI no-benefit: noSlow",
+      "passed": true,
+      "detail": {
+        "noLong": true,
+        "noShield": true,
+        "longTargets": [
+          "A1",
+          "A2"
+        ],
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
+        "speedCap": true
+      }
+    },
+    {
+      "name": "AI no-benefit: noBig",
+      "passed": true,
+      "detail": {
+        "noLong": true,
+        "noShield": true,
+        "longTargets": [
+          "A1",
+          "A2"
+        ],
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
+        "speedCap": true
+      }
+    },
+    {
+      "name": "AI no-benefit: noSpin",
+      "passed": true,
+      "detail": {
+        "noLong": true,
+        "noShield": true,
+        "longTargets": [
+          "A1",
+          "A2"
+        ],
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
+        "speedCap": true
+      }
+    },
+    {
+      "name": "AI no-benefit: speedCap",
+      "passed": true,
+      "detail": {
+        "noLong": true,
+        "noShield": true,
+        "longTargets": [
+          "A1",
+          "A2"
+        ],
+        "noSpeed": true,
+        "noSmall": true,
+        "noSlow": true,
+        "noBig": true,
+        "noSpin": true,
+        "speedCap": true
+      }
+    },
+    {
+      "name": "Reconnected human waits for next rally boundary",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "New serve returns both paddles to original people",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Same committed checkpoint reaches all members",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Isolated old host stops physics on majority lease loss",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Remaining player becomes host with spectator witness vote",
+      "passed": true,
+      "detail": {
+        "version": 2,
+        "role": "host",
+        "localDevice": "G1",
+        "host": "G1",
+        "term": 2,
+        "room": "4d718c3b",
+        "status": "paused",
+        "formation": "depth",
+        "aiFill": true,
+        "autoMigration": true,
+        "voters": [
+          "H",
+          "G1",
+          "G2"
+        ],
+        "quorum": 2,
+        "checkpoint": 4,
+        "mesh": {
+          "ready": 3,
+          "total": 3
+        },
+        "players": [
+          {
+            "id": "H:0",
+            "name": "房主",
+            "seat": "A2",
+            "device": "H",
+            "index": 0,
+            "bot": true,
+            "pendingReturn": false
+          },
+          {
+            "id": "H:1",
+            "name": "队友",
+            "seat": "A1",
+            "device": "H",
+            "index": 1,
+            "bot": true,
+            "pendingReturn": false
+          },
+          {
+            "id": "G1:0",
+            "name": "G1",
+            "seat": "B1",
+            "device": "G1",
+            "index": 0,
+            "bot": false,
+            "pendingReturn": false
+          },
+          {
+            "id": "G1:1",
+            "name": "队友",
+            "seat": "B2",
+            "device": "G1",
+            "index": 1,
+            "bot": false,
+            "pendingReturn": false
+          }
+        ],
+        "nodes": [
+          {
+            "id": "H",
+            "name": "房主",
+            "count": 2,
+            "order": 0,
+            "connected": false,
+            "visible": true,
+            "synced": false,
+            "ready": false,
+            "rtt": 0,
+            "route": "unknown",
+            "lostAt": 4913.600000000093
+          },
+          {
+            "id": "G1",
+            "name": "G1",
+            "count": 2,
+            "order": 1,
+            "connected": true,
+            "visible": true,
+            "synced": true,
+            "ready": false,
+            "rtt": 25,
+            "route": "unknown",
+            "lostAt": 4912.100000000093
+          },
+          {
+            "id": "G2",
+            "name": "G2",
+            "count": 0,
+            "order": 2,
+            "connected": true,
+            "visible": true,
+            "synced": true,
+            "ready": false,
+            "rtt": 17,
+            "route": "unknown",
+            "lostAt": 0
+          },
+          {
+            "id": "G3",
+            "name": "G3",
+            "count": 0,
+            "order": 3,
+            "connected": true,
+            "visible": true,
+            "synced": true,
+            "ready": false,
+            "rtt": 0,
+            "route": "unknown",
+            "lostAt": 0
+          }
+        ],
+        "history": [
+          {
+            "from": "H",
+            "to": "G1",
+            "term": 2,
+            "planned": false,
+            "checkpoint": 4
+          }
+        ],
+        "links": [
+          {
+            "id": "H",
+            "connected": false,
+            "authenticated": true,
+            "kind": "upstream",
+            "rtt": 0,
+            "route": "unknown",
+            "sent": 0,
+            "dropped": 0,
+            "ordered": null,
+            "maxRetransmits": null
+          },
+          {
+            "id": "G2",
+            "connected": true,
+            "authenticated": true,
+            "kind": "mesh",
+            "rtt": 17,
+            "route": "unknown",
+            "sent": 0,
+            "dropped": 0,
+            "ordered": false,
+            "maxRetransmits": 0
+          },
+          {
+            "id": "G3",
+            "connected": true,
+            "authenticated": true,
+            "kind": "mesh",
+            "rtt": 8,
+            "route": "unknown",
+            "sent": 0,
+            "dropped": 0,
+            "ordered": false,
+            "maxRetransmits": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "Observers follow elected authority without becoming host",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Migration retains team scores and hidden effect timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Old host two-seat team is replaced by AI after election",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "New host automatically issues synchronized resume barrier",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Delayed old-host state fenced out by term and authority ID",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "No browser runtime errors in mixed-player room",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "Start after per-device readiness and standby mesh",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Barrier prepares and releases all independent pages",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Two-device orderly handoff receives explicit acknowledgement",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Orderly handoff moves authority and preserves score",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Start after per-device readiness and standby mesh",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Barrier prepares and releases all independent pages",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Two-device sudden loss does not manufacture a quorum",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Four-device consent-based seat swapping preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Start after per-device readiness and standby mesh",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Barrier prepares and releases all independent pages",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Original split formation seam accelerates exactly once",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "20 percent deterministic RT loss keeps valid room membership",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "No uncaught browser exceptions in all protocol scenarios",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": [],
+  "failure": null
+}

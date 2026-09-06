@@ -1,5 +1,5 @@
 {
-  "source": "index_doubles.html",
+  "source": "index.html",
   "test_method": "Chromium real DOM + native Fullscreen API with page.set_content; no URL navigation; deterministic in-memory gameplay fixtures used",
   "tests": [
     {

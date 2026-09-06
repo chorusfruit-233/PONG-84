@@ -1,5 +1,6 @@
 __pycache__/
+*.py[cod]
 .venv/
-.DS_Store
+validation/*.log
 validation/compiled.js
-validation/*.png
+.DS_Store
