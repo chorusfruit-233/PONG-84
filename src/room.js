@@ -73,7 +73,7 @@
 
     class DoublesRoom {
       constructor(){
-        this.options={...NETWORK_DEFAULTS};this.game=null;this.onChange=null;this.epoch=0;
+        this.options={...NETWORK_DEFAULTS};this.game=null;this.onChange=null;this.epoch=0;this.metrics={iceRtt:0,appRtt:0,stateInterval:0,hostCompute:0,sendBacklog:0};
         this.links=new Map();this.players=new Map();this.nodes=new Map();this.invitations=new Map();
         this.peers=new Set();this.timer=null;this.meshJobs=new Map();this.meshReports=new Map();
         this.role=null;this.localId=null;this.hostId='H';this.id='';this.code='';this.name='玩家';this.name2='队友';
@@ -170,7 +170,7 @@
         l.onMessage=(m,ch)=>{if(current())this.receive(l,m,ch);};
         l.onClose=reason=>{if(current())this.linkLost(l.pid,reason);};
         l.onConnectionState=(s,detail)=>{if(!current())return;if(detail)this.notice=detail;if(s==='failed'&&l.authed)this.linkLost(l.pid,detail||'链路失败');this.emit();};
-        l.onStats=()=>{if(!current())return;const node=this.nodes.get(l.pid);if(node){node.rtt=Math.round(l.rtt);node.route=l.route;}};
+        l.onStats=()=>{if(!current())return;const node=this.nodes.get(l.pid);if(node){node.rtt=Math.round(l.rtt);node.route=l.route;this.metrics.iceRtt=node.rtt;}};
         return l;
       }
       disposeLink(key){const l=this.links.get(key);if(!l)return;this.links.delete(key);l.onOpen=l.onClose=l.onMessage=l.onStats=l.onConnectionState=null;l.cleanup();}
@@ -558,9 +558,10 @@
         if(this.role==='host'&&[...this.nodes.values()].some(n=>n.id!==this.localId&&n.count>0&&n.connected))await this.handoff(null,true);
         if(this.role==='client')this.sendHost({t:'leave'});this.close(false);this.game?.clearD4Preview();this.game?.emitUi();
       }
-      sendState(s){if(this.role!=='host')return;const now=performance.now();for(const [id,l] of this.links){const n=this.nodes.get(id);if(!n?.synced||!n.connected||!l.authed||!l.connected)continue;
+      sendState(s){if(this.role!=='host')return;const started=performance.now(),now=started;for(const [id,l] of this.links){const n=this.nodes.get(id);if(!n?.synced||!n.connected||!l.authed||!l.connected)continue;
           const hz=n.count===0?20:now<l.lowRateUntil?30:60;if(now-l.lastStateAt<1000/hz-2)continue;
-          if(this.sendTo(l,{t:'state',s},true)){l.lastStateAt=now;l.sentStates++;}}}
+          const live={...s,aux:{...s.aux,brains:undefined,tactics:undefined,teamwork:undefined}};
+          if(this.sendTo(l,{t:'state',s:live},true)){l.lastStateAt=now;l.sentStates++;this.metrics.sendBacklog=Math.max(this.metrics.sendBacklog,l.rt?.dataChannel?.bufferedAmount||0);}}this.metrics.hostCompute=performance.now()-started;}
       saveRecovery(){try{sessionStorage.setItem('pong84.teams.recovery',JSON.stringify({rid:this.id,pid:this.localId,token:this.token,code:this.code,namespace:this.options.namespace}));}catch{}}
       loadRecovery(rid=null,code=null){let d;try{d=safeParseJSON(sessionStorage.getItem('pong84.teams.recovery'),null);}catch{}return d&&isId(d.token)&&(rid&&d.rid===rid||code&&d.code===code&&d.namespace===this.options.namespace)?d:null;}
       forgetRecovery(){try{sessionStorage.removeItem('pong84.teams.recovery');}catch{}this.resumeSaved=null;this.token='';this.notice='已清除本标签页的恢复身份。';this.emit();}
@@ -574,6 +575,6 @@
       }
       diagnostics(){return {version:D4.version,role:this.role,localDevice:this.localId,host:this.hostId,term:this.term,room:this.code||this.id.slice(0,8),status:this.status,formation:this.formation,
         aiFill:this.aiFill,autoMigration:this.autoMigration,voters:[...this.voters],quorum:this.quorum,checkpoint:this.committed?.id||0,mesh:this.meshSummary(),
-        players:[...this.players.values()].map(p=>({id:p.id,name:p.name,seat:p.seat,device:p.device,index:p.index,bot:this.isBot(p),pendingReturn:p.pendingReturn})),
+        metrics:{...this.metrics},players:[...this.players.values()].map(p=>({id:p.id,name:p.name,seat:p.seat,device:p.device,index:p.index,bot:this.isBot(p),pendingReturn:p.pendingReturn})),
         nodes:[...this.nodes.values()].map(({token,...n})=>n),history:[...this.hostHistory],links:[...this.links].map(([id,l])=>({id,connected:l.connected,authenticated:l.authed,kind:l.kind,rtt:Math.round(l.rtt),route:l.route,sent:l.sentStates,dropped:l.droppedStates,ordered:l.rt?.dataChannel?.ordered,maxRetransmits:l.rt?.dataChannel?.maxRetransmits}))};}
     }

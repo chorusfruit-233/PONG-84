@@ -740,7 +740,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
     // A local file in LAN mode makes no external script/STUN/TURN requests.
     const P2P_VERSION = 2;
     const MAX_SIGNAL_SIZE = 65536;
-    const DEFAULT_STUN = 'stun:stun.cloudflare.com:3478\nstun:stun.l.google.com:19302\nstun.qq.com:3478';
+    const DEFAULT_STUN = 'stun:stun.cloudflare.com:3478\nstun:stun.l.google.com:19302\nstun:stun.qq.com:3478';
     const NETWORK_DEFAULTS = Object.freeze({
       scope:'internet', stun:DEFAULT_STUN, turn:'', username:'', credential:'', relay:false,
       host:'', port:443, path:'/', key:'peerjs', secure:true, namespace:'pong84-public-v2'
@@ -2856,7 +2856,11 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
           `ICE：${data.ice} | 地址收集：${data.gathering}`,
           `控制通道：${data.ctrl} | 实时通道：${data.rt}`,
           `实际路径：${route}${data.routeDetail?' | '+data.routeDetail:''}`,
-          `往返延迟：${data.rtt>0?Math.round(data.rtt)+' ms':'待测量'}`
+          `底层 ICE RTT：${data.rtt>0?Math.round(data.rtt)+' ms':'待测量'}`,
+          `应用层 RTT：${n.metrics?.appRtt>0?Math.round(n.metrics.appRtt)+' ms':'待测量'}`,
+          `状态到达间隔：${this.game?.netMetrics?.stateInterval>0?Math.round(this.game.netMetrics.stateInterval)+' ms':'待测量'}`,
+          `主机计算耗时：${n.metrics?.hostCompute>0?n.metrics.hostCompute.toFixed(2)+' ms':'待测量'}`,
+          `发送积压：${n.metrics?.sendBacklog>0?Math.round(n.metrics.sendBacklog)+' B':'0 B'}`
         ].join('\n');
       }
       bindOnlineCallbacks() {
