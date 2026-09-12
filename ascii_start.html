@@ -3750,7 +3750,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         if(m.term!==this.term)return;
         // Only the current authority can publish room or simulation state.
         if(from===this.hostId){
-          if(m.t==='state'&&ch==='rt'){if(this.game?.isDoubles())this.game.applyD4(m.s);return;}
+          if(m.t==='state'&&(ch==='rt'||ch==='ctrl')){if(this.game?.isDoubles())this.game.applyD4(m.s);return;}
           if(ch==='ctrl'){
             if(m.t==='heartbeat'){this.lastAuthorityAt=performance.now();this.sendHost({t:'heartbeat_ack',serial:m.serial});return;}
             if(m.t==='roster'){if(this.applyRoster(m.roster)){this.saveRecovery();this.emit();}return;}
@@ -4036,10 +4036,10 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         if(this.role==='host'&&[...this.nodes.values()].some(n=>n.id!==this.localId&&n.count>0&&n.connected))await this.handoff(null,true);
         if(this.role==='client')this.sendHost({t:'leave'});this.close(false);this.game?.clearD4Preview();this.game?.emitUi();
       }
-      sendState(s){if(this.role!=='host')return;const started=performance.now(),now=started;for(const [id,l] of this.links){const n=this.nodes.get(id);if(!n?.synced||!n.connected||!l.authed||!l.connected)continue;
-          const hz=n.count===0?20:now<l.lowRateUntil?30:60;if(now-l.lastStateAt<1000/hz-2)continue;
+      sendState(s){if(this.role!=='host')return;const started=performance.now(),now=started;for(const [id,l] of this.links){const n=this.nodes.get(id);if(!n?.synced||!n.connected||!l.authed||!l.ctrl?.open&&!l.rt?.open)continue;
+          const realtime=!!l.rt?.open,hz=!realtime?20:n.count===0?20:now<l.lowRateUntil?30:60;if(now-l.lastStateAt<1000/hz-2)continue;
           const live={...s,aux:{...s.aux,brains:undefined,tactics:undefined,teamwork:undefined}};
-          if(this.sendTo(l,{t:'state',s:live},true)){l.lastStateAt=now;l.sentStates++;this.metrics.sendBacklog=Math.max(this.metrics.sendBacklog,l.rt?.dataChannel?.bufferedAmount||0);}}this.metrics.hostCompute=performance.now()-started;}
+          if(this.sendTo(l,{t:'state',s:live},realtime)){l.lastStateAt=now;l.sentStates++;this.metrics.sendBacklog=Math.max(this.metrics.sendBacklog,l.rt?.dataChannel?.bufferedAmount||0);}}this.metrics.hostCompute=performance.now()-started;}
       saveRecovery(){try{sessionStorage.setItem('pong84.teams.recovery',JSON.stringify({rid:this.id,pid:this.localId,token:this.token,code:this.code,namespace:this.options.namespace}));}catch{}}
       loadRecovery(rid=null,code=null){let d;try{d=safeParseJSON(sessionStorage.getItem('pong84.teams.recovery'),null);}catch{}return d&&isId(d.token)&&(rid&&d.rid===rid||code&&d.code===code&&d.namespace===this.options.namespace)?d:null;}
       forgetRecovery(){try{sessionStorage.removeItem('pong84.teams.recovery');}catch{}this.resumeSaved=null;this.token='';this.notice='已清除本标签页的恢复身份。';this.emit();}
