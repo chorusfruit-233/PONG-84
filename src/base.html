@@ -356,15 +356,15 @@ html.local-immersive body{position:fixed;top:var(--immersive-scroll-top,0px);lef
         <p id="menuSub" class="muted">选择玩法。你的画面，你的节奏。</p>
         <div class="section"><div class="section-title">游戏模式</div>
           <div id="modeSelect" class="mode-grid">
-            <button class="choice mode-card selected" data-setting="mode" data-value="ai" type="button"><span class="mode-no">01</span><strong>人机对战</strong><small>独自练习 · 电脑无增益</small></button>
+            <button class="choice mode-card selected" data-setting="mode" data-value="ai" type="button"><span class="mode-no">01</span><strong>人机对战</strong><small>五档难度 · 挑战半神</small></button>
             <button class="choice mode-card" data-setting="mode" data-value="pvp" type="button"><span class="mode-no">02</span><strong>同屏双人</strong><small>共享键盘 · 并肩对战</small></button>
             <button class="choice mode-card" data-setting="mode" data-value="timer" type="button"><span class="mode-no">03</span><strong>双人计时</strong><small>限时回合 · 分高者胜</small></button>
             <button class="choice mode-card" data-setting="mode" data-value="online" type="button"><span class="mode-no">04</span><strong>联机对战</strong><small>两台设备 · 同场对决</small></button>
           </div>
         </div>
         <div id="difficultySection" class="section"><div class="section-title">电脑难度</div><div class="select-row compact">
-          <button class="choice" data-setting="difficulty" data-value="easy" type="button">简单</button><button class="choice selected" data-setting="difficulty" data-value="normal" type="button">普通</button><button class="choice" data-setting="difficulty" data-value="hard" type="button">困难</button><button class="choice" data-setting="difficulty" data-value="hell" type="button">地狱</button>
-        </div></div>
+          <button class="choice" data-setting="difficulty" data-value="easy" type="button">简单</button><button class="choice selected" data-setting="difficulty" data-value="normal" type="button">普通</button><button class="choice" data-setting="difficulty" data-value="hard" type="button">困难</button><button class="choice" data-setting="difficulty" data-value="hell" type="button">地狱</button><button class="choice" data-setting="difficulty" data-value="demigod" type="button" title="精确预判 · 强攻 · 默认移速上限">半神</button>
+        </div><p id="difficultyAdvice" class="small-note"></p></div>
         <div id="scoreSection" class="section"><label class="section-title" for="customScore">目标比分</label><div class="select-row compact">
           <button class="choice" data-setting="score" data-value="5" type="button">5</button><button class="choice" data-setting="score" data-value="7" type="button">7</button><button class="choice selected" data-setting="score" data-value="11" type="button">11</button><button class="choice" data-setting="score" data-value="15" type="button">15</button><button class="choice" data-setting="score" data-value="21" type="button">21</button><input id="customScore" class="score-input" type="number" inputmode="numeric" min="1" max="99" placeholder="自定" aria-label="自定义目标比分，1 至 99">
         </div></div>
@@ -477,7 +477,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         <div id="themeSection" class="section"><div class="section-title">球场颜色</div><div class="select-row"><button class="choice selected" data-setting="theme" data-value="green" type="button">绿色</button><button class="choice" data-setting="theme" data-value="amber" type="button">琥珀</button><button class="choice" data-setting="theme" data-value="white" type="button">白色</button><button class="choice" data-setting="theme" data-value="blue" type="button">冰蓝</button></div></div>
         <pre id="renderStats" class="stats-report">开始对局后显示本机数据。</pre><p class="small-note">“脚本耗时”不含浏览器排版与绘制耗时；刷新率为脚本提交次数，不是显示器实测帧率。</p>
       </div></details>
-      <details class="settings-details" id="helpPanel"><summary>操作与功能球<span>首次游玩</span></summary><div class="details-body"><dl class="key-guide"><div><dt><kbd>W</kbd> <kbd>S</kbd></dt><dd>左拍 / 联机时自己的球拍</dd></div><div><dt><kbd>↑</kbd> <kbd>↓</kbd></dt><dd>右拍 / 人机时也控制左拍</dd></div><div><dt><kbd>空格</kbd> <kbd>回车</kbd></dt><dd>人机 / 联机：自己发球；同屏：分别对应左 / 右</dd></div><div><dt><kbd>P</kbd> <kbd>R</kbd> <kbd>F</kbd></dt><dd>暂停 / 切换渲染 / 原生全屏</dd></div></dl><p class="small-note">原生全屏时球场以 16:9 等比放大并居中，空余区域留黑边；画面不拉伸、不裁切。鼠标移动或轻触右上角“⋯”显示控制栏，F 或 Esc 退出。ASCII 的控制入口在右下角。</p><p class="small-note">触屏上下拖动，松手发球。同屏双人各用半边球场；触控中断不会自动发球。</p><div class="legend"><span><b>@</b> 常规</span><span><b>*</b> 加速</span><span><b>o</b> 减速</span><span><b>O</b> 大球</span><span><b>.</b> 小球</span><span><b>#</b> 球拍 / 长拍</span><span><b>~</b> 变轨</span><span><b>%</b> 旋转</span></div><p class="small-note">连得 3 分可获得一次护盾。人机模式仅玩家可获增益，电脑不能获得长拍、护盾或强化回球。</p></div></details>
+      <details class="settings-details" id="helpPanel"><summary>操作与功能球<span>首次游玩</span></summary><div class="details-body"><dl class="key-guide"><div><dt><kbd>W</kbd> <kbd>S</kbd></dt><dd>左拍 / 联机时自己的球拍</dd></div><div><dt><kbd>↑</kbd> <kbd>↓</kbd></dt><dd>右拍 / 人机时也控制左拍</dd></div><div><dt><kbd>空格</kbd> <kbd>回车</kbd></dt><dd>人机 / 联机：自己发球；同屏：分别对应左 / 右</dd></div><div><dt><kbd>P</kbd> <kbd>R</kbd> <kbd>F</kbd></dt><dd>暂停 / 切换渲染 / 原生全屏</dd></div></dl><p class="small-note">原生全屏时球场以 16:9 等比放大并居中，空余区域留黑边；画面不拉伸、不裁切。鼠标移动或轻触右上角“⋯”显示控制栏，F 或 Esc 退出。ASCII 的控制入口在右下角。</p><p class="small-note">触屏上下拖动，松手发球。同屏双人各用半边球场；触控中断不会自动发球。</p><div class="legend"><span><b>@</b> 常规</span><span><b>*</b> 加速</span><span><b>o</b> 减速</span><span><b>O</b> 大球</span><span><b>.</b> 小球</span><span><b>#</b> 球拍 / 长拍</span><span><b>~</b> 变轨</span><span><b>%</b> 旋转</span></div><p class="small-note">连得 3 分可获得一次护盾。人机的简单至地狱难度仅玩家可获增益；半神与玩家共享长拍、护盾和强化回球规则，精确预判但移速仍受默认上限约束。</p></div></details>
       <div class="console-bottom">无内置统计 · 无账号 · 单文件运行<br><span>公网联机可能需要 STUN / TURN；请保持页面在前台。</span></div>
     </aside>
   </section>
@@ -520,7 +520,8 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       easy:   { label:'简单', aiSpeed:165, reaction:5.8, deadZone:18, predict:0.10, errorChance:0.22, errorTime:[.34,.70], paddleHeight:132 },
       normal: { label:'普通', aiSpeed:270, reaction:8.8, deadZone:12, predict:0.28, errorChance:0.12, errorTime:[.25,.55], paddleHeight:110 },
       hard:   { label:'困难', aiSpeed:375, reaction:12.5, deadZone:8, predict:0.50, errorChance:0.055, errorTime:[.18,.38], paddleHeight:94 },
-      hell:   { label:'地狱', aiSpeed:485, reaction:17.0, deadZone:5, predict:0.78, errorChance:0.018, errorTime:[.12,.25], paddleHeight:78 }
+      hell:   { label:'地狱', aiSpeed:485, reaction:17.0, deadZone:5, predict:0.78, errorChance:0.018, errorTime:[.12,.25], paddleHeight:78 },
+      demigod:{ label:'半神', aiSpeed:PC_PADDLE_SPEED, paddleHeight:104 }
     });
 
     const POWERUPS = Object.freeze({
@@ -1340,7 +1341,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         else if(g.curveRemaining>0)status='~ CURVE SHOT';
         if(g.isTimerMode())status+=' / TIME '+formatTime(g.match.remaining);
         if(g.match.leftShield)status+=' / L SHIELD';
-        if(g.match.rightShield&&g.settings.mode!=='ai')status+=' / R SHIELD';
+        if(g.match.rightShield&&!g.isRestrictedAI())status+=' / R SHIELD';
         this.center(this.rows-1,' '+status.slice(0,this.cols-6)+' ');
         const paddles=[g.left,g.right];
         for(let i=0;i<2;i++) {
@@ -1587,7 +1588,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
           this.rounded(c,x-4,y-5,w+8,h+10,5);c.stroke();c.setLineDash([]);
         }
         const shield=side==='left'?g.match.leftShield:g.match.rightShield;
-        if(shield&&(side!=='right'||g.settings.mode!=='ai')){
+        if(shield&&(side!=='right'||!g.isRestrictedAI())){
           const sx=side==='left'?15:WORLD.width-15;
           this.glow(c,color,sx,WORLD.height/2,36,WORLD.height*1.4,.23);
           c.strokeStyle=color;c.lineWidth=1.1;c.globalAlpha=.5;c.setLineDash([8,5]);c.beginPath();
@@ -1795,6 +1796,15 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         this.loop = this.loop.bind(this);
       }
 
+      isDemigod() { return this.settings.mode==='ai' && this.settings.difficulty==='demigod'; }
+      isRestrictedAI() { return this.settings.mode==='ai' && !this.isDemigod(); }
+      physicsRandom() {
+        if(!this.isDemigod())return Math.random();
+        // Match-local RNG lets the oracle copy future physics without consuming it.
+        this.demigodRng=(Math.imul(this.demigodRng??1,1664525)+1013904223)>>>0;
+        return this.demigodRng/4294967296;
+      }
+      physicsRange(lo,hi) { return lo+(hi-lo)*this.physicsRandom(); }
       isTimerMode() { return this.settings.mode === 'timer'; }
       isOnline() { return this.settings.mode === 'online'; }
       isHost() { return this.isOnline() && this.online.role === 'host'; }
@@ -1895,7 +1905,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         this.right.height = this.right.baseHeight = rightHeight;
         this.right.speed = this.settings.mode === 'ai' ? d.aiSpeed : PC_PADDLE_SPEED;
         this.left.speed = PC_PADDLE_SPEED;
-        if (this.settings.mode === 'ai') this.match.rightShield = false;
+        if (this.isRestrictedAI()) this.match.rightShield = false;
         this.ball.baseSpeed = BALL_TUNING.baseSpeed * this.cheatMul;
         this.ball.maxSpeed = BALL_TUNING.maxSpeed * this.cheatMul;
       }
@@ -1904,6 +1914,8 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       emitToast(name, visible) { if (this.onToast) this.onToast(name, visible); }
 
       resetMatch() {
+        if(this.isDemigod())this.demigodRng=(Math.random()*4294967296)>>>0;
+        this.demigodBrain=null;
         this.match = {
           leftScore:0, rightScore:0, leftStreak:0, rightStreak:0,
           leftShield:false, rightShield:false,
@@ -2345,7 +2357,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         const overlapY = b.y + b.radius >= paddle.y && b.y - b.radius <= paddle.y + paddle.height;
         if (!overlapX || !overlapY) return false;
 
-        const aiReturn = this.settings.mode === 'ai' && !isLeft;
+        const aiReturn = this.isRestrictedAI() && !isLeft;
         const hitPos = clamp((b.y - (paddle.y + paddle.height/2)) / (paddle.height/2), -1, 1);
         const angle = hitPos * (Math.PI / 3);
         b.rallySpeed = Math.min((b.rallySpeed || b.baseSpeed) + (aiReturn ? 0 : BALL_TUNING.hitAcceleration), b.maxSpeed);
@@ -2372,15 +2384,15 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       }
 
       scorePoint(side) {
-        // Defensive gate: a CPU shield can neither be earned nor consume a player's point.
-        if (this.settings.mode === 'ai') this.match.rightShield = false;
+        // Legacy difficulties cannot earn shields; Demigod uses the human rules.
+        if (this.isRestrictedAI()) this.match.rightShield = false;
         if (side === 'right') {
           if (this.match.leftShield) {
             this.match.leftShield = false; this.match.leftStreak = 0; this.audio.shieldBreak();
             this.respawnRemaining = .45; this.nextServeDir = 1; this.emitUi(); return;
           }
           this.match.rightScore++; this.match.leftStreak = 0; this.match.rightStreak++;
-          if (this.settings.mode !== 'ai' && this.match.rightStreak >= 3 && !this.match.rightShield) {
+          if (!this.isRestrictedAI() && this.match.rightStreak >= 3 && !this.match.rightShield) {
             this.match.rightShield = true; this.match.rightStreak = 0; this.audio.shield();
           }
           this.audio.lose();
@@ -2416,15 +2428,16 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         if (this.effectCooldown <= 0) this.spawnEffect();
       }
 
-      spawnEffect(type=choice(Object.keys(POWERUPS).filter(key=>key!=='multi'))) {
+      spawnEffect(type) {
+        if(type===undefined){const types=Object.keys(POWERUPS).filter(key=>key!=='multi');type=types[Math.floor(this.physicsRandom()*types.length)];}
         if(type==='multi')return false;
         const meta = POWERUPS[type];
         if (!meta) return false;
         if (this.effect) this.clearEffect(false);
         this.effect = { type, remaining:meta.duration, applied:true };
         if (type === 'long') {
-          // Human-only in AI mode, including while the player's cheat is active.
-          const target = this.settings.mode === 'ai' ? 'left' : (this.cheat ? 'right' : (Math.random()<.5 ? 'left' : 'right'));
+          // Human-only for legacy AI difficulties; Demigod has equal eligibility.
+          const target = this.isRestrictedAI() ? 'left' : (this.cheat ? 'right' : (this.physicsRandom()<.5 ? 'left' : 'right'));
           this.effect.target = target;
           const paddle = target === 'left' ? this.left : this.right;
           if (!(target === 'left' && this.cheat)) paddle.height = Math.min(WORLD.height, paddle.baseHeight * 1.5);
@@ -2438,7 +2451,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
 
       syncBallEffect() {
         const b = this.ball;
-        const aiMode = this.settings.mode === 'ai';
+        const aiMode = this.isRestrictedAI();
         const type = this.effect ? this.effect.type : null;
         let applied = !!this.effect;
         if (aiMode && type) {
@@ -2467,7 +2480,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         if (!this.effect) return;
         const was = this.effect.type;
         this.effect = null;
-        this.effectCooldown = randomRange(EFFECT_TIMING.gapMin, EFFECT_TIMING.gapMax);
+        this.effectCooldown = this.physicsRange(EFFECT_TIMING.gapMin, EFFECT_TIMING.gapMax);
         if (was === 'long') {
           this.left.height = this.cheat ? WORLD.height : this.left.baseHeight;
           this.right.height = this.right.baseHeight;
@@ -2486,11 +2499,11 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       }
 
       tryStartCurve(isLeft) {
-        if (this.settings.mode === 'ai' && (!isLeft || this.ball.vx <= 0)) return;
+        if (this.isRestrictedAI() && (!isLeft || this.ball.vx <= 0)) return;
         if (this.curveRemaining > 0) return;
-        if (Math.random() < CURVE_CHANCE) {
-          this.curveRemaining = randomRange(2.8, 5.2);
-          this.curveChangeRemaining = randomRange(.32, .62);
+        if (this.physicsRandom() < CURVE_CHANCE) {
+          this.curveRemaining = this.physicsRange(2.8, 5.2);
+          this.curveChangeRemaining = this.physicsRange(.32, .62);
           this.toastTimers.curve = 1.25;
           this.emitToast('curve', true);
           this.audio.curve();
@@ -2506,15 +2519,15 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
 
       updateCurve(dt) {
         if (this.curveRemaining <= 0) return;
-        if (this.settings.mode === 'ai' && this.ball.vx < 0) { this.clearCurve(); return; }
+        if (this.isRestrictedAI() && this.ball.vx < 0) { this.clearCurve(); return; }
         this.curveRemaining -= dt;
         this.curveChangeRemaining -= dt;
         if (this.curveChangeRemaining <= 0) {
-          this.ball.vy += randomRange(-115,115);
-          this.ball.vx *= randomRange(.93,1.08);
+          this.ball.vy += this.physicsRange(-115,115);
+          this.ball.vx *= this.physicsRange(.93,1.08);
           const mag = Math.hypot(this.ball.vx,this.ball.vy);
           if (mag > this.ball.maxSpeed) { const k=this.ball.maxSpeed/mag; this.ball.vx*=k; this.ball.vy*=k; }
-          this.curveChangeRemaining = randomRange(.30,.56);
+          this.curveChangeRemaining = this.physicsRange(.30,.56);
         }
         if (this.curveRemaining <= 0) this.emitToast('curve', false);
       }
@@ -3087,6 +3100,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       updateMenuSections() {
         const mode=this.game.settings.mode;
         this.difficultySection.classList.toggle('hidden-section', mode!=='ai');
+        this.setText('difficultyAdvice',this.game.isDemigod()?'半神：精确预测旋转与变轨，强攻选点、对等增益；唯一行动限制为默认移速上限 1100。':'简单至地狱：电脑无增益，难度影响移速、预判与失误。');
         this.scoreSection.classList.toggle('hidden-section', mode==='timer');
         this.timeSection.classList.toggle('hidden-section', mode!=='timer');
         this.onlineSection.classList.toggle('hidden-section', mode!=='online');
@@ -3298,7 +3312,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         this.setText('fsMatchMeta',g.isTimerMode()?formatTime(g.match.remaining):'先得 '+g.settings.score+' 分');
         let status=this.status.textContent||'';
         if(g.match.leftShield)status+=' · 左方护盾';
-        if(g.match.rightShield&&g.settings.mode!=='ai')status+=' · 右方护盾';
+        if(g.match.rightShield&&!g.isRestrictedAI())status+=' · 右方护盾';
         if(g.isOnline()&&this.online.connected)status+=' · '+Math.round(this.online.rtt||0)+' ms';
         this.setText('fsStatus',status);
         this.setText('fsRenderBtn',ascii?'精致图形 R':'ASCII R');
@@ -3355,7 +3369,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         const hasEffect=g.effect?POWERUPS[g.effect.type].label+(g.effect.applied===false?' · 待生效':''):'常规球';
         this.setText('liveEffect',g.curveRemaining>0?'变轨球':hasEffect);
         this.setText('liveNetwork',g.isOnline()?(this.online.connected?(this.online.route==='relay'?'TURN 中继':'P2P')+' · '+Math.round(this.online.rtt||0)+' ms':'等待连接'):'本地对局');
-        this.setText('playAdvice',g.settings.mode==='ai'?'电脑不能获得增益。移动到合适的位置，接住下一球。':g.isOnline()?'双方各自选择画面。联机时请保持游戏页面在前台。':'左方 W/S，右方方向键；触屏时各使用半边球场。');
+        this.setText('playAdvice',g.settings.mode==='ai'?(g.isDemigod()?'半神：精确预判、强攻选点、对等增益；移速上限 1100，超出可达范围仍会失分。':'电脑不能获得增益。移动到合适的位置，接住下一球。'):g.isOnline()?'双方各自选择画面。联机时请保持游戏页面在前台。':'左方 W/S，右方方向键；触屏时各使用半边球场。');
         this.setText('soundBtn',g.settings.sound?'声音开':'声音关');
         document.getElementById('soundBtn').setAttribute('aria-pressed',String(g.settings.sound));
         this.syncImmersiveUi();
@@ -3394,7 +3408,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         this.scoreLeft.classList.toggle('active',m.leftScore>m.rightScore);
         this.scoreRight.classList.toggle('active',m.rightScore>m.leftScore);
         this.shieldLeft.classList.toggle('active',m.leftShield);
-        this.shieldRight.classList.toggle('active',m.rightShield && mode !== 'ai');
+        this.shieldRight.classList.toggle('active',m.rightShield && !g.isRestrictedAI());
         this.timer.classList.toggle('show',g.isTimerMode());
         this.timer.classList.toggle('urgent',g.isTimerMode() && m.remaining<=10);
         if (g.isTimerMode()) this.timer.textContent=formatTime(m.remaining);

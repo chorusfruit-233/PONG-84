@@ -1,0 +1,37 @@
+{
+  "method": "Node production physics and controller; no browser/device acceptance",
+  "checks": [
+    {
+      "name": "Difficulty is selectable, persists through settings validation, and uses default speed",
+      "passed": true
+    },
+    {
+      "name": "Oracle matches live fixed-step walls, spin, curves, expiry and newly spawned effects",
+      "passed": true
+    },
+    {
+      "name": "Every reachable deterministic test shot is defended without exceeding the speed cap",
+      "passed": true
+    },
+    {
+      "name": "Unreachable shots can beat Demigod; no teleport, collision bypass or score suppression",
+      "passed": true
+    },
+    {
+      "name": "Team attack search is reused and chooses legal non-central offensive contacts",
+      "passed": true
+    },
+    {
+      "name": "Demigod has shared benefits; legacy difficulties retain restricted returns and shields",
+      "passed": true
+    },
+    {
+      "name": "Invalid dt is ignored, instant reversal is allowed, and prediction never consumes global RNG",
+      "passed": true
+    },
+    {
+      "name": "Continuous production steps, serves, scoring and effect cycles stay finite",
+      "passed": true
+    }
+  ]
+}

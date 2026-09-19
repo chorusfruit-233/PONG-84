@@ -26,7 +26,7 @@ replace("if(g.isTimerMode())status+=' / TIME '+formatTime(g.match.remaining);", 
 replace("const paddles=[g.left,g.right];\n        for(let i=0;i<2;i++) {", "const paddles=g.getPaddles();\n        if(g.isDoubles()&&g.room.formation==='split'){const mid=this.wy(WORLD.height/2);for(let x=4;x<this.cols-4;x+=5)this.put(x,mid,'.');}\n        for(let i=0;i<paddles.length;i++) {")
 replace("for(let y=y0;y<=y1;y++)this.put(x0,y,'#'.repeat(x1-x0+1));", "for(let y=y0;y<=y1;y++)this.put(x0,y,'#'.repeat(x1-x0+1));\n          if(g.isDoubles())this.put(p.side==='left'?x1+2:x0-5,Math.max(1,y0-1),(g.isLocalSeat(p.id)?'>':g.isBotSeat(p.id)?'~':' ')+p.id);")
 replace("for(const side of ['left','right']){\n          const d=g[side],x=d.x+d.width/2,y=d.y+d.height/2,dir=side==='left'?1:-1;", "for(const d of g.getPaddles()){\n          const side=d.side||(d===g.left?'left':'right'),x=d.x+d.width/2,y=d.y+d.height/2,dir=side==='left'?1:-1;")
-replace("if(shield&&(side!=='right'||g.settings.mode!=='ai')){", "if(shield&&(side!=='right'||g.settings.mode!=='ai')&&(!g.isDoubles()||d.id.endsWith('1'))){")
+replace("if(shield&&(side!=='right'||!g.isRestrictedAI())){", "if(shield&&(side!=='right'||!g.isRestrictedAI())&&(!g.isDoubles()||d.id.endsWith('1'))){")
 replace("this.drawScore(g,p);this.drawLighting(g,p);this.drawPaddle(g,p,g.left,'left');this.drawPaddle(g,p,g.right,'right');", """this.drawScore(g,p);this.drawLighting(g,p);
         if(g.isDoubles()&&g.room.formation==='split'){
           c.save();c.strokeStyle='#a7d8e41a';c.lineWidth=.6;c.setLineDash([4,14]);c.beginPath();c.moveTo(58,H/2);c.lineTo(W-58,H/2);c.stroke();c.setLineDash([]);c.restore();
@@ -49,9 +49,9 @@ replace("const c=this.ctx,b=g.ball,color=this.ballColor(g,p),ultra=g.settings.gr
 replace("        if(!this.reducedMotion&&g.trail.length>1&&!g.serveSide){", "        if(b===g.ball&&!this.reducedMotion&&g.trail.length>1&&!g.serveSide){", 1)
 replace("        if(g.respawnRemaining<=0)for(const b of (g.extraBalls||[]))this.put(this.wx(b.x),this.wy(b.y),'@');", "        if(g.respawnRemaining<=0)for(const b of (g.extraBalls||[]))this.put(this.wx(b.x),this.wy(b.y),'@');")
 # Inject new module code immediately before boot declarations, after original classes.
-insert='\n'.join(W.joinpath(f).read_text(encoding='utf-8') for f in ['room.js','game_d4.js','ui_d4.js'])
+insert='\n'.join(W.joinpath(f).read_text(encoding='utf-8') for f in ['room.js','game_d4.js','game_demigod.js','ui_d4.js'])
 replace("    const canvas=document.getElementById('gameCanvas');",insert+"\n    const canvas=document.getElementById('gameCanvas');",1)
-replace('const game=new PongGame(canvas,ctx,audio,input,online);\n    const ui=new UIController(game,online,audio);', 'const doubles=new DoublesRoom();\n    const game=new DoublesGame(canvas,ctx,audio,input,online,doubles);\n    const ui=new DoublesUI(game,online,audio);')
+replace('const game=new PongGame(canvas,ctx,audio,input,online);\n    const ui=new UIController(game,online,audio);', 'const doubles=new DoublesRoom();\n    const game=new DemigodGame(canvas,ctx,audio,input,online,doubles);\n    const ui=new DoublesUI(game,online,audio);')
 replace("if(game.isClient() && online.connected)online.sendRealtime", "if(game.isDoubles()){game.sendD4Input(true);return;}\n      if(game.isClient() && online.connected)online.sendRealtime")
 replace("window.addEventListener('pagehide',()=>online.cleanup());", "window.addEventListener('pagehide',()=>{online.cleanup();doubles.close(false);});\n    document.addEventListener('visibilitychange',()=>doubles.presence(!document.hidden));")
 replace("version:'4.1.0'", "version:'6.3.0'")
