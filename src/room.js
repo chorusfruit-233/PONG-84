@@ -150,7 +150,7 @@
         const current=()=>epoch===this.epoch&&!this.closed;
         peer.on('connection',c=>{if(current()&&this.role==='host')this.acceptCloud(c);else this.rejectConnection(c,'此入口已不是房主，请使用房间界面显示的新房间码。');});
         peer.on('disconnected',()=>{if(!current())return;this.notice='云信令暂时离线；已建立的主链路和备用链路不因此关闭。';this.emit();setTimeout(()=>{if(current()&&!peer.destroyed&&peer.disconnected)try{peer.reconnect();}catch{}},1400);});
-        peer.on('error',e=>{if(current()&&e?.type!=='unavailable-id'){this.notice=new OnlinePeer().cloudError(e);this.emit();}});
+        peer.on('error',e=>{if(current()&&e?.type!=='unavailable-id'){this.notice=new OnlinePeer().cloudError(e);this.onError?.(this.notice);this.emit();}});
       }
       async publishCloudEntry(){
         const epoch=this.epoch;await loadPeerLibrary();if(epoch!==this.epoch||this.role!=='host')return;
@@ -169,7 +169,7 @@
         l.onOpen=()=>{if(!current())return;if(l.kind==='mesh')this.sendTo(l,{t:'mesh_hello',ticket:l.ticket});else if(l.kind==='upstream')this.sendHello(l);this.reportMesh();};
         l.onMessage=(m,ch)=>{if(current())this.receive(l,m,ch);};
         l.onClose=reason=>{if(current())this.linkLost(l.pid,reason);};
-        l.onConnectionState=(s,detail)=>{if(!current())return;if(detail)this.notice=detail;if(s==='failed'&&l.authed)this.linkLost(l.pid,detail||'链路失败');this.emit();};
+        l.onConnectionState=(s,detail)=>{if(!current())return;if(detail)this.notice=detail;if(['failed','cloud-error','channel-error'].includes(s))this.onError?.(detail||'连接失败，请检查网络后重试。');if(s==='failed'&&l.authed)this.linkLost(l.pid,detail||'链路失败');this.emit();};
         l.onStats=()=>{if(!current())return;const node=this.nodes.get(l.pid);if(node){node.rtt=Math.round(l.rtt);node.route=l.route;this.metrics.iceRtt=node.rtt;}};
         return l;
       }
@@ -250,11 +250,11 @@
       }
       receive(l,raw,ch){
         if(raw&&typeof raw==='object'&&raw.t==='d4_reject'&&l.kind==='upstream'&&ch==='ctrl'){
-          l.rejected=String(raw.reason||'房主拒绝连接，请确认所有设备使用同一版本。').slice(0,200);this.notice=l.rejected;this.emit();return;
+          l.rejected=String(raw.reason||'房主拒绝连接，请确认所有设备使用同一版本。').slice(0,200);this.notice=l.rejected;this.onError?.(this.notice);this.emit();return;
         }
         if(!raw||typeof raw!=='object'||raw.v!==D4.version||typeof raw.t!=='string'||!raw.t.startsWith('d4_'))return;
         const m={...raw,t:raw.t.slice(3)};let from=l.pid;
-        if(m.t==='reject'&&l.kind==='upstream'){l.rejected=String(m.reason||'房主拒绝连接。').slice(0,200);this.notice=l.rejected;this.emit();return;}
+        if(m.t==='reject'&&l.kind==='upstream'){l.rejected=String(m.reason||'房主拒绝连接。').slice(0,200);this.notice=l.rejected;this.onError?.(this.notice);this.emit();return;}
         if(m.t==='hello'&&this.role==='host'&&l.kind==='downstream'&&ch==='ctrl'){this.acceptHello(l,m);return;}
         if(m.t==='welcome'&&l.kind==='upstream'&&!l.authed&&ch==='ctrl'){
           if(!isId(m.rid)||!ROOM_NODES.includes(m.id)||!ROOM_NODES.includes(m.hostId)||!isId(m.token))return;
@@ -276,12 +276,12 @@
           if(ch==='ctrl'){
             if(m.t==='heartbeat'){this.lastAuthorityAt=performance.now();this.sendHost({t:'heartbeat_ack',serial:m.serial});return;}
             if(m.t==='roster'){if(this.applyRoster(m.roster)){this.saveRecovery();this.emit();}return;}
-            if(m.t==='notice'){this.notice=String(m.text||'').slice(0,260);this.emit();return;}
+            if(m.t==='notice'){this.notice=String(m.text||'').slice(0,260);this.onError?.(this.notice);this.emit();return;}
             if(m.t==='checkpoint'){this.receiveCheckpoint(from,m);return;}
             if(m.t==='checkpoint_commit'){this.commitCheckpoint(m);return;}
             if(m.t==='secrets'&&this.localNode?.count>0){for(const [id,t] of Object.entries(m.tokens||{}))if(this.nodes.has(id)&&isId(t))this.nodes.get(id).token=t;return;}
-            if(m.t==='mesh_prepare'){this.prepareMesh(m).catch(e=>{this.meshError=e.message;this.emit();});return;}
-            if(m.t==='mesh_signal'){this.meshSignal(m).catch(e=>{this.meshError=e.message;this.emit();});return;}
+            if(m.t==='mesh_prepare'){this.prepareMesh(m).catch(e=>{this.meshError=e.message;this.onError?.('备用连接失败：'+e.message);this.emit();});return;}
+            if(m.t==='mesh_signal'){this.meshSignal(m).catch(e=>{this.meshError=e.message;this.onError?.('备用连接失败：'+e.message);this.emit();});return;}
             if(m.t==='prepare'&&isId(m.barrier)&&validD4Snapshot(m.s)){this.clientBarrier=m.barrier;this.game.applyD4(m.s,true);this.status='arming';this.sendHost({t:'loaded',barrier:m.barrier,matchId:m.s.matchId});this.emit();return;}
             if(m.t==='release'&&m.barrier===this.clientBarrier){this.clientBarrier=null;this.status='match';this.game.applyD4(m.s,true);this.emit();return;}
             if(m.t==='freeze'&&validD4Snapshot(m.s)){this.clientBarrier=null;this.status='paused';this.game.applyD4(m.s,true);this.emit();return;}
@@ -420,6 +420,7 @@
       roundBoundary(){if(this.role!=='host')return;let changed=false;for(const p of this.players.values())if(p.pendingReturn){const n=this.nodes.get(p.device);if(n?.connected&&n.visible){p.botActive=false;p.pendingReturn=false;changed=true;}}
         if(changed)this.changed('已在新回合将球拍归还原玩家。');}
       linkLost(id,reason,voluntary=false){
+        if(!voluntary)this.onError?.(reason||'设备连接中断，请检查网络后重新连接。');
         const n=this.nodes.get(id);this.meshReports.get(this.localId)?.delete(id);
         if(this.role==='host'&&n){n.connected=false;n.synced=false;n.ready=false;n.lostAt=performance.now();if(n.count){if(this.aiFill)this.replaceWithBots(id);else if(this.active)this.freeze(n.name+' 掉线。');}
           if(voluntary&&!this.active){for(const [pid,p] of this.players)if(p.device===id)this.players.delete(pid);this.nodes.delete(id);this.voters=this.voters.filter(v=>v!==id);this.pendingCheckpoint=null;this.fillBots();this.clearReady();}
@@ -527,7 +528,7 @@
         if(this.role==='host'){
           for(const n of this.nodes.values()){n.connected=n.id===local||!!this.links.get(n.id)?.authed&&!!this.links.get(n.id)?.connected;n.synced=n.connected;if(!n.connected){n.lostAt=performance.now();this.replaceWithBots(n.id);}}
           this.game?.syncD4Benefits();if(cp.s&&cp.s.phase!==Phase.ENDED)this.autoResumeAt=performance.now()+1200;
-          if(this.transport==='cloud')this.publishCloudEntry().catch(e=>{this.notice='比赛已迁移，但新房间入口创建失败：'+e.message;this.emit();});
+          if(this.transport==='cloud')this.publishCloudEntry().catch(e=>{this.notice='比赛已迁移，但新房间入口创建失败：'+e.message;this.onError?.(this.notice);this.emit();});
           this.broadcast({t:'heartbeat',serial:performance.now()});
         }
         this.notice=planned?'主持权已移交，比分与比赛状态已恢复。':'新房主已接管最近一次多数确认的比赛状态。';this.saveRecovery();this.game?.emitUi();this.emit();

@@ -3,6 +3,7 @@
         super(game,online,audio);this.d4Busy=false;this.d4Error='';this.d4JoinVisible=false;this.d4Response='';this.roomToolsOpen=false;
         const by=id=>document.getElementById(id),r=game.room;
         try{by('d4Name').value=cleanName(localStorage.getItem('pong84.doubles.name')||'玩家');}catch{}
+        r.onError=message=>this.showError(message);
         r.onChange=()=>{this.update();game.requestDraw();};
         const preferences=()=>r.configureTeam({count:Number(by('d4CountSelect').value),name2:by('d4Name2').value,formation:by('d4Formation').value,aiFill:by('d4AI').checked,migration:by('d4Migration').checked});
         by('d4Create').addEventListener('click',()=>this.d4Action(async()=>{preferences();game.phase=Phase.MENU;game.matchId='';this.audio.ensure();
@@ -34,16 +35,16 @@
           this.bindD4File('d4Out'+pid,'d4In'+pid,'d4Copy'+pid,'d4Save'+pid,'d4Import'+pid,'d4File'+pid,()=>`pong84-team-${pid}-invite.txt`);
         }
         this.bindD4File('d4AnswerOutput','d4InviteInput','d4AnswerCopy','d4AnswerSave','d4InviteImport','d4InviteFile',()=>`pong84-team-answer.txt`);
-        by('d4CopyRoom').addEventListener('click',()=>this.d4Action(async()=>{this.d4Error=await copyField(by('d4RoomCode'))?'已复制当前入口短码。':'请选择并复制房间码。';},false));
+        by('d4CopyRoom').addEventListener('click',()=>this.d4Action(async()=>{const ok=await copyField(by('d4RoomCode'));this.d4Error=ok?'已复制当前入口短码。':'请选择并复制房间码。';if(!ok)this.showError('自动复制失败，'+this.d4Error);},false));
         window.addEventListener('keydown',e=>{if(!game.isDoubles()||this.isTypingTarget(e.target)||e.repeat||e.ctrlKey||e.altKey||e.metaKey)return;
           if(e.key==='p'||e.key==='P'){e.preventDefault();game.setPaused(game.phase!==Phase.PAUSED);}if(['w','W','s','S','ArrowUp','ArrowDown'].includes(e.key))game.sendD4Input(true);});
         window.addEventListener('keyup',e=>{if(game.isDoubles()&&['w','W','s','S','ArrowUp','ArrowDown'].includes(e.key))game.sendD4Input(true);});
         this.d4Bound=true;this.update();
       }
       async exitTeamRoom(){return this.d4Action(async()=>{await this.game.room.leaveRoom();this.d4JoinVisible=false;this.d4Response='';this.roomToolsOpen=false;this.menuTitle.textContent='开始一局';});}
-      async d4Action(action,lock=true){if(lock&&this.d4Busy)return;this.d4Error='';if(lock)this.d4Busy=true;this.update();try{await action();}catch(e){this.d4Error=e?.message||'操作失败。';}finally{if(lock)this.d4Busy=false;this.update();}}
+      async d4Action(action,lock=true){if(lock&&this.d4Busy)return;this.d4Error='';if(lock)this.d4Busy=true;this.update();try{await action();}catch(e){this.d4Error=e?.message||'操作失败。';this.showError(this.d4Error);}finally{if(lock)this.d4Busy=false;this.update();}}
       bindD4File(outId,inId,copyId,saveId,importId,fileId,filename){const by=id=>document.getElementById(id);
-        by(copyId).addEventListener('click',()=>this.d4Action(async()=>{this.d4Error=await copyField(by(outId))?'已复制完整连接码。':'请手动复制，或保存文件。';},false));
+        by(copyId).addEventListener('click',()=>this.d4Action(async()=>{const ok=await copyField(by(outId));this.d4Error=ok?'已复制完整连接码。':'请手动复制，或保存文件。';if(!ok)this.showError('自动复制失败，'+this.d4Error);},false));
         by(saveId).addEventListener('click',()=>{if(by(outId).value)downloadText(by(outId).value,filename());});
         by(importId).addEventListener('click',()=>{by(fileId).value='';by(fileId).click();});
         by(fileId).addEventListener('change',()=>this.d4Action(async()=>{const f=by(fileId).files?.[0];if(!f)return;if(f.size>D4.maxSignal)throw new Error('连接码文件不能超过 128 KB。');

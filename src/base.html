@@ -241,6 +241,14 @@
 }
 @media(prefers-reduced-motion:reduce){:root:not(.ascii-mode) .countdown span{animation:none}}
 
+/* Persistent failure feedback stays visible outside panels and in native fullscreen. */
+.failure-notice{position:fixed;z-index:1000;top:max(16px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:min(560px,calc(100% - 24px));box-sizing:border-box;display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border:2px solid #ff8c8c;border-radius:10px;background:#431b24;color:#fff3f3;box-shadow:0 8px 32px #0009;font-size:14px;line-height:1.6;max-height:calc(100dvh - 32px);overflow:auto}
+.failure-notice[hidden]{display:none}
+.failure-notice strong{display:block;font-size:17px;color:#ffb5b5}
+.failure-notice p{margin:4px 0 0;overflow-wrap:anywhere;white-space:pre-wrap}
+.failure-notice>div{flex:1;min-width:0}
+.failure-notice button{flex:none;min-width:44px;min-height:44px;border:1px solid #ff8c8c;background:#631f2d;color:#fff;font-size:14px}
+:root.ascii-mode .failure-notice{border-radius:0;box-shadow:none}
 </style>
 </head>
 <body>
@@ -252,6 +260,10 @@
     <span class="version-tag">双渲染 <b>v4.1</b></span>
   </header>
   <section id="gameShell" class="game-shell" tabindex="-1" aria-label="PONG-84 游戏与控制台">
+    <aside id="failureNotice" class="failure-notice" hidden aria-label="错误提示">
+      <div role="alert" aria-live="assertive" aria-atomic="true"><strong>⚠ 操作未完成</strong><p id="failureMessage"></p></div>
+      <button id="failureDismiss" type="button" aria-label="关闭错误提示">关闭</button>
+    </aside>
     <div class="arena-column">
       <aside id="rotateHint" class="orientation-tip" role="status" aria-live="polite" aria-hidden="true" hidden>
         <span class="orientation-symbol" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="13" y="5" width="14" height="24" rx="3" transform="rotate(65 20 20)"/><path d="M7 15A14 14 0 0 1 31 9m0-5v5h-5M33 25A14 14 0 0 1 9 31m0 5v-5h5"/><path d="M18 25h4" transform="rotate(65 20 20)"/></svg><span class="orientation-ascii">[ &gt; ]</span></span>
@@ -2601,6 +2613,10 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         this.renderModeBtn = document.getElementById('renderModeBtn');
         this.menuFullscreenBtn = document.getElementById('menuFullscreenBtn');
         this.fullscreenTarget = document.getElementById('gameShell');
+        document.getElementById('failureDismiss').addEventListener('click',()=>{
+          document.getElementById('failureNotice').hidden=true;
+          this.fullscreenTarget.focus({preventScroll:true});
+        });
         this.resumeBtn = document.getElementById('resumeBtn');
         this.quitBtn = document.getElementById('quitBtn');
         this.scoreLeft = document.getElementById('scoreLeft');
@@ -2775,8 +2791,9 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         this.net.manualCopyBtn.addEventListener('click',async()=>{
           try {
             const ok=await copyField(this.net.manualOutput);
+            if(!ok)this.showError('自动复制失败，请手动复制连接码或保存为文件。');
             this.net.manualInfo.textContent=ok?'已复制。把完整连接码发给对方，并保持本页打开。':'浏览器未允许自动复制，已选中全文；请手动复制或使用“保存为文件”。';
-          } catch(err){this.net.manualInfo.textContent=err.message;}
+          } catch(err){this.net.manualInfo.textContent=err.message;this.showError(err.message);}
         });
         this.net.manualSaveBtn.addEventListener('click',()=>{
           if(!this.net.manualOutput.value)return;
@@ -2794,7 +2811,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
             unpackSignal(text,this.manualStep==='host-response'?'answer':'offer');
             this.net.manualInput.value=text.trim();
             this.net.manualInfo.textContent='文件已读取，请点击下方确认按钮继续。';
-          } catch(err){if(id===this.networkActionId)this.net.manualInfo.textContent=err.message;}
+          } catch(err){if(id===this.networkActionId){this.net.manualInfo.textContent=err.message;this.showError(err.message);}}
         });
         document.getElementById('createRoomBtn').addEventListener('click',()=>this.createRoom());
         document.getElementById('joinRoomBtn').addEventListener('click',()=>this.joinRoomUi());
@@ -2876,6 +2893,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
           if(role==='host')this.startBtn.scrollIntoView({block:'nearest',behavior:'auto'});
         };
         this.online.onClose=reason=>{
+          this.showError(reason||'连接已断开，请重新连接。');
           this.networkActionId++;this.networkBusy=false;
           if([Phase.PLAYING,Phase.COUNTDOWN].includes(this.game.phase))this.game.endGame(reason || '连接断开',null,true);
           this.onlineUiState='disconnected';this.manualStep='disconnected';
@@ -2898,6 +2916,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
           if(messages[state]) {
             const target=this.transportMode==='manual'?this.net.manualInfo:this.onlineInfo;
             target.textContent=messages[state];
+            if(['channel-error','cloud-error'].includes(state))this.showError(messages[state]);
           }
           this.updateNetworkControls();this.update();
         };
@@ -2927,7 +2946,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         } catch(err) {
           if(id!==this.networkActionId)return;
           this.manualStep='idle';this.net.manualChooser.classList.remove('hidden-section');this.net.manualExchange.classList.add('hidden-section');
-          this.net.manualInfo.textContent='生成失败：'+err.message;
+          this.net.manualInfo.textContent='生成失败：'+err.message;this.showError(this.net.manualInfo.textContent);
         } finally {if(id===this.networkActionId){this.networkBusy=false;this.updateNetworkControls();this.update();}}
       }
       joinManualUi() {
@@ -2959,7 +2978,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
           }
         } catch(err) {
           if(id!==this.networkActionId)return;
-          this.manualStep=step;this.net.manualInfo.textContent='连接码处理失败：'+err.message;
+          this.manualStep=step;this.net.manualInfo.textContent='连接码处理失败：'+err.message;this.showError(this.net.manualInfo.textContent);
           this.net.manualInputGroup.classList.remove('hidden-section');
         } finally {if(id===this.networkActionId){this.networkBusy=false;this.updateNetworkControls();this.update();}}
       }
@@ -2975,7 +2994,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
           this.onlineInfo.textContent='房间已创建。将这 4 位房间码告诉对方；双方信令服务和房间分组必须相同。';
           this.onlineActionBtn.textContent='复制房间码';this.onlineActionBtn.classList.remove('hidden-section');
           this.menuSub.textContent=`云端房间 ${room} · 等待对手加入`;
-        } catch(err) {if(id===this.networkActionId){this.onlineInfo.textContent='创建失败：'+err.message;this.onlineUiState='failed';}}
+        } catch(err) {if(id===this.networkActionId){this.onlineInfo.textContent='创建失败：'+err.message;this.showError(this.onlineInfo.textContent);this.onlineUiState='failed';}}
         finally {if(id===this.networkActionId){this.networkBusy=false;this.updateNetworkControls();this.update();}}
       }
       joinRoomUi() {
@@ -2988,8 +3007,8 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       async onlineAction() {
         if(this.networkBusy)return;
         if(this.onlineUiState==='host-room-ready') {
-          try{const ok=await copyField(this.onlineCode);this.onlineInfo.textContent=ok?'房间码已复制，等待对方加入。':'已选中房间码，请手动复制。';}
-          catch(err){this.onlineInfo.textContent=err.message;}return;
+          try{const ok=await copyField(this.onlineCode);if(!ok)this.showError('自动复制失败，请手动复制房间码。');this.onlineInfo.textContent=ok?'房间码已复制，等待对方加入。':'已选中房间码，请手动复制。';}
+          catch(err){this.onlineInfo.textContent=err.message;this.showError(err.message);}return;
         }
         if(this.onlineUiState!=='join-wait-room')return;
         const id=++this.networkActionId;
@@ -3003,7 +3022,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
           if(id!==this.networkActionId)return;
           this.onlineUiState='join-wait-room';this.onlineCode.readOnly=false;
           this.onlineActionBtn.textContent='重新加入';this.onlineActionBtn.classList.remove('hidden-section');
-          this.onlineInfo.textContent='加入失败：'+err.message;
+          this.onlineInfo.textContent='加入失败：'+err.message;this.showError(this.onlineInfo.textContent);
         } finally {if(id===this.networkActionId){this.networkBusy=false;this.updateNetworkControls();this.update();}}
       }
       showOnlineBox() {
@@ -3098,9 +3117,16 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         return document.fullscreenElement || document.webkitFullscreenElement || null;
       }
 
+      showError(message) {
+        const notice=document.getElementById('failureNotice');
+        const text=String(message||'操作失败，请重试。');
+        if(!notice.hidden&&document.getElementById('failureMessage').textContent===text)return;
+        notice.hidden=false;
+        document.getElementById('failureMessage').textContent=text;
+      }
       showNotice(message) {
         const notice=document.getElementById('inlineNotice');
-        notice.textContent=message;notice.hidden=false;
+        notice.textContent=message;notice.hidden=false;this.showError(message);
       }
       async toggleFullscreen() {
         if(this.fullscreenBusy)return;
