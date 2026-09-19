@@ -60,6 +60,7 @@ replace("network:{transport:ui.transportMode", "doubles:doubles.diagnostics(),\n
 s=s.replace("this.setText('leftName','左队 A');this.setText('rightName','右队 B');", "this.setText('playerLeftName','左队 A');this.setText('playerRightName','右队 B');")
 (ROOT/'index.html').write_text(s,encoding='utf-8')
 ascii_html=s.replace("const bootRender=new URLSearchParams(location.search).get('render');","const bootRender='ascii'; // Independent zero-canvas startup entry.")
+ascii_html=ascii_html.replace('href="manifest.webmanifest"','href="ascii.webmanifest"')
 (ROOT/'ascii_start.html').write_text(ascii_html,encoding='utf-8')
 # extract inline scripts for syntax test (this file has one main and a small boot hint script)
 scripts=re.findall(r'<script[^>]*>([\s\S]*?)</script>',s)

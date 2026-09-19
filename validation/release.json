@@ -1,11 +1,11 @@
 {
   "checks": [
     {
-      "name": "Solo/base source is byte-identical to prior release",
+      "name": "Standalone entry metadata is present",
       "passed": true
     },
     {
-      "name": "ASCII entry differs only by its startup preference",
+      "name": "ASCII entry differs only by its startup preference and manifest",
       "passed": true
     },
     {
@@ -79,5 +79,5 @@
   ],
   "functionalAssertions": 297,
   "networkAcceptance": false,
-  "entrypointSHA256": "8679ab6ed3a2eec2b5c8a1d75261024c3a7d6cd835f94cbadac348f3a07d0a47"
+  "entrypointSHA256": "a72355d2e8d59b547da601dc9efcb6b847251c2d0f6087832fdd69c986e6b3df"
 }

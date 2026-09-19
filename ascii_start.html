@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070b13">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PONG-84">
+<link rel="manifest" href="ascii.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/icon-180.png">
 <meta name="description" content="PONG-84：精致光影球场与独立低开销 ASCII 双渲染，16:9 自适应原生全屏、移动端横屏提示、本地双人、四人团队双打、手动 WebRTC P2P 与云房间联机。">
 <title>PONG-84 · 团队 AI 协同强攻 · 光学球场</title>
 <style>:root{color-scheme:dark;--bg:#111713;--surface:#19201b;--card:#1d251f;--border:#333e35;--text:#ecf0e8;--muted:#a0aea0;--faint:#6f826f;--accent:#c6f18d;--accent-ink:#1b2812;--crt-color:#33ff33;--crt-bg:#051005;--crt-dim:rgba(51,255,51,.24);--crt-glow:transparent;--crt-soft:rgba(51,255,51,.08);--danger:#ffaaa0;--court-reserve:400px;font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
@@ -249,6 +255,26 @@
 .failure-notice>div{flex:1;min-width:0}
 .failure-notice button{flex:none;min-width:44px;min-height:44px;border:1px solid #ff8c8c;background:#631f2d;color:#fff;font-size:14px}
 :root.ascii-mode .failure-notice{border-radius:0;box-shadow:none}
+/* Local immersive mode uses the available viewport; browser chrome stays browser-owned. */
+html.local-immersive,html.local-immersive body{overflow:hidden;overscroll-behavior:none}
+html.local-immersive body{position:fixed;top:var(--immersive-scroll-top,0px);left:0;right:0}
+#gameShell.local-immersive{height:100vh!important;height:100dvh!important}
+.immersive-exit{display:none}
+#gameShell.immersive .immersive-exit{display:block;position:absolute;z-index:50;top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));min-width:44px;min-height:44px;padding:8px 12px;border:1px solid #7094a9;background:#0c1a27ee;color:#fff;border-radius:8px}
+#gameShell.immersive .orientation-tip{top:max(60px,calc(env(safe-area-inset-top) + 52px))}
+#gameShell.immersive.portrait-hint-visible.immersive-menu .console-column{top:calc(174px + env(safe-area-inset-top));max-height:calc(100% - 194px - env(safe-area-inset-top) - env(safe-area-inset-bottom))!important}
+#gameShell.immersive .console-column{max-width:calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right) - 24px)}
+#gameShell.immersive .inline-notice{bottom:max(76px,calc(env(safe-area-inset-bottom) + 64px));max-height:25%;overflow:auto}
+.install-help{margin:10px 0;padding:10px 12px;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px}
+.install-help p{margin-top:8px}
+@media(pointer:coarse){
+  input,textarea,select{font-size:16px}
+  #gameShell.immersive .immersive-reveal{min-width:44px;min-height:44px;right:max(8px,env(safe-area-inset-right));top:max(8px,env(safe-area-inset-top))}
+  #gameShell.immersive .immersive-controls{max-width:calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right) - 16px);bottom:max(12px,env(safe-area-inset-bottom))}
+  #gameShell.immersive .immersive-controls button,.court-toolbar button,.orientation-action,.orientation-close{min-height:44px;min-width:44px}
+  .game-container{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  #gameShell.immersive .immersive-hud{max-width:calc(100% - 180px);top:max(8px,env(safe-area-inset-top))}
+}
 /* Four-player lobby. No animated filters, canvases or shadow layers in ASCII. */
 .mode-card[data-value="doubles"]{grid-column:1/-1;min-height:78px!important}.doubles-panel{margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
 .d4-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.d4-heading h3{font-size:17px;letter-spacing:-.3px}.d4-count{font:700 14px ui-monospace,monospace;color:var(--accent);white-space:nowrap}
@@ -282,7 +308,12 @@
     <div class="header-caption">一个文件。一张球场。<span>下一球见。</span></div>
     <span class="version-tag">组队 / 双渲染 <b>v6.3</b></span>
   </header>
+  <details id="installHelp" class="install-help" hidden>
+    <summary>iPhone / iPad：添加到主屏幕，打开更简洁</summary>
+    <p>在 Safari 中打开本页，点“分享” → “添加到主屏幕”（如有“作为网页 App 打开”，请开启）。以后从主屏幕图标进入；横屏游玩空间更大。浏览器内也可点击“沉浸模式”。</p>
+  </details>
   <section id="gameShell" class="game-shell" tabindex="-1" aria-label="PONG-84 游戏与控制台">
+    <button id="immersiveExitBtn" class="immersive-exit" type="button" aria-label="退出沉浸模式">退出</button>
     <aside id="failureNotice" class="failure-notice" hidden aria-label="错误提示">
       <div role="alert" aria-live="assertive" aria-atomic="true"><strong>⚠ 操作未完成</strong><p id="failureMessage"></p></div>
       <button id="failureDismiss" type="button" aria-label="关闭错误提示">关闭</button>
@@ -1851,7 +1882,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       resizeCanvas() {
         const field=document.getElementById('gameContainer');
         const shell=document.getElementById('gameShell');
-        const full=(document.fullscreenElement||document.webkitFullscreenElement)===shell;
+        const full=shell.classList.contains('immersive');
         if(full) {
           field.style.removeProperty('--court-limit');
           const wrap=field.parentElement,style=getComputedStyle(wrap);
@@ -2798,6 +2829,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
             this.toggleFullscreen();
             return;
           }
+          if(e.key==='Escape' && this.localImmersive){e.preventDefault();this.toggleFullscreen();return;}
           if (e.key==='Escape' && this.getFullscreenElement()) return; // let the browser exit fullscreen without also pausing
           if ((e.key==='p'||e.key==='P'||e.key==='Escape') && !e.repeat && !this.isTypingTarget(e.target) && !this.game.isOnline()) {
             if ([Phase.PLAYING,Phase.COUNTDOWN].includes(this.game.phase)) this.game.setPaused(true);
@@ -3196,6 +3228,28 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         return document.fullscreenElement || document.webkitFullscreenElement || null;
       }
 
+      supportsNativeFullscreen() {
+        return !this.nativeFullscreenUnavailable && !!(
+          (this.fullscreenTarget.requestFullscreen && document.fullscreenEnabled!==false) ||
+          (this.fullscreenTarget.webkitRequestFullscreen && document.webkitFullscreenEnabled!==false));
+      }
+      isImmersive() {
+        return !!this.localImmersive || this.getFullscreenElement()===this.fullscreenTarget;
+      }
+      setLocalImmersive(active) {
+        if(active===!!this.localImmersive)return;
+        if(active){
+          this.immersiveScrollY=window.scrollY;
+          document.documentElement.style.setProperty('--immersive-scroll-top',-this.immersiveScrollY+'px');
+        }
+        this.localImmersive=active;
+        document.documentElement.classList.toggle('local-immersive',active);
+        this.fullscreenTarget.classList.toggle('local-immersive',active);
+        if(!active){
+          document.documentElement.style.removeProperty('--immersive-scroll-top');
+          window.scrollTo({top:this.immersiveScrollY||0,behavior:'instant'});
+        }
+      }
       showError(message) {
         const notice=document.getElementById('failureNotice');
         const text=String(message||'操作失败，请重试。');
@@ -3205,41 +3259,53 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       }
       showNotice(message) {
         const notice=document.getElementById('inlineNotice');
-        notice.textContent=message;notice.hidden=false;this.showError(message);
+        notice.textContent=message;notice.hidden=false;
       }
       async toggleFullscreen() {
         if(this.fullscreenBusy)return;
         this.fullscreenBusy=true;
+        const exiting=this.isImmersive();
         try {
-          if(this.getFullscreenElement()) {
-            if(document.exitFullscreen)await document.exitFullscreen();
-            else if(document.webkitExitFullscreen)document.webkitExitFullscreen();
-          } else {
-            const target=this.fullscreenTarget;
-            if(target.requestFullscreen)await target.requestFullscreen({navigationUI:'hide'});
-            else if(target.webkitRequestFullscreen)target.webkitRequestFullscreen();
-            else {
-              this.showNotice('当前浏览器不支持网页原生全屏。页面不会把“窗口内放大”冒充全屏；请使用支持全屏的完整浏览器。');
-              return;
-            }
+          if(this.localImmersive){
+            this.setLocalImmersive(false);
             document.getElementById('inlineNotice').hidden=true;
+          } else if(this.getFullscreenElement()) {
+            if(document.exitFullscreen)await document.exitFullscreen();
+            else if(document.webkitExitFullscreen)await document.webkitExitFullscreen();
+          } else if(this.supportsNativeFullscreen()) {
+            const target=this.fullscreenTarget;
+            if(target.requestFullscreen && document.fullscreenEnabled!==false)await target.requestFullscreen({navigationUI:'hide'});
+            else await target.webkitRequestFullscreen();
+            document.getElementById('inlineNotice').hidden=true;
+          } else {
+            this.setLocalImmersive(true);
+            this.showNotice('已进入沉浸模式，浏览器工具栏可能仍会显示。点左上角“退出”返回。');
           }
         } catch(err) {
-          console.warn('Fullscreen request failed:',err);
-          this.showNotice('浏览器拒绝了全屏请求。请直接点击全屏按钮；嵌入页面还需要宿主允许 fullscreen 权限。');
+          if(exiting)this.showError('退出全屏失败，请使用浏览器的退出全屏操作，或再试一次。');
+          else {
+            this.nativeFullscreenUnavailable=true;
+            this.setLocalImmersive(true);
+            this.showNotice('浏览器未允许原生全屏，已切换为沉浸模式。点左上角“退出”返回。');
+          }
         } finally {
           this.fullscreenBusy=false;this.syncFullscreenButton();
         }
       }
       syncFullscreenButton() {
-        const active=this.getFullscreenElement()===this.fullscreenTarget;
-        const label=active?'退出全屏':'全屏';
+        const active=this.isImmersive();
+        const native=this.getFullscreenElement()===this.fullscreenTarget;
+        const label=active?(native?'退出全屏':'退出沉浸模式'):(this.supportsNativeFullscreen()?'全屏':'沉浸模式');
         this.fullscreenTarget.classList.toggle('immersive',active);
         document.documentElement.classList.toggle('in-fullscreen',active);
         for(const button of [this.fullscreenBtn,this.menuFullscreenBtn]) {
-          button.textContent=label;button.setAttribute('aria-label',active?'退出原生全屏':'进入原生全屏');
-          button.title=active?'退出全屏 (F / Esc)':'球场全屏 (F)';
+          button.textContent=label;button.setAttribute('aria-label',label);
+          button.title=label+' (F / Esc)';
         }
+        this.setText('fsExitBtn',native?'退出全屏 F':'退出沉浸 F');
+        document.getElementById('immersiveExitBtn').setAttribute('aria-label',native?'退出全屏':'退出沉浸模式');
+        this.setText('rotateFullscreenBtn',this.supportsNativeFullscreen()?'全屏':'沉浸模式');
+        document.getElementById('rotateFullscreenBtn').hidden=active;
         if(active!==this.wasFullscreen) {
           this.wasFullscreen=active;
           if(active)this.showFullscreenControls();
@@ -3250,7 +3316,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         this.game.resizeCanvas();this.game.requestDraw();this.syncImmersiveUi();
       }
       showFullscreenControls() {
-        if(this.getFullscreenElement()!==this.fullscreenTarget)return;
+        if(!this.isImmersive())return;
         this.fullscreenTarget.classList.add('controls-visible');
         const controls=document.getElementById('fsControls');
         controls.inert=false;controls.setAttribute('aria-hidden','false');
@@ -3282,6 +3348,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         el('fsRevealBtn').addEventListener('click',()=>{
           this.showFullscreenControls();
         });
+        el('immersiveExitBtn').addEventListener('click',()=>this.toggleFullscreen());
         el('fsExitBtn').addEventListener('click',()=>this.toggleFullscreen());
         el('fsPauseBtn').addEventListener('click',()=>this.game.setPaused(this.game.phase!==Phase.PAUSED));
         el('fsRenderBtn').addEventListener('click',()=>this.toggleRenderMode());
@@ -3295,13 +3362,13 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
           if(event.pointerType==='mouse'&&(event.movementX||event.movementY))this.showFullscreenControls();
         },{passive:true});
         this.fullscreenTarget.addEventListener('keydown',event=>{
-          if(event.key==='Tab'&&this.getFullscreenElement()===this.fullscreenTarget)this.showFullscreenControls();
+          if(event.key==='Tab'&&this.isImmersive())this.showFullscreenControls();
         });
         this.syncImmersiveUi();
       }
       syncImmersiveUi() {
         const g=this.game,ascii=g.settings.renderMode==='ascii';
-        const active=this.getFullscreenElement()===this.fullscreenTarget;
+        const active=this.isImmersive();
         this.fullscreenTarget.classList.toggle('immersive-menu',[Phase.MENU,Phase.ENDED,Phase.PAUSED].includes(g.phase));
         document.querySelector('.immersive-hud').setAttribute('aria-hidden',String(!active||ascii));
         this.setText('fsScoreLeft',g.match.leftScore);this.setText('fsScoreRight',g.match.rightScore);
@@ -5115,7 +5182,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
       const show=portrait&&!orientationDismissed;
       hint.hidden=!show;hint.setAttribute('aria-hidden',String(!show));
       shell.classList.toggle('portrait-hint-visible',show);
-      document.getElementById('rotateFullscreenBtn').hidden=ui.getFullscreenElement()===ui.fullscreenTarget;
+      document.getElementById('rotateFullscreenBtn').hidden=ui.isImmersive();
     }
     function scheduleOrientationUpdate(){
       if(orientationFrame!==null)return;
@@ -5133,6 +5200,10 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
     document.addEventListener('webkitfullscreenchange',scheduleOrientationUpdate);
     document.addEventListener('focusout',scheduleOrientationUpdate);
     updateOrientationHint();
+    const standalone=window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
+    const appleTouch=/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+    document.getElementById('installHelp').hidden=!appleTouch || standalone;
+    if(standalone){ui.setLocalImmersive(true);ui.syncFullscreenButton();}
 
     window.PONG84 = Object.freeze({
       version:'6.3.0',
@@ -5140,7 +5211,7 @@ turns:turn.example.com:5349?transport=tcp" rows="2" spellcheck="false"></textare
         profile:game.settings.renderProfile, targetFps:game.targetRenderFps(), grid:[game.ascii.cols,game.ascii.rows],
         canvasInitialized:!!game.ctx, canvasSize:[game.canvas.width,game.canvas.height],graphicsQuality:game.settings.graphicsQuality,
         graphicalCaches:game.graphics?game.graphics.sprites.size+(game.graphics.background?1:0):0,
-        nativeFullscreen:ui.getFullscreenElement()===ui.fullscreenTarget,viewport:[innerWidth,innerHeight],
+        nativeFullscreen:ui.getFullscreenElement()===ui.fullscreenTarget,localImmersive:!!ui.localImmersive,standalone,viewport:[innerWidth,innerHeight],
          court:(()=>{const r=document.getElementById('gameContainer').getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,aspect:r.width/r.height};})(),
          orientationHint:!document.getElementById('rotateHint').hidden,
         activeFrameLoop:!!game.raf, stats:{...game.stats},

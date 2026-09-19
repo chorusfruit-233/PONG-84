@@ -120,10 +120,12 @@ with sync_playwright() as p:
     ascii.evaluate('game.setPaused(true)');ascii.wait_for_timeout(130)
     writes=ascii.evaluate('game.ascii.totalRowWrites');ascii.evaluate('game.render();game.render();game.render()')
     check('Identical ASCII frames cause no row writes',ascii.evaluate('game.ascii.totalRowWrites')==writes)
-    # Rejected native fullscreen is never simulated by CSS.
+    # Rejected native fullscreen falls back to explicitly labeled local immersive mode.
     ascii.evaluate("()=>{ui.fullscreenTarget.requestFullscreen=()=>Promise.reject(new Error('test denied'))}")
     ascii.locator('#fullscreenBtn').click();ascii.wait_for_timeout(100)
-    check('Denied fullscreen keeps normal layout and informs user',ascii.evaluate("!document.fullscreenElement&&!ui.fullscreenTarget.classList.contains('immersive')&&!document.getElementById('inlineNotice').hidden"))
+    check('Denied fullscreen uses labeled immersive fallback without error',ascii.evaluate("!document.fullscreenElement&&ui.localImmersive&&ui.fullscreenTarget.classList.contains('immersive')&&!document.getElementById('inlineNotice').hidden&&document.getElementById('failureNotice').hidden"))
+    ascii.locator('#immersiveExitBtn').click()
+    check('Persistent exit restores normal layout',ascii.evaluate("!ui.isImmersive()&&!document.documentElement.classList.contains('local-immersive')"))
     ascii.close()
     # Touch layout / mapping.
     mobile_ctx=browser.new_context(viewport={'width':390,'height':844},device_scale_factor=2,has_touch=True,is_mobile=True)
